@@ -1,0 +1,48 @@
+<dom-module id="free-poll-menu-list">
+	<template>
+		<style>
+			.menu-title {
+				@apply(--layout-horizontal);
+			}
+
+		</style>
+		<div class="menu-title" height="40px">
+			<paper-icon-button icon="menu"></paper-icon-button>
+		</div>
+		<template is="dom-repeat" items="{{menuList}}">
+			<paper-item on-tap="_menuSelected">{{item.name}}</paper-item>
+		</template>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-menu-list',
+
+			properties: {
+
+				menuList: {
+					type: Array,
+					value: function() {
+						return [{
+							name: 'Setting',
+							url: 'setting'
+						}, {
+							name: 'Board',
+							url: 'board'
+						}, {
+							name: 'Poll List',
+							url: 'poll_list'
+						}, {
+							name: 'My Polls',
+							url: 'my_polls'
+						}];
+					}
+				}
+			},
+
+			_menuSelected: function(event) {
+				var selectedMenu = event.model.item.url;
+				console.log('Route to ' + selectedMenu);
+			}
+		})
+	</script>
+</dom-module>

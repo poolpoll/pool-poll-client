@@ -1,0 +1,30 @@
+<dom-module id="free-poll-drawer">
+	<template>
+		<app-drawer id="drawer">
+			<free-poll-menu-list></free-poll-menu-list>
+		</app-drawer>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-drawer',
+
+			properties: {
+			},
+
+			ready: function() {
+				document.addEventListener('side-menu-toggled', function() {
+					this._drawerToggled();
+				}.bind(this));
+			},
+
+			// getter section
+			getDrawer: function() {
+				return this.$['drawer'];
+			},
+
+			_drawerToggled: function(event) {
+				this.getDrawer().toggle();
+			}
+		})
+	</script>
+</dom-module>

@@ -1,0 +1,25 @@
+<dom-module id="free-poll-header">
+	<template>
+		<paper-toolbar class="toolbar">
+			<paper-icon-button icon="menu" on-tap="_drawerToggled" drawer-toggle></paper-icon-button>
+			<span>[[title]]</span>
+		</paper-toolbar>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-header',
+
+			properties: {
+
+				title: {
+					type: String,
+					value: 'Title is not inited.'
+				}
+			},
+
+			_drawerToggled: function(event) {
+				this.fire('side-menu-toggled', event);
+			}
+		})
+	</script>
+</dom-module>
