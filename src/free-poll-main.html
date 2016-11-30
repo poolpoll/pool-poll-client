@@ -6,15 +6,32 @@
 		<!-- menu content -->
 		<free-poll-drawer></free-poll-drawer>
 
-		<div>
-			<h2>Main Content</h2>
-		</div>
+		<iron-pages attr-for-selected="route-url" selected="{{routeUrl}}">
+			<!-- 화면을 구성하는 페이지들을 각각 임포트 (태그를 삽입)한다.  -->
+			<!-- 이 어플리캐이션으 전체적으로 공유하는 변수(글로벌 변수)인 routUrl 값을 -->
+			<!-- 아래 태그 리스트의 route-url 속성 (attribute)과 일치하는 값으로 변경하면 -->
+			<!-- 그에 해당하는 페이지가 출력 된다. -->
+			<!-- 메뉴를 추가하려면 free-poll-menu-list의 property 중 menuList에 새로운 메뉴의 name과 url을 -->
+			<!-- 등록하고 해당 아래의 리스트에 원하는 페이지의 태그를 임포트 (태그 삽입)하면 된다.  -->
+			<my-view1 route-url="setting"></my-view1>
+			<my-view2 route-url="board"></my-view2>
+			<my-view3 route-url="poll_list"></my-view3>
+			<my-view404 route-url="my_polls"></my-view404>
+		</iron-pages>
 	</template>
 	<script>
 		Polymer({
 			is: 'free-poll-main',
 
 			properties: {
+
+				routeUrl: {
+					type: String
+				},
+
+				title: {
+					type: String
+				}
 			}
 		})
 	</script>

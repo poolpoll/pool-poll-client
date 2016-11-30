@@ -40,8 +40,10 @@
 			},
 
 			_menuSelected: function(event) {
-				var selectedMenu = event.model.item.url;
-				console.log('Route to ' + selectedMenu);
+				var selectedMenuUrl = event.model.item.url;
+				var selectedMenuName = event.model.item.name;
+				app.route = selectedMenuUrl;
+				app.title = selectedMenuName;
 			}
 		})
 	</script>

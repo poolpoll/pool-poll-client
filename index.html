@@ -105,7 +105,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
   </head>
   <body>
-    <free-poll-main></free-poll-main>
+    <template is="dom-bind" id="app">
+      <free-poll-main route-url="[[route]]" title="[[title]]"></free-poll-main>
+    </template>
     <!-- Built with love using Polymer Starter Kit -->
   </body>
 </html>
