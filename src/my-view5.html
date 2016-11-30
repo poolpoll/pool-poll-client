@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<!-- paper-input 밑 button이 drawer 보다 상위 레이어로 표시됨 -->
+<dom-module id="my-view5">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+     
+    <p style="font-size: 15pt"><b>Sign In</b></p>
+      <div class="card">
+        <paper-input label="[[inputId]]"></paper-input>
+        <paper-input label="[[inputPw]]" type="password"></paper-input>
+      </div>
+
+    <p style="font-size: 9pt; text-align: center">
+      <paper-button><u>Sign Up</u></paper-button>
+      <br>
+      <paper-button><u>Forget Your ID/Password?</u></paper-button>
+      <!-- paper-button 에서 알파벳 대문자로 변환함 -->
+    </p>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view5',
+
+      properties: {
+
+        inputId: {
+          type: String,
+          value: 'Input ID'
+        },
+
+        inputPw: {
+          type: String,
+          value: 'Input Password'
+        }
+      }
+
+    })
+  </script>
+</dom-module>
+
