@@ -4,7 +4,7 @@
 		<free-poll-header title="[[title]]"></free-poll-header>
 
 		<!-- menu content -->
-		<free-poll-drawer></free-poll-drawer>
+		<free-poll-drawer id="side-menu"></free-poll-drawer>
 
 		<iron-pages attr-for-selected="route-url" selected="{{routeUrl}}">
 			<!-- 화면을 구성하는 페이지들을 각각 임포트 (태그를 삽입)한다.  -->
@@ -17,7 +17,7 @@
 			<my-view2 route-url="board"></my-view2>
 			<my-view3 route-url="poll_list"></my-view3>
 			<my-view404 route-url="my_polls"></my-view404>
-			<my-view5 route-url="sign_in"></my-view5>
+			<free-poll-sign-in route-url="sign_in"></free-poll-sign-in>
 		</iron-pages>
 	</template>
 	<script>
@@ -27,12 +27,20 @@
 			properties: {
 
 				routeUrl: {
-					type: String
+					type: String,
+					observer: '_routeUrlChanged'
 				},
 
 				title: {
 					type: String
 				}
+			},
+
+			/**
+			 * routeUrl이 변경될 때 마다 호출한다.
+			 */
+			_routeUrlChanged: function() {
+				this.$['side-menu']._drawerToggled();
 			}
 		})
 	</script>

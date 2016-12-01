@@ -1,0 +1,57 @@
+<!-- paper-input 밑 button이 drawer 보다 상위 레이어로 표시됨 -->
+<dom-module id="free-poll-sign-in">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      },
+      #container {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
+      .column {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+      .button {
+        font-size: 9pt;
+        text-align: center
+      }
+    </style>
+     
+    <p style="font-size: 15pt"><b>Sign In</b></p>
+      <div id="container" class="card">
+        <div class="column">
+          <paper-input label="[[inputId]]"></paper-input>
+          <paper-input label="[[inputPw]]" type="password"></paper-input>
+        </div>
+        <div class="column">
+            <paper-button class="button"><u>Sign Up</u></paper-button>
+            <paper-button class="button"><u>Forget Your ID/Password?</u></paper-button>
+        </div>
+      </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'free-poll-sign-in',
+
+      properties: {
+
+        inputId: {
+          type: String,
+          value: 'Input ID'
+        },
+
+        inputPw: {
+          type: String,
+          value: 'Input Password'
+        }
+      }
+
+    })
+  </script>
+</dom-module>
+

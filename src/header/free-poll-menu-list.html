@@ -6,9 +6,6 @@
 			}
 
 		</style>
-		<div class="menu-title" height="40px">
-			<paper-icon-button icon="menu"></paper-icon-button>
-		</div>
 		<template is="dom-repeat" items="{{menuList}}">
 			<paper-item on-tap="_menuSelected">{{item.name}}</paper-item>
 		</template>
@@ -34,7 +31,7 @@
 						}, {
 							name: 'My Polls',
 							url: 'my_polls'
-						},	{
+						}, {
 							name: 'Sign In',
 							url: 'sign_in'
 						}];
