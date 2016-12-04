@@ -1,7 +1,7 @@
 <dom-module id="free-poll-header">
 	<template>
 		<paper-toolbar class="toolbar">
-			<paper-icon-button icon="menu" on-tap="_drawerToggled" drawer-toggle></paper-icon-button>
+			<paper-icon-button icon="menu" on-tap="_drawerToggled"></paper-icon-button>
 			<span>[[title]]</span>
 		</paper-toolbar>
 	</template>
@@ -18,7 +18,7 @@
 			},
 
 			_drawerToggled: function(event) {
-				this.fire('side-menu-toggled', event);
+				this.fire('side-menu-open', event);
 			}
 		})
 	</script>

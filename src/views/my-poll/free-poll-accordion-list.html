@@ -1,0 +1,44 @@
+<dom-module id="free-poll-accordion-list">
+	<template>
+		<style>
+			.content {
+				padding: 15px;
+				border: 1px solid #dedede;
+				border-top: none;
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+				@apply(--shadow-elevation-2dp);
+			}
+		</style>
+		<paper-item on-tap="_openDetail">[[item.title]]/[[item.status]]
+			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+		</paper-item>
+
+		<iron-collapse id="collapse" class="content">
+			<li>[[item.openDate]] ~ [[item.closeDate]]</li>
+			<li>[[item.pollCount]]</li>
+		</iron-collapse>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-accordion-list',
+
+			properties: {
+				item: {
+					type: Object
+				},
+
+				arrowIcon: {
+					type: String,
+					value: 'icons:arrow-drop-down'
+				}
+			},
+
+			_openDetail: function() {
+				var collapse = this.$['collapse'];
+				collapse.toggle();
+				this.arrowIcon = (collapse.opened) ? 'icons:arrow-drop-up' : 'icons:arrow-drop-down';
+			}
+		})
+	</script>
+</dom-module>

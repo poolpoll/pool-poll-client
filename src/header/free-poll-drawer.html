@@ -8,12 +8,9 @@
 		Polymer({
 			is: 'free-poll-drawer',
 
-			properties: {
-			},
-
 			ready: function() {
-				document.addEventListener('side-menu-toggled', function() {
-					this._drawerToggled();
+				document.addEventListener('side-menu-open', function() {
+					this.open();
 				}.bind(this));
 			},
 
@@ -22,8 +19,12 @@
 				return this.$['drawer'];
 			},
 
-			_drawerToggled: function(event) {
-				this.getDrawer().toggle();
+			open: function() {
+				this.getDrawer().open();
+			},
+
+			close: function() {
+				this.getDrawer().close();
 			}
 		})
 	</script>

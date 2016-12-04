@@ -1,0 +1,42 @@
+<dom-module id="free-poll-dialog">
+	<template>
+		<paper-dialog id="dialog">
+		</paper-dialog>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-dialog',
+			
+			properties: {
+				openCallback: {
+					type: Function
+				},
+
+				closeCallback: {
+					type: Function
+				}
+			},
+
+			listeners: {
+				'dialog.iron-overlay-opened': 'dialogOpened',
+				'dialog.iron-overlay-closed': 'dialogClosed'
+			},
+
+			openDialog: function(content, openCallback, closeCallback) {
+				this.openCallback = openCallback;
+				this.closeCallback = closeCallback;
+				var container = this.$['dialog'];
+				container.appendChild(content);
+				this.$['dialog'].open();
+			},
+
+			dialogOpened: function() {
+				if(this.openCallback) this.openCallback();
+			},
+
+			dialogClosed: function() {
+				if(this.closeCallback) this.closeCallback();
+			}
+		})
+	</script>
+</dom-module>
