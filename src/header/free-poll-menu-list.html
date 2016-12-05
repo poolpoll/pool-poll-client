@@ -5,6 +5,16 @@
 				@apply(--layout-horizontal);
 			}
 		</style>
+
+		<iron-ajax
+			auto
+		 	id="menu-ajax"
+		 	url="http://localhost:3000/menus"
+		 	handle-as="json"
+		 	method="GET"
+		 	last-response="{{menuList}}">
+	 	</iron-ajax>
+
 		<template is="dom-repeat" items="{{menuList}}">
 			<paper-item on-tap="_menuSelected">{{item.name}}</paper-item>
 		</template>
@@ -17,15 +27,7 @@
 
 				menuList: {
 					type: Array,
-					value: function() {
-						return [{
-							name: 'My Polls',
-							url: 'my_polls'
-						}, {
-							name: 'Sign In',
-							url: 'sign_in'
-						}];
-					}
+					observer: '_menuChanged'
 				}
 			},
 
