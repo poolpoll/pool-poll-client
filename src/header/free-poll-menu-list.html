@@ -8,10 +8,8 @@
 
 		<iron-ajax
 			auto
-		 	id="menu-ajax"
 		 	url="http://localhost:3000/menus"
 		 	handle-as="json"
-		 	method="GET"
 		 	last-response="{{menuList}}">
 	 	</iron-ajax>
 
@@ -26,8 +24,7 @@
 			properties: {
 
 				menuList: {
-					type: Array,
-					observer: '_menuChanged'
+					type: Array
 				}
 			},
 

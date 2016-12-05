@@ -6,6 +6,13 @@
 			padding: 10px;
 		}		
 		</style>
+		<iron-ajax
+		 	auto
+		 	url="http://localhost:3000/my_polls"
+		 	handle-as="json"
+		 	last-response="{{pollList}}">
+ 		</iron-ajax>
+
 		<paper-item on-tap="_addNewPoll">New
 			<iron-icon icon="icons:add"></iron-icon>
 		</paper-item>
@@ -23,43 +30,7 @@
 			properties: {
 
 				pollList: {
-					type: Array,
-					value: [{
-						id: 'test-poll',
-						title: 'Test Poll',
-						openDate: '2016-12-03',
-						closeDate: '2016-01-03',
-						status: 'Open',
-						pollCount: 1423
-					}, {
-						id: 'demo-poll',
-						title: 'Demo Poll',
-						openDate: '2016-09-11',
-						closeDate: '2016-10-11',
-						status: 'Closed',
-						pollCount: 4237
-					}, {
-						id: 'park-still',
-						title: 'Is Park still president?',
-						openDate: '2016-11-25',
-						closeDate: '2017-03-25',
-						status: 'Open',
-						pollCount: 513324
-					}, {
-						id: 'team-fav',
-						title: 'Which Team is your favorite?',
-						openDate: '2016-11-15',
-						closeDate: '2017-01-01',
-						status: 'Open',
-						pollCount: 320
-					}, {
-						id: 'do-i-die',
-						title: 'Do I have to DIE?',
-						openDate: '2015-07-10',
-						closeDate: '2015-07-12',
-						status: 'Closed',
-						pollCount: 312
-					}]
+					type: Array
 				}
 			},
 
