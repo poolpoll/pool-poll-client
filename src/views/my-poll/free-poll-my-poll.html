@@ -1,10 +1,10 @@
 <dom-module id="free-poll-my-poll">
 	<template>
 		<style>
-		:host {
-			display: block;
-			padding: 10px;
-		}		
+			:host {
+				display: block;
+				padding: 10px;
+			}		
 		</style>
 		<iron-ajax
 		 	auto
@@ -41,7 +41,7 @@
 
 			_addNewPoll: function() {
 				var content = document.createElement('free-poll-new-poll');
-				this.$['dialog'].openDialog(content, openCallback, closeCallback)
+				this.$['dialog'].openDialog(content, null, null)
 			}
 		})
 	</script>

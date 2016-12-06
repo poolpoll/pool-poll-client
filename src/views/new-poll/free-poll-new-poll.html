@@ -1,0 +1,31 @@
+<dom-module id="free-poll-new-poll">
+	<template>
+		<style>
+			:host {
+				display: block;
+				padding: 10px;
+			}
+
+			.input-container {
+				@apply(--layout-vertical);
+				@apply(--layour-flex);
+			}
+		</style>
+		<div class="input-container">
+			<paper-input label="Title"></paper-input>
+			<paper-input label="Description"></paper-input>
+			<paper-input label="Type"></paper-input>
+			<paper-input label="Start Date"></paper-input>
+			<paper-input label="Due Date"></paper-input>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-new-poll',
+
+			properties: {
+
+			}
+		})
+	</script>
+</dom-module>
