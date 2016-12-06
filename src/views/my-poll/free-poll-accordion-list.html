@@ -10,13 +10,13 @@
 				@apply(--shadow-elevation-2dp);
 			}
 		</style>
-		<paper-item on-tap="_openDetail">[[item.title]]/[[item.status]]
+		<paper-item on-tap="_openDetail">[[item.name]] / [[item.description]]
 			<iron-icon icon="[[arrowIcon]]"></iron-icon>
 		</paper-item>
 
 		<iron-collapse id="collapse" class="content">
-			<li>[[item.openDate]] ~ [[item.closeDate]]</li>
-			<li>[[item.pollCount]]</li>
+			<li>[[item.from_date]] ~ [[item.to_date]]</li>
+			<li>[[item.count]]</li>
 		</iron-collapse>
 	</template>
 	<script>
