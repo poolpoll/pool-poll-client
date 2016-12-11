@@ -1,6 +1,6 @@
 <dom-module id="free-poll-dialog">
 	<template>
-		<paper-dialog id="dialog">
+		<paper-dialog id="dialog" modal>
 		</paper-dialog>
 	</template>
 	<script>
@@ -25,8 +25,9 @@
 			openDialog: function(content, openCallback, closeCallback) {
 				this.openCallback = openCallback;
 				this.closeCallback = closeCallback;
+				this.content = content;
 				var container = this.$['dialog'];
-				container.appendChild(content);
+				container.appendChild(this.content);
 				this.$['dialog'].open();
 			},
 
@@ -36,6 +37,9 @@
 
 			dialogClosed: function() {
 				if(this.closeCallback) this.closeCallback();
+
+				var container = this.$['dialog'];
+				container.removeChild(this.content);
 			}
 		})
 	</script>

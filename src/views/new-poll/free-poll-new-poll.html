@@ -15,16 +15,15 @@
 		<iron-ajax
 		 	id="create-ajax"
 		 	url="http://localhost:3000/my_polls"
-		 	content-type="application/json"
-		 	method="post"
-		 	handle-as="json">
+		 	content-type="application/x-www-form-urlencoded"
+		 	method="post">
  		</iron-ajax>		
 
 		<div class="input-container">
-			<paper-input label="Title" value="[[name]]"></paper-input>
-			<paper-input label="Description" value="[[description]]"></paper-input>
-			<paper-input label="Start Date" value="[[fromDate]]"></paper-input>
-			<paper-input label="Due Date" value="[[toDate]]"></paper-input>
+			<paper-input label="Title" value="{{name}}"></paper-input>
+			<paper-input label="Description" value="{{description}}"></paper-input>
+			<paper-input label="Start Date" value="{{fromDate}}"></paper-input>
+			<paper-input label="Due Date" value="{{toDate}}"></paper-input>
 			<paper-button id="new-poll-submit" on-tap="submitNewPoll">Create New Poll</paper-button>
 		</div>
 	</template>
@@ -33,6 +32,26 @@
 			is: 'free-poll-new-poll',
 
 			properties: {
+
+				name: {
+					type: String
+				},
+
+				description: {
+					type: String
+				},
+
+				fromDate: {
+					type: String
+				},
+
+				toDate: {
+					type: String
+				}
+			},
+
+			listeners: {
+				'create-ajax.response': 'createResponsed'
 			},
 
 			submitNewPoll: function() {
@@ -45,6 +64,14 @@
 				};
 
 				createAjax.generateRequest();
+			},
+
+			createResponsed: function(result) {
+				if(result) {
+					alert('created');
+				} else {
+					alert('failed');
+				}
 			}
 		})
 	</script>
