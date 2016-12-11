@@ -11,12 +11,21 @@
 				@apply(--layour-flex);
 			}
 		</style>
+
+		<iron-ajax
+		 	id="create-ajax"
+		 	url="http://localhost:3000/my_polls"
+		 	content-type="application/json"
+		 	method="post"
+		 	handle-as="json">
+ 		</iron-ajax>		
+
 		<div class="input-container">
-			<paper-input label="Title"></paper-input>
-			<paper-input label="Description"></paper-input>
-			<paper-input label="Type"></paper-input>
-			<paper-input label="Start Date"></paper-input>
-			<paper-input label="Due Date"></paper-input>
+			<paper-input label="Title" value="[[name]]"></paper-input>
+			<paper-input label="Description" value="[[description]]"></paper-input>
+			<paper-input label="Start Date" value="[[fromDate]]"></paper-input>
+			<paper-input label="Due Date" value="[[toDate]]"></paper-input>
+			<paper-button id="new-poll-submit" on-tap="submitNewPoll">Create New Poll</paper-button>
 		</div>
 	</template>
 	<script>
@@ -24,7 +33,18 @@
 			is: 'free-poll-new-poll',
 
 			properties: {
+			},
 
+			submitNewPoll: function() {
+				var createAjax = this.$['create-ajax'];
+				createAjax.body = {
+					name: this.name,
+					description: this.description,
+					from_date: this.fromDate,
+					to_date: this.toDate
+				};
+
+				createAjax.generateRequest();
 			}
 		})
 	</script>
