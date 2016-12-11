@@ -13,10 +13,6 @@
 		 	last-response="{{pollList}}">
  		</iron-ajax>
 
-		<paper-item on-tap="_addNewPoll">New
-			<iron-icon icon="icons:add"></iron-icon>
-		</paper-item>
-
 		<template is="dom-repeat" items="[[pollList]]">
 			<free-poll-accordion-list item="[[item]]"></free-poll-accordion-list>		
 		</template>

@@ -1,0 +1,45 @@
+<dom-module id="free-poll-detail-info">
+	<template>
+		<style>
+			:host {
+				display: block;
+				padding: 10px;
+			}
+
+			.input-container {
+				@apply(--layout-vertical);
+				@apply(--layour-flex);
+			}
+		</style>
+
+		<div class="input-container">
+			<paper-button on-tap="prevStep">Prev</paper-button>
+			<paper-button on-tap="finish">Submit</paper-button>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-detail-info',
+
+			properties: {
+
+				name: {
+					type: String
+				},
+
+				description: {
+					type: String
+				},
+
+				fromDate: {
+					type: String
+				},
+
+				toDate: {
+					type: String
+				}
+			}
+		})
+	</script>
+</dom-module>

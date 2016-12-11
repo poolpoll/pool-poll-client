@@ -12,20 +12,9 @@
 			}
 		</style>
 
-		<iron-ajax
-		 	id="create-ajax"
-		 	url="http://localhost:3000/my_polls"
-		 	content-type="application/x-www-form-urlencoded"
-		 	method="post">
- 		</iron-ajax>		
+		<free-poll-basic-info hidden="[[hideBasic]]"></free-poll-basic-info>
+		<free-poll-detail-info hidden="[[hideDetail]]"></free-poll-detail-info>
 
-		<div class="input-container">
-			<paper-input label="Title" value="{{name}}"></paper-input>
-			<paper-input label="Description" value="{{description}}"></paper-input>
-			<paper-input label="Start Date" value="{{fromDate}}"></paper-input>
-			<paper-input label="Due Date" value="{{toDate}}"></paper-input>
-			<paper-button id="new-poll-submit" on-tap="submitNewPoll">Create New Poll</paper-button>
-		</div>
 	</template>
 	<script>
 		Polymer({
@@ -47,30 +36,22 @@
 
 				toDate: {
 					type: String
+				},
+
+				step: {
+					type: String,
+					value: 'basic',
+					observer: 'stepChanged'
 				}
 			},
 
-			listeners: {
-				'create-ajax.response': 'createResponsed'
-			},
-
-			submitNewPoll: function() {
-				var createAjax = this.$['create-ajax'];
-				createAjax.body = {
-					name: this.name,
-					description: this.description,
-					from_date: this.fromDate,
-					to_date: this.toDate
-				};
-
-				createAjax.generateRequest();
-			},
-
-			createResponsed: function(result) {
-				if(result) {
-					alert('created');
-				} else {
-					alert('failed');
+			stepChanged: function(step) {
+				if(step == 'basic') {
+					this.hideBasic = false;
+					this.hideDetail = true;
+				} else if (step == 'detail') {
+					this.hideBasic = true;
+					this.hideDetail = false;
 				}
 			}
 		})
