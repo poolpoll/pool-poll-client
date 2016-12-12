@@ -1,20 +1,9 @@
 <dom-module id="new-poll">
 	<template>
-		<style>
-			:host {
-				display: block;
-				padding: 10px;
-			}
-
-			.input-container {
-				@apply(--layout-vertical);
-				@apply(--layour-flex);
-			}
-		</style>
-
-		<new-poll-basic hidden="[[hideBasic]]"></new-poll-basic>
-		<new-poll-detail hidden="[[hideDetail]]"></new-poll-detail>
-
+		<neon-animated-pages attr-for-selected="step" selected="[[step]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+			<neon-animatable step="basic"><new-poll-basic></new-poll-basic></neon-animatable>
+			<neon-animatable step="detail"><new-poll-detail></new-poll-detail></neon-animatable>
+		</neon-animated-pages>
 	</template>
 	<script>
 		Polymer({
@@ -40,18 +29,7 @@
 
 				step: {
 					type: String,
-					value: 'basic',
-					observer: 'stepChanged'
-				}
-			},
-
-			stepChanged: function(step) {
-				if(step == 'basic') {
-					this.hideBasic = false;
-					this.hideDetail = true;
-				} else if (step == 'detail') {
-					this.hideBasic = true;
-					this.hideDetail = false;
+					value: 'basic'
 				}
 			}
 		})

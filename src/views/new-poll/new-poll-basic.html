@@ -17,7 +17,6 @@
 			<paper-input label="Description" value="{{description}}"></paper-input>
 			<paper-input label="Start Date" value="{{fromDate}}"></paper-input>
 			<paper-input label="Due Date" value="{{toDate}}"></paper-input>
-			<paper-button on-tap="goNextStep">Next</paper-button>
 		</div>
 
 	</template>
@@ -45,17 +44,7 @@
 				toDate: {
 					type: String,
 					notify: true
-				},
-
-				step: {
-					type: String,
-					value: 'basic',
-					notify: true
 				}
-			},
-
-			goNextStep: function() {
-				this.step = 'detail';
 			}
 		})
 	</script>

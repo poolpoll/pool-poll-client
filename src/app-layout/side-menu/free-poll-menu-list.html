@@ -29,10 +29,8 @@
 			},
 
 			_menuSelected: function(event) {
-				var selectedMenuUrl = event.model.item.url;
-				var selectedMenuName = event.model.item.name;
-				app.route = selectedMenuUrl;
-				app.title = selectedMenuName;
+				app.route = event.model.item.url;
+				app.title = event.model.item.name;
 			}
 		})
 	</script>
