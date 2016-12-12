@@ -1,4 +1,4 @@
-<dom-module id="free-poll-basic-info">
+<dom-module id="new-poll-basic">
 	<template>
 		<style>
 			:host {
@@ -23,7 +23,7 @@
 	</template>
 	<script>
 		Polymer({
-			is: 'free-poll-basic-info',
+			is: 'new-poll-basic',
 
 			properties: {
 
@@ -45,10 +45,10 @@
 				toDate: {
 					type: String,
 					notify: true
-				}
+				},
 
 				step: {
-					type: String
+					type: String,
 					value: 'basic',
 					notify: true
 				}

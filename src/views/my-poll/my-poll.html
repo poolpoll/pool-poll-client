@@ -1,4 +1,4 @@
-<dom-module id="free-poll-my-poll">
+<dom-module id="my-poll">
 	<template>
 		<style>
 			:host {
@@ -16,12 +16,10 @@
 		<template is="dom-repeat" items="[[pollList]]">
 			<accordion-list item="[[item]]"></accordion-list>		
 		</template>
-
-		<free-poll-dialog id= "dialog"></free-poll-dialog>
 	</template>
 	<script>
 		Polymer({
-			is: 'free-poll-my-poll',
+			is: 'my-poll',
 
 			properties: {
 

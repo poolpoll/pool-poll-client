@@ -1,4 +1,4 @@
-<dom-module id="free-poll-new-poll">
+<dom-module id="new-poll">
 	<template>
 		<style>
 			:host {
@@ -12,13 +12,13 @@
 			}
 		</style>
 
-		<free-poll-basic-info hidden="[[hideBasic]]"></free-poll-basic-info>
-		<free-poll-detail-info hidden="[[hideDetail]]"></free-poll-detail-info>
+		<new-poll-basic hidden="[[hideBasic]]"></new-poll-basic>
+		<new-poll-detail hidden="[[hideDetail]]"></new-poll-detail>
 
 	</template>
 	<script>
 		Polymer({
-			is: 'free-poll-new-poll',
+			is: 'new-poll',
 
 			properties: {
 

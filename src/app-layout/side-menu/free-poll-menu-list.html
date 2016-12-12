@@ -14,7 +14,7 @@
 	 	</iron-ajax>
 
 		<template is="dom-repeat" items="{{menuList}}">
-			<paper-item on-tap="_menuSelected">{{item.name}}</paper-item>
+			<paper-item on-tap="_menuSelected">[[item.name]]</paper-item>
 		</template>
 	</template>
 	<script>
