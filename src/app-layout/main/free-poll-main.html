@@ -4,7 +4,7 @@
 		<free-poll-header title="[[title]]"></free-poll-header>
 
 		<!-- view list -->
-		<iron-pages attr-for-selected="route-url" selected="{{routeUrl}}">
+		<iron-pages attr-for-selected="route-url" selected="{{routeUrl}}" fallback-selection="my_polls">
 			<free-poll-new-poll route-url="new_poll"></free-poll-new-poll>
 			<free-poll-my-poll route-url="my_polls"></free-poll-my-poll>
 			<free-poll-sign-in route-url="sign_in"></free-poll-sign-in>
@@ -20,13 +20,11 @@
 
 				routeUrl: {
 					type: String,
-					value: 'my_polls',
 					observer: '_routeUrlChanged'
 				},
 
 				title: {
 					type: String,
-					value: 'My Polls'
 				}
 			},
 
