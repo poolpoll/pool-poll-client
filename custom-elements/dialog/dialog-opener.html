@@ -1,7 +1,16 @@
 <dom-module id="dialog-opener">
 	<template>
-		<paper-dialog id="dialog" modal>
-		</paper-dialog>
+		<style>
+		  paper-dialog {
+		    border: 2px solid;
+		    border-color: var(--paper-green-500);
+		    background-color: var(--paper-light-green-50);
+		    color: var(--paper-green-500);
+
+        width: 300px;
+		  }
+		</style>
+		<paper-dialog id="dialog" modal></paper-dialog>
 	</template>
 	<script>
 		Polymer({
@@ -20,6 +29,13 @@
 			listeners: {
 				'dialog.iron-overlay-opened': 'dialogOpened',
 				'dialog.iron-overlay-closed': 'dialogClosed'
+			},
+
+			ready: function() {
+				document.addEventListener('dialog-open', function(event) {
+					var request = event.detail;
+					this.openDialog(request.content, request.openCallback, request.closeCallback);
+				}.bind(this))
 			},
 
 			openDialog: function(content, openCallback, closeCallback) {

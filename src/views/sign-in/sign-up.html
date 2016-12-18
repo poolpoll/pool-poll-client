@@ -1,0 +1,81 @@
+<dom-module id="sign-up">
+	<template>
+		<style>
+			.container {
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+		</style>
+		<iron-ajax
+			id="sign-up-ajax"
+			url="http://localhost:3000/auth/sign_up"
+			method="post"
+		 	handle-as="json"
+		 	last-response="{{pollList}}">
+ 		</iron-ajax>
+
+		<div class="container">
+			<paper-input label="ID" value="{{id}}"></paper-input>
+			<paper-input label="Name" value="{{name}}"></paper-input>
+			<paper-input label="Password" value="{{password}}" type="password"></paper-input>
+			<paper-input label="Confirm Password" value="{{confirmPassword}}" type="password"></paper-input>
+			<paper-input label="E-Mail" value="{{email}}"></paper-input>
+
+			<paper-button on-tap="signUp">Sign up</paper-button>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'sign-up',
+
+			properties: {
+				id: {
+					type: String
+				},
+
+				name: {
+					type: String
+				},
+
+				password: {
+					type: String
+				},
+
+				confirmPassword: {
+					type: String
+				},
+
+				email: {
+					type: String
+				}
+			},
+
+			signUp: function() {
+				if(this.validatePassword(this.password, this.confirmPassword)) {
+					var signUpAjax = this.$['sign-up-ajax'];
+					signUpAjax.body = {
+						id: this.id,
+						password: this.password,
+						email: this.email
+					};
+
+					signUpAjax.generateRequest();
+				} else {
+					console.error('password is not valid.')
+				}
+			},
+
+			validatePassword(password, confirmPassword) {
+				if(password === confirmPassword) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+		})
+	</script>
+</dom-module>

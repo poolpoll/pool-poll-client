@@ -7,8 +7,7 @@
 			}		
 		</style>
 		<iron-ajax
-			auto
-		 	url="http://localhost:3000/my_polls"
+			id="poll-ajax"
 		 	handle-as="json"
 		 	last-response="{{pollList}}">
  		</iron-ajax>
@@ -28,14 +27,15 @@
 				}
 			},
 
+			attached: function(userId) {
+				var pollAjax = this.$['poll-ajax'];
+				pollAjax.url = 'http://localhost:3000/polls/' + 1;
+				pollAjax.generateRequest();
+			},
+
 			_openDetail: function(event) {
 				var collapseId = event.model.item.id;
 				this.$$(collpaseId).toggle();
-			},
-
-			_addNewPoll: function() {
-				var content = document.createElement('free-poll-new-poll');
-				this.$['dialog'].openDialog(content, null, null)
 			}
 		})
 	</script>

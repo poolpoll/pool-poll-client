@@ -27,8 +27,8 @@
           <paper-input label="[[inputPw]]" type="password"></paper-input>
         </div>
         <div class="column">
-            <paper-button class="button"><u>Sign Up</u></paper-button>
-            <paper-button class="button"><u>Forget Your ID/Password?</u></paper-button>
+          <paper-button class="button" on-tap="signUp"><u>Sign Up</u></paper-button>
+          <paper-button class="button"><u>Forget Your ID/Password?</u></paper-button>
         </div>
       </div>
   </template>
@@ -47,8 +47,16 @@
           type: String,
           value: 'Input Password'
         }
-      }
+      },
 
+      signUp: function() {
+        var content = document.createElement('sign-up');
+        var event = {
+          content: content
+        };
+
+        this.fire('dialog-open', event);
+      }
     })
   </script>
 </dom-module>
