@@ -12,12 +12,12 @@
 			id="sign-up-ajax"
 			url="http://localhost:3000/auth/sign_up"
 			method="post"
-		 	handle-as="json"
-		 	last-response="{{pollList}}">
+			content-type="application/x-www-form-urlencoded"
+		 	handle-as="json">
  		</iron-ajax>
 
 		<div class="container">
-			<paper-input label="ID" value="{{id}}"></paper-input>
+			<paper-input label="ID" value="{{account}}"></paper-input>
 			<paper-input label="Name" value="{{name}}"></paper-input>
 			<paper-input label="Password" value="{{password}}" type="password"></paper-input>
 			<paper-input label="Confirm Password" value="{{confirmPassword}}" type="password"></paper-input>
@@ -32,7 +32,7 @@
 			is: 'sign-up',
 
 			properties: {
-				id: {
+				account: {
 					type: String
 				},
 
@@ -57,7 +57,8 @@
 				if(this.validatePassword(this.password, this.confirmPassword)) {
 					var signUpAjax = this.$['sign-up-ajax'];
 					signUpAjax.body = {
-						id: this.id,
+						account: this.account,
+						name: this.name,
 						password: this.password,
 						email: this.email
 					};
