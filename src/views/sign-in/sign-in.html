@@ -14,18 +14,35 @@
         @apply(--layout-vertical);
         @apply(--layout-flex);
       }
+      .row {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
       .button {
         font-size: 9pt;
         text-align: center
       }
     </style>
+
+    <iron-ajax
+      id="sign-in-ajax"
+      url="http://localhost:3000/auth/sign_in"
+      method="post"
+      content-type="application/x-www-form-urlencoded"
+      handle-as="json"
+      last-response="{{isSignedIn}}">
+    </iron-ajax>
      
     <p style="font-size: 15pt"><b>Sign In</b></p>
       <div id="container" class="card">
-        <div class="column">
-          <paper-input label="[[inputId]]"></paper-input>
-          <paper-input label="[[inputPw]]" type="password"></paper-input>
+        <div class="row">
+          <div class="column">
+            <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
+            <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
+          </div>
+          <paper-icon-button icon="icons:power-settings-new" on-tap="signIn">Sign In</paper-button>
         </div>
+
         <div class="column">
           <paper-button class="button" on-tap="signUp"><u>Sign Up</u></paper-button>
           <paper-button class="button"><u>Forget Your ID/Password?</u></paper-button>
@@ -46,6 +63,38 @@
         inputPw: {
           type: String,
           value: 'Input Password'
+        },
+
+        account: {
+          type: String
+        },
+
+        password: {
+          type: String
+        },
+
+        isSignedIn: {
+          type: Boolean,
+          observer: 'isSignedInChanged'
+        }
+      },
+
+      signIn: function() {
+        if(this.account && this.password) {
+          var signInAjax = this.$['sign-in-ajax'];
+          signInAjax.body = {
+            account: this.account,
+            password: this.password
+          };
+
+          signInAjax.generateRequest();
+        }
+      },
+
+      isSignedInChanged: function(isSignedIn) {
+        if(isSignedIn) {
+          app.route = 'my_polls';
+          app.title = 'My Poll';
         }
       },
 

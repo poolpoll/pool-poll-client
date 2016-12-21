@@ -17,13 +17,13 @@
  		</iron-ajax>
 
 		<div class="container">
-			<paper-input label="ID" value="{{account}}"></paper-input>
-			<paper-input label="Name" value="{{name}}"></paper-input>
-			<paper-input label="Password" value="{{password}}" type="password"></paper-input>
-			<paper-input label="Confirm Password" value="{{confirmPassword}}" type="password"></paper-input>
-			<paper-input label="E-Mail" value="{{email}}"></paper-input>
+			<paper-input id="id-input" label="ID" value="{{account}}"></paper-input>
+			<paper-input id="name-input" label="Name" value="{{name}}"></paper-input>
+			<paper-input id="pwd-input" label="Password" value="{{password}}" type="password"></paper-input>
+			<paper-input id="confirm-pwd-input" label="Confirm Password" value="{{confirmPassword}}" type="password"></paper-input>
+			<paper-input id="email-input" label="E-Mail" value="{{email}}"></paper-input>
 
-			<paper-button on-tap="signUp">Sign up</paper-button>
+			<paper-button id="sign-up-btn" on-tap="signUp" disabled>Sign up</paper-button>
 		</div>
 
 	</template>
@@ -53,30 +53,37 @@
 				}
 			},
 
-			signUp: function() {
-				if(this.validatePassword(this.password, this.confirmPassword)) {
-					var signUpAjax = this.$['sign-up-ajax'];
-					signUpAjax.body = {
-						account: this.account,
-						name: this.name,
-						password: this.password,
-						email: this.email
-					};
+			observers: [
+				'autoValidator(account, name, password, confirmPassword, email)'
+			],
 
-					signUpAjax.generateRequest();
+			signUp: function() {
+				var signUpAjax = this.$['sign-up-ajax'];
+				signUpAjax.body = {
+					account: this.account,
+					name: this.name,
+					password: this.password,
+					email: this.email
+				};
+
+				signUpAjax.generateRequest();
+			},
+
+			autoValidator: function(account, name, password, confirmPassword, email) {
+				if(account && name && password && confirmPassword && email && password === confirmPassword) {
+					this.activeButton();
 				} else {
-					console.error('password is not valid.')
+					this.deactiveButton();
 				}
 			},
 
-			validatePassword(password, confirmPassword) {
-				if(password === confirmPassword) {
-					return true;
-				} else {
-					return false;
-				}
-			}
+			activeButton: function() {
+				this.$['sign-up-btn'].disabled = false;
+			},
 
+			deactiveButton: function() {
+				this.$['sign-up-btn'].disabled = true;
+			}
 		})
 	</script>
 </dom-module>
