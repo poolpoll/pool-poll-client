@@ -22,6 +22,11 @@
         font-size: 9pt;
         text-align: center
       }
+      paper-button.green {
+        background-color: var(--paper-green-500);
+        color: white;
+        height: 100%;
+      }      
     </style>
 
     <iron-ajax
@@ -40,7 +45,7 @@
             <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
             <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
           </div>
-          <paper-icon-button icon="icons:power-settings-new" on-tap="signIn">Sign In</paper-button>
+          <paper-button class="green" on-tap="signIn">Sign In</paper-button>
         </div>
 
         <div class="column">
