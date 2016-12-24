@@ -10,6 +10,10 @@
 			<sign-in route="sign_in"></sign-in>
 		</iron-pages>
 
+		<paper-toast id="bottom-toast" class="fit-bottom" text="[[toastMsg]]"></paper-toast>
+
+		<paper-spinner id="spinner"></paper-spinner>
+
 		<free-poll-drawer id="side-menu"></free-poll-drawer>
 
 		<dialog-opener id="dialog-opener"></dialog-opener>
@@ -30,6 +34,18 @@
 				}
 			},
 
+			ready: function() {
+				document.addEventListener('toast-toggle', function(event) {
+					var message = event.detail;
+					this.toggleToast(message);
+				}.bind(this));
+
+				document.addEventListener('spinner-toggle', function(event) {
+					var isActive = event.detail;
+					this.toggleSpinner(isActive);
+				}.bind(this));
+			},
+
 			attached: function() {
 				if(!app.route || app.route == '') {
 					app.route = 'my_polls';
@@ -42,6 +58,22 @@
 			 */
 			_routeChanged: function(route) {
 				this.$['side-menu'].close();
+			},
+
+			/**
+			 * toast toggle event listener
+			 */
+			toggleToast: function(message) {
+				var toast = this.$['bottom-toast'];
+				toast.text = message;
+				toast.toggle();
+			},
+
+			/**
+			 * spinner toggle event listner
+			 */
+			toggleSpinner: function(isActive) {
+				this.$['spinner'].active = isActive;
 			}
 		})
 	</script>

@@ -92,14 +92,17 @@
             password: this.password
           };
 
+          this.fire('spinner-toggle', true);
           signInAjax.generateRequest();
         }
       },
 
       isSignedInChanged: function(isSignedIn) {
+        this.fire('spinner-toggle', false);
         if(isSignedIn) {
-          app.route = 'my_polls';
-          app.title = 'My Poll';
+          this.fire('toast-toggle', 'login succeed!');
+        } else {
+          this.fire('toast-toggle', 'login failed...');
         }
       },
 
