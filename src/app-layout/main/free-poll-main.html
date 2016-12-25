@@ -31,6 +31,10 @@
 
 				title: {
 					type: String,
+				},
+
+				baseUrl: {
+					type: String
 				}
 			},
 
@@ -50,6 +54,7 @@
 				if(!app.route || app.route == '') {
 					app.route = 'my_polls';
 					app.title = 'My Poll';
+					app.baseUrl = 'http://localhost:3000/'
 				};
 			},
 
@@ -66,6 +71,7 @@
 			toggleToast: function(message) {
 				var toast = this.$['bottom-toast'];
 				toast.text = message;
+				toast.close();
 				toast.toggle();
 			},
 

@@ -1,8 +1,8 @@
 <dom-module id="new-poll">
 	<template>
 		<neon-animated-pages attr-for-selected="step" selected="[[step]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
-			<neon-animatable step="basic"><new-poll-basic></new-poll-basic></neon-animatable>
-			<neon-animatable step="detail"><new-poll-detail></new-poll-detail></neon-animatable>
+			<neon-animatable step="basic"><new-poll-basic step="{{step}}"></new-poll-basic></neon-animatable>
+			<neon-animatable step="detail"><new-poll-detail step="{{step}}"></new-poll-detail></neon-animatable>
 		</neon-animated-pages>
 	</template>
 	<script>

@@ -1,0 +1,58 @@
+<dom-module id="drop-down-list">
+	<template>
+		<iron-ajax
+			id="resource-ajax"
+		 	handle-as="json"
+		 	last-response="{{items}}">
+	 	</iron-ajax>
+
+		<paper-dropdown-menu id="drop-down-menu" label="[[label]]" selected-item-label="{{selectedItemLabel}}" value="{{value}}">
+		  <paper-listbox class="dropdown-content">
+		  	<template is="dom-repeat" items="[[items]]">
+			    <paper-item item-id="[[item.id]]" on-tap="itemSelected">[[item.name]]</paper-item>
+		  	</template>
+		  </paper-listbox>
+		</paper-dropdown-menu>	
+	</template>
+	<script>
+		Polymer({
+			is: 'drop-down-list',
+
+			properties: {
+				label: {
+					type: String,
+					value: 'Label'
+				},
+
+				resourceName: {
+					type: String,
+					observer: 'resourceNameChanged'
+				},
+
+				selectedItemLabel: {
+					type: String,
+					notify: true
+				},
+
+				value: {
+					type: String,
+					notify: true
+				}
+			},
+
+			resourceNameChanged: function(resourceName) {
+				if(resourceName) {
+					var resourceAjax = this.$['resource-ajax'];
+					resourceAjax.url = 'http://localhost:3000/' + resourceName;
+					resourceAjax.generateRequest();
+				}
+			},
+
+			itemSelected: function(event) {
+				var item = event.model.item;
+				this.selectedItemLabel = item.name;
+				this.value = item.id;
+			}
+		})
+	</script>
+</dom-module>
