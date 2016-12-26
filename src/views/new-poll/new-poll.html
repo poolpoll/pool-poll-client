@@ -1,8 +1,8 @@
 <dom-module id="new-poll">
 	<template>
-		<neon-animated-pages attr-for-selected="step" selected="[[step]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
-			<neon-animatable step="basic"><new-poll-basic step="{{step}}"></new-poll-basic></neon-animatable>
-			<neon-animatable step="detail"><new-poll-detail step="{{step}}"></new-poll-detail></neon-animatable>
+		<neon-animated-pages attr-for-selected="step" selected="[[step]]">
+			<neon-animatable entry-animation="slide-from-left-animation" exit-animation="slide-left-animation" step="basic"><new-poll-basic step="{{step}}"></new-poll-basic></neon-animatable>
+			<neon-animatable entry-animation="slide-from-right-animation" exit-animation="slide-right-animation" step="detail"><new-poll-detail step="{{step}}"></new-poll-detail></neon-animatable>
 		</neon-animated-pages>
 	</template>
 	<script>
@@ -31,6 +31,20 @@
 					type: String,
 					value: 'basic'
 				}
+			},
+
+			ready: function() {
+				document.addEventListener('swipe-to-right', function() {
+					if(this.step == 'detail') {
+						this.step = 'basic';
+					}
+				}.bind(this));
+
+				document.addEventListener('swipe-to-left', function() {
+					if(this.step == 'basic') {
+						this.step = 'detail';
+					}
+				}.bind(this));
 			}
 		})
 	</script>
