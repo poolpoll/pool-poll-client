@@ -1,20 +1,13 @@
 <dom-module id="new-poll-detail">
 	<template>
 		<style>
-			:host {
-				display: block;
-				padding: 10px;
-			}
-
 			.input-container {
 				@apply(--layout-vertical);
-				@apply(--layour-flex);
 			}
 		</style>
 
 		<div class="input-container">
-			<paper-button on-tap="prevStep">Prev</paper-button>
-			<paper-button on-tap="finish">Submit</paper-button>
+			<paper-button>Add</paper-button>
 		</div>
 
 	</template>
@@ -27,10 +20,6 @@
 					type: String,
 					notify: true
 				}
-			},
-
-			prevStep: function() {
-				this.step = 'basic';
 			}
 		})
 	</script>

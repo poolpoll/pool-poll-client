@@ -15,10 +15,9 @@
 		<div class="input-container">
 			<paper-input label="Title" value="{{name}}"></paper-input>
 			<paper-input label="Description" value="{{description}}"></paper-input>
-			<drop-down-list label="Category" resource-name="categories" value="[[categoryId]]"></drop-down-list>	
+			<drop-down-list label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>	
 			<paper-input label="Start Date" value="{{fromDate}}" type="date"></paper-input>
 			<paper-input label="Due Date" value="{{toDate}}" type="date"></paper-input>
-			<paper-button id="confirm-btn" on-tap="confirmBtnTapped" disabled>Confirm</paper-button>
 		</div>
 
 	</template>
@@ -36,6 +35,10 @@
 					type: String
 				},
 
+				categoryId: {
+					type: Number
+				},
+
 				fromDate: {
 					type: String
 				},
@@ -50,20 +53,12 @@
 				}
 			},
 
-			observers: [
-				'validateCheck(name,description,fromDate,toDate)'
-			],
-
-			validateCheck: function(name, description, fromDate, toDate) {
-				if(name && description && fromDate && toDate) {
-					this.$['confirm-btn'].disabled = false;
+			validate: function() {
+				if(this.name && this.description && this.categoryId && this.fromDate && this.toDate) {
+					return true;
 				} else {
-					this.$['confirm-btn'].disabled = true;
+					return false;
 				}
-			},
-
-			confirmBtnTapped: function() {
-				this.step = 'detail';
 			}
 		})
 	</script>

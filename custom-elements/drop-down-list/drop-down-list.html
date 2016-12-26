@@ -1,12 +1,17 @@
 <dom-module id="drop-down-list">
 	<template>
+		<style>
+			.drop-down-menu {
+				@apply(--layout-vertical);
+			}
+		</style>
 		<iron-ajax
 			id="resource-ajax"
 		 	handle-as="json"
 		 	last-response="{{items}}">
 	 	</iron-ajax>
 
-		<paper-dropdown-menu id="drop-down-menu" label="[[label]]" selected-item-label="{{selectedItemLabel}}" value="{{value}}">
+		<paper-dropdown-menu class="drop-down-menu" id="drop-down-menu" label="[[label]]" selected-item-label="[[selectedItemLabel]]" value="[[value]]">
 		  <paper-listbox class="dropdown-content">
 		  	<template is="dom-repeat" items="[[items]]">
 			    <paper-item item-id="[[item.id]]" on-tap="itemSelected">[[item.name]]</paper-item>
@@ -30,13 +35,16 @@
 				},
 
 				selectedItemLabel: {
-					type: String,
-					notify: true
+					type: String
 				},
 
 				value: {
 					type: String,
 					notify: true
+				},
+
+				items: {
+					type: Array
 				}
 			},
 
