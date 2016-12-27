@@ -1,0 +1,50 @@
+<dom-module id="accordion-poll-detail">
+	<template>
+		<style>
+			.content {
+				padding: 15px;
+				border: 1px solid #dedede;
+				border-top: none;
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+				@apply(--shadow-elevation-2dp);
+			}
+
+			.title {
+				@apply(--layout-flex);
+			}
+		</style>
+		<paper-item on-tap="_openDetail">
+			<div class="title">[[title]]</div>
+			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+		</paper-item>
+
+		<iron-collapse id="collapse" class="content">
+			<template is="dom-repeat" items="[[options]]">
+				<paper-item>[[item.option]]</paper-item>
+			</template>
+		</iron-collapse>
+	</template>
+	<script>
+		Polymer({
+			is: 'accordion-poll-detail',
+
+			properties: {
+				
+				options: {
+					type: Array,
+					value: []
+				},
+
+				arrowIcon: {
+					type: String,
+					value: 'icons:arrow-drop-down'
+				}
+			},
+
+			_openDetail: function() {
+				this.$['collapse'].toggle();
+			}
+		})
+	</script>
+</dom-module>

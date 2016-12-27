@@ -7,7 +7,9 @@
 		</style>
 
 		<div class="input-container">
-			<paper-button>Add</paper-button>
+			<template is="dom-repeat" items="[[questionList]]">
+				<accordion-poll-detail title="[[item.title]]" options="[[item.options]]"></accordion-poll-detail>
+			</template>
 		</div>
 
 	</template>
@@ -16,10 +18,43 @@
 			is: 'new-poll-detail',
 
 			properties: {
+				questionList: {
+					type: Array,
+					value: []
+				},
+
 				step: {
 					type: String,
 					notify: true
 				}
+			},
+
+			ready: function() {
+				document.addEventListener('question-added', function(event) {
+					var questionObj = {
+						title: event.detail.title,
+						options: event.detail.options
+					};
+					this.push('questionList', questionObj);
+				}.bind(this));
+
+				document.addEventListener('swipe-to-down', function() {
+					this.addDialogOpen();
+				}.bind(this));
+			},
+
+			addDialogOpen: function() {
+				var addDialog = document.createElement('new-poll-add-dialog');
+				this.fire('dialog-open', {
+					content: addDialog,
+					openCallback: null,
+					closeCallback: null,
+					dialogConfig: {
+						modal: false,
+						entryAnimation: 'slide-from-top-animation',
+						exitAnimation: 'slide-up-animation'
+					}
+				});
 			}
 		})
 	</script>

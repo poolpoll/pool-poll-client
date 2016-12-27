@@ -68,7 +68,16 @@
 						} else if (dx <= -100) {
 							this.fire('swipe-to-left');
 						}
-					}
+					};
+
+					if (event.detail.dy) {
+						var dy = event.detail.dy;
+						if(dy >= 100) {
+							this.fire('swipe-to-down');
+						} else if (dy <= -100) {
+							this.fire('swipe-to-up');
+						}
+					};
 				}
 			},
 

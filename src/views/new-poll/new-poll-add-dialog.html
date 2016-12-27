@@ -1,0 +1,79 @@
+<dom-module id="new-poll-add-dialog">
+	<template>
+		<style>
+			.opt-container {
+				@apply(--layout-vertical);
+			}
+		</style>
+		<iron-ajax
+			id="create-question-ajax"
+			url="http://localhost:3000/questions"
+			method="post"
+			content-type="application/x-www-form-urlencoded"
+		 	handle-as="json">
+ 		</iron-ajax>
+
+		<paper-input id="title-input" label="Title" value="{{title}}"></paper-input>
+		
+		<div id="opt-container" class="opt-container"></div>
+
+		<paper-button id="add-option" on-tap="addOptionBtnTapped">Add Option</paper-button>
+		<paper-button id="confirm" on-tap="confirmBtnTapped">Confirm</paper-button>
+	</template>
+	<script>
+		Polymer({
+			is: 'new-poll-add-dialog',
+
+			properties: {
+				title: {
+					type: String
+				},
+
+				optNumber: {
+					type: Number,
+					value: 0
+				},
+
+				optionIdArray: {
+					type: Array,
+					value: []
+				}
+			},
+
+			addOptionBtnTapped: function() {
+				var optionInput = document.createElement('paper-input');
+				this.optNumber++;
+				var optionId = 'opt-' + this.optNumber;
+				this.push('optionIdArray', optionId);
+				optionInput.setAttribute('id', optionId);
+				optionInput.setAttribute('label', 'Option ' + this.optNumber);
+
+				this.$['opt-container'].appendChild(optionInput);
+			},
+
+			confirmBtnTapped: function() {
+				var options = [];
+				this.optionIdArray.forEach(function(optionId) {
+					var optionInput = this.shadowRoot.getElementById(optionId);
+					
+					if(!optionInput.value) 
+							return;
+						
+					var tempObj = {
+						option: optionInput.value
+					};
+					options.push(tempObj);
+				}.bind(this));
+
+				this.fire('question-added', {
+					title: this.title,
+					options: options
+				});
+
+				this.fire('dialog-close');
+
+				this.splice('optionIdArray', 0, this.optionIdArray.length);
+			}
+		})
+	</script>
+</dom-module>

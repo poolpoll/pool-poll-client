@@ -2,21 +2,34 @@
 	<template>
 		<style>
 		  paper-dialog {
-		    border: 2px solid;
-		    border-color: var(--paper-green-500);
-		    background-color: var(--paper-light-green-50);
-		    color: var(--paper-green-500);
-
-        width: 300px;
+		    border: 1px solid;
+		    padding: 5%;
+		    position: fixed;
+        width: 90%;
 		  }
 		</style>
-		<paper-dialog id="dialog"></paper-dialog>
+		<paper-dialog id="dialog" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]" modal="[[modal]]"></paper-dialog>
 	</template>
 	<script>
 		Polymer({
 			is: 'dialog-opener',
 			
 			properties: {
+				entryAnimation: {
+					type: String,
+					value: null
+				},
+
+				exitAnimation: {
+					type: String,
+					value: null
+				},
+
+				modal: {
+					type: Boolean,
+					value: false
+				},
+
 				openCallback: {
 					type: Function
 				},
@@ -34,17 +47,32 @@
 			ready: function() {
 				document.addEventListener('dialog-open', function(event) {
 					var request = event.detail;
-					this.openDialog(request.content, request.openCallback, request.closeCallback);
-				}.bind(this))
+					this.openDialog(request.content, request.openCallback, request.closeCallback, request.dialogConfig);
+				}.bind(this));
+
+				document.addEventListener('dialog-close', function() {
+					this.closeDialog();
+				}.bind(this));
 			},
 
-			openDialog: function(content, openCallback, closeCallback) {
+			openDialog: function(content, openCallback, closeCallback, dialogConfig) {
+				this.setDialogConfig(dialogConfig);
 				this.openCallback = openCallback;
 				this.closeCallback = closeCallback;
 				this.content = content;
 				var container = this.$['dialog'];
 				container.appendChild(this.content);
 				this.$['dialog'].open();
+			},
+
+			closeDialog: function() {
+				this.$['dialog'].close();
+			},
+
+			setDialogConfig: function(config) {
+				this.modal = (config.modal) ? config.modal : false;
+				this.entryAnimation = (config.entryAnimation) ? config.entryAnimation : null;
+				this.exitAnimation = (config.exitAnimation) ? config.exitAnimation : null;
 			},
 
 			dialogOpened: function() {
