@@ -1,21 +1,33 @@
 <dom-module id="free-poll-main">
 	<template>
-		<!-- header content -->
-		<free-poll-header title="[[title]]"></free-poll-header>
+		<style>
+			iron-pages {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+		<paper-drawer-panel id="drawer">
+			<paper-header-panel id="side-menu" drawer>
+				<free-poll-menu-list></free-poll-menu-list>
+			</paper-header-panel>
 
-		<!-- view list -->
-		<iron-pages id="pages" attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
-			<new-poll route="new_poll"></new-poll>
-			<my-poll route="my_polls"></my-poll>
-			<sign-in route="sign_in"></sign-in>
-		</iron-pages>
+			<paper-header-panel main>
+				<!-- header -->
+				<free-poll-header title="[[title]]"></free-poll-header>
 
+				<!-- main -->
+				<iron-pages class="container" id="pages" attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
+					<!-- view list -->
+					<new-poll route="new_poll"></new-poll>
+					<my-poll route="my_polls"></my-poll>
+					<sign-in route="sign_in"></sign-in>
+				</iron-pages>
+			</paper-header-panel>
+		</paper-drawer-panel>
+
+		<!-- common utils -->
 		<paper-toast id="bottom-toast" class="fit-bottom" text="[[toastMsg]]"></paper-toast>
-
 		<paper-spinner id="spinner"></paper-spinner>
-
-		<free-poll-drawer id="side-menu"></free-poll-drawer>
-
 		<dialog-opener id="dialog-opener"></dialog-opener>
 	</template>
 	<script>
@@ -39,6 +51,10 @@
 			},
 
 			ready: function() {
+				document.addEventListener('side-menu-open', function() {
+					this.openSideMenu();
+				}.bind(this));
+
 				document.addEventListener('toast-toggle', function(event) {
 					var message = event.detail;
 					this.toggleToast(message);
@@ -81,11 +97,15 @@
 				}
 			},
 
+			openSideMenu: function() {
+				this.$['drawer'].openDrawer();
+			},
+
 			/**
 			 * routeUrl이 변경될 때 마다 호출한다.
 			 */
 			_routeChanged: function(route) {
-				this.$['side-menu'].close();
+				this.$['drawer'].closeDrawer();
 			},
 
 			/**
