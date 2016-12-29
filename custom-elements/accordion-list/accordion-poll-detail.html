@@ -12,6 +12,10 @@
 			.title {
 				@apply(--layout-flex);
 			}
+			.container {
+				@apply(--layout-vertical);
+				padding: 5px;
+			}
 		</style>
 		<paper-item on-tap="_openDetail">
 			<div class="title">[[title]]</div>
@@ -20,10 +24,12 @@
 
 		<iron-collapse id="collapse" class="content">
 			<template is="dom-repeat" items="[[options]]">
-			  <paper-icon-item>
-			    <iron-icon icon="check" item-icon></iron-icon>
-			    [[item.option]]
-			  </paper-icon-item>
+				<div class="container">
+				  <paper-icon-item class="item">
+				    <iron-icon icon="check" item-icon></iron-icon>
+				    [[item.option]]
+				  </paper-icon-item>
+			  </div>
 			</template>
 		</iron-collapse>
 	</template>
