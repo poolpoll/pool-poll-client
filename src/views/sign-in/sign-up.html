@@ -8,13 +8,13 @@
 				padding-right: 10px;
 			}
 		</style>
-		<iron-ajax
+		<custom-ajax
 			id="sign-up-ajax"
-			url="http://localhost:3000/auth/sign_up"
+			resource-url="auth/sign_up"
 			method="post"
 			content-type="application/x-www-form-urlencoded"
 		 	handle-as="json">
- 		</iron-ajax>
+ 		</custom-ajax>
 
 		<div class="container">
 			<paper-input id="id-input" label="ID" value="{{account}}"></paper-input>

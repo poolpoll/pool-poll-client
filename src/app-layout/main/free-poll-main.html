@@ -51,6 +51,10 @@
 			},
 
 			ready: function() {
+				document.addEventListener('WebComponentsReady', function() {
+					this.setGlobalVariables();
+				}.bind(this));
+
 				document.addEventListener('side-menu-open', function() {
 					this.openSideMenu();
 				}.bind(this));
@@ -66,7 +70,7 @@
 				}.bind(this));
 			},
 
-			attached: function() {
+			setGlobalVariables: function() {
 				if(!app.route || app.route == '') {
 					app.route = 'my_polls';
 					app.title = 'My Poll';
@@ -96,6 +100,8 @@
 					};
 				}
 			},
+
+
 
 			openSideMenu: function() {
 				this.$['drawer'].openDrawer();
