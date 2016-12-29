@@ -1,17 +1,15 @@
 <dom-module id="free-poll-menu-list">
 	<template>
-		<style>
-			.menu-title {
-				@apply(--layout-horizontal);
-			}
-		</style>
-
 		<custom-ajax
 			auto
 		 	resource-url="menus"
 		 	handle-as="json"
 		 	last-response="{{menuList}}">
-	 	</iron-ajax>
+	 	</custom-ajax>
+
+	 	<paper-toolbar></paper-toolbar>
+	 		
+	 	</paper-toolbar>
 
 		<template is="dom-repeat" items="{{menuList}}">
 			<paper-item on-tap="_menuSelected">[[item.name]]</paper-item>

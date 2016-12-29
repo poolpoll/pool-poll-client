@@ -9,7 +9,6 @@
 				border-bottom-right-radius: 5px;
 				@apply(--shadow-elevation-2dp);
 			}
-
 			.title {
 				@apply(--layout-flex);
 			}
@@ -21,7 +20,10 @@
 
 		<iron-collapse id="collapse" class="content">
 			<template is="dom-repeat" items="[[options]]">
-				<paper-item>[[item.option]]</paper-item>
+			  <paper-icon-item>
+			    <iron-icon icon="check" item-icon></iron-icon>
+			    [[item.option]]
+			  </paper-icon-item>
 			</template>
 		</iron-collapse>
 	</template>

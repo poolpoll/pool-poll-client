@@ -2,27 +2,25 @@
 	<template>
 		<style>
 			iron-pages {
-				width: 100%;
-				height: 100%;
+				height: 90%;
 			}
 		</style>
 		<paper-drawer-panel id="drawer">
-			<paper-header-panel id="side-menu" drawer>
-				<free-poll-menu-list></free-poll-menu-list>
-			</paper-header-panel>
+		  <paper-header-panel id="side-menu" drawer>
+	    	<free-poll-menu-list></free-poll-menu-list>
+		  </paper-header-panel>
 
-			<paper-header-panel main>
-				<!-- header -->
-				<free-poll-header title="[[title]]"></free-poll-header>
-
+		  <paper-header-panel main>
+		  	<!-- header -->
+		    <free-poll-header title="[[title]]"></free-poll-header>
 				<!-- main -->
-				<iron-pages class="container" id="pages" attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
+				<iron-pages attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
 					<!-- view list -->
 					<new-poll route="new_poll"></new-poll>
 					<my-poll route="my_polls"></my-poll>
 					<sign-in route="sign_in"></sign-in>
 				</iron-pages>
-			</paper-header-panel>
+		  </paper-header-panel>
 		</paper-drawer-panel>
 
 		<!-- common utils -->
@@ -100,8 +98,6 @@
 					};
 				}
 			},
-
-
 
 			openSideMenu: function() {
 				this.$['drawer'].openDrawer();

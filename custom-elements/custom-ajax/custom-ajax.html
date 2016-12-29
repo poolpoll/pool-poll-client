@@ -69,6 +69,15 @@ element.
     },
 
     properties: {
+
+      /**
+       * base url
+       */
+      baseUrl: {
+        type: String,
+        value: 'http://localhost:3000/'
+      },
+
       /**
        * The URL target of the request.
        */
@@ -337,7 +346,7 @@ element.
     ],
 
     _computeUrl: function(resourceUrl) {
-    	return app.baseUrl + '/' + resourceUrl;
+    	return  this.baseUrl + resourceUrl;
     },
 
     /**
