@@ -39,7 +39,7 @@
 				}.bind(this));
 
 				document.addEventListener('swipe-to-down', function() {
-					this.addDialogOpen();
+					if(this.step == 'detail') this.addDialogOpen();
 				}.bind(this));
 			},
 
