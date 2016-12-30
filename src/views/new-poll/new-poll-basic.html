@@ -28,23 +28,28 @@
 			properties: {
 
 				name: {
-					type: String
+					type: String,
+					notify: true
 				},
 
 				description: {
-					type: String
+					type: String,
+					notify: true
 				},
 
 				categoryId: {
-					type: Number
+					type: Number,
+					notify: true
 				},
 
 				fromDate: {
-					type: String
+					type: String,
+					notify: true
 				},
 
 				toDate: {
-					type: String
+					type: String,
+					notify: true
 				},
 
 				step: {
@@ -53,9 +58,19 @@
 				}
 			},
 
+			getBasicInfo: function() {
+				return {
+					name: this.name,
+					description: this.description,
+					categoryId: this.categoryId,
+					fromDate: this.fromDate,
+					toDate: this.toDate
+				};
+			},
+
 			validate: function() {
 				if(this.name && this.description && this.categoryId && this.fromDate && this.toDate) {
-					return true;
+					return true
 				} else {
 					return false;
 				}

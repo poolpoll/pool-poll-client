@@ -4,10 +4,13 @@
 			.input-container {
 				@apply(--layout-vertical);
 			}
+			.tail {
+				@apply(--layout-end);
+			}
 		</style>
 
 		<custom-ajax
-			id="regist-poll"
+			id="regist-poll-ajax"
 			resource-url="polls/regist"
 			method="POST"
 			content-type="application/x-www-form-urlencoded"
@@ -20,12 +23,20 @@
 			</template>
 		</div>
 
+		<div class="tail">
+			<paper-button id="regist-btn" on-tap="registPoll">Regist</paper-button>
+		</div>
+
 	</template>
 	<script>
 		Polymer({
 			is: 'new-poll-detail',
 
 			properties: {
+
+				basicInfo: {
+					type: Object,
+				},
 				questionList: {
 					type: Array,
 					value: []
@@ -47,12 +58,12 @@
 				}.bind(this));
 
 				document.addEventListener('swipe-to-down', function() {
-					if(this.step == 'detail') this.addDialogOpen();
+					if(app.route == 'new_poll' && this.step == 'detail') this.addDialogOpen();
 				}.bind(this));
+			},
 
-				document.addEventListener('swipe-to-left', function() {
-					if(this.step == 'detail') this.registPoll();
-				}.bind(this));
+			detached: function() {
+				console.log('detached');
 			},
 
 			addDialogOpen: function() {
@@ -69,8 +80,25 @@
 				});
 			},
 
-			registPoll: function() {
+			validate: function() {
+				if(this.basicInfo && this.questionList && this.questionList.length > 0) {
+					return true;
+				} else {
+					return false;
+				}
+			},
 
+			registPoll: function() {
+				if(this.validate()) {
+					var registPollAjax = this.$['regist-poll-ajax'];
+					registPollAjax.body = {
+						basic_info: {
+							title:
+						}
+						questionList: this.questionList
+					};
+					registPollAjax.generateRequest();
+				}
 			}
 		})
 	</script>

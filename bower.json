@@ -33,7 +33,8 @@
     "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
     "paper-listbox": "polymerelements/paper-listbox#^1.1.2",
-    "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.2"
+    "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.2",
+    "iron-swipeable-container": "PolymerElements/iron-swipeable-container#^1.0.3"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
