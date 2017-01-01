@@ -58,7 +58,9 @@
 			},
 
 			openDialog: function(content, openCallback, closeCallback, dialogConfig) {
-				this.setDialogConfig(dialogConfig);
+				if(dialogConfig) {
+					this.setDialogConfig(dialogConfig);
+				}
 				this.openCallback = openCallback;
 				this.closeCallback = closeCallback;
 				this.content = content;

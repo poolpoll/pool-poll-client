@@ -4,9 +4,6 @@
 			.input-container {
 				@apply(--layout-vertical);
 			}
-			.tail {
-				@apply(--layout-end);
-			}
 		</style>
 
 		<custom-ajax
@@ -14,17 +11,14 @@
 			resource-url="polls/regist"
 			method="POST"
 			content-type="application/x-www-form-urlencoded"
-			handle-as="json">
+			handle-as="json"
+			with-credential>
 		</custom-ajax>
 
 		<div class="input-container">
 			<template is="dom-repeat" items="[[questionList]]">
-				<accordion-poll-detail title="[[item.title]]" options="[[item.options]]"></accordion-poll-detail>
+				<accordion-poll-detail title="[[item.name]]" options="[[item.options]]"></accordion-poll-detail>
 			</template>
-		</div>
-
-		<div class="tail">
-			<paper-button id="regist-btn" on-tap="registPoll">Regist</paper-button>
 		</div>
 
 	</template>
@@ -51,7 +45,7 @@
 			ready: function() {
 				document.addEventListener('question-added', function(event) {
 					var questionObj = {
-						title: event.detail.title,
+						name: event.detail.name,
 						options: event.detail.options
 					};
 					this.push('questionList', questionObj);
@@ -60,10 +54,10 @@
 				document.addEventListener('swipe-to-down', function() {
 					if(app.route == 'new_poll' && this.step == 'detail') this.addDialogOpen();
 				}.bind(this));
-			},
 
-			detached: function() {
-				console.log('detached');
+				document.addEventListener('swipe-to-left', function() {
+					if(app.route == 'new_poll' && this.step == 'detail') this.registPoll();
+				}.bind(this));
 			},
 
 			addDialogOpen: function() {
@@ -92,11 +86,13 @@
 				if(this.validate()) {
 					var registPollAjax = this.$['regist-poll-ajax'];
 					registPollAjax.body = {
-						basic_info: {
-							title:
-						}
-						questionList: this.questionList
-					};
+						name: this.basicInfo.name,
+						description: this.basicInfo.description,
+						category_id: this.basicInfo.categoryId,
+						from_date: this.basicInfo.fromDate,
+						to_date: this.basicInfo.toDate,
+						question_list: JSON.stringify(this.questionList)
+					}
 					registPollAjax.generateRequest();
 				}
 			}

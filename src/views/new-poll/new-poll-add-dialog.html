@@ -13,7 +13,7 @@
 		 	handle-as="json">
  		</iron-ajax>
 
-		<paper-input id="title-input" label="Title" value="{{title}}"></paper-input>
+		<paper-input id="title-input" label="Title" value="{{name}}"></paper-input>
 		
 		<div id="opt-container" class="opt-container"></div>
 
@@ -25,7 +25,7 @@
 			is: 'new-poll-add-dialog',
 
 			properties: {
-				title: {
+				name: {
 					type: String
 				},
 
@@ -66,7 +66,7 @@
 				}.bind(this));
 
 				this.fire('question-added', {
-					title: this.title,
+					name: this.name,
 					options: options
 				});
 
