@@ -5,11 +5,11 @@
 				@apply(--layout-vertical);
 			}
 		</style>
-		<iron-ajax
+		<custom-ajax
 			id="resource-ajax"
 		 	handle-as="json"
 		 	last-response="{{items}}">
-	 	</iron-ajax>
+	 	</custom-ajax>
 
 		<paper-dropdown-menu class="drop-down-menu" id="drop-down-menu" label="[[label]]" selected-item-label="[[selectedItemLabel]]" value="[[value]]">
 		  <paper-listbox class="dropdown-content">
@@ -51,7 +51,7 @@
 			resourceNameChanged: function(resourceName) {
 				if(resourceName) {
 					var resourceAjax = this.$['resource-ajax'];
-					resourceAjax.url = 'http://localhost:3000/' + resourceName;
+					resourceAjax.resourceUrl = resourceName;
 					resourceAjax.generateRequest();
 				}
 			},

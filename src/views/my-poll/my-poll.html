@@ -6,11 +6,11 @@
 				padding: 10px;
 			}		
 		</style>
-		<iron-ajax
+		<custom-ajax
 			id="poll-ajax"
 		 	handle-as="json"
 		 	last-response="{{pollList}}">
- 		</iron-ajax>
+ 		</custom-ajax>
 
 		<template is="dom-repeat" items="[[pollList]]">
 			<accordion-list item="[[item]]"></accordion-list>		
@@ -29,8 +29,8 @@
 
 			attached: function(userId) {
 				var pollAjax = this.$['poll-ajax'];
-				pollAjax.url = 'http://localhost:3000/polls/' + 1;
-				pollAjax.generateRequest();
+				pollAjax.resourceUrl = 'polls/' + 1;
+				// pollAjax.generateRequest();
 			},
 
 			_openDetail: function(event) {

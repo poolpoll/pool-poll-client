@@ -24,8 +24,8 @@
       }
       paper-button.green {
         background-color: var(--paper-green-500);
+        margin: 5%;
         color: white;
-        height: 100%;
       }
     </style>
 
@@ -37,6 +37,13 @@
       handle-as="json">
     </custom-ajax>
 
+    <custom-ajax
+      id="check-session-ajax"
+      resource-url="auth/check_session"
+      handle-as="json"
+      last-response="{{sessionInfo}}">
+    </custom-ajax>
+
     <p style="font-size: 15pt"><b>Sign In</b></p>
       <div id="container" class="card">
         <div class="row">
@@ -44,7 +51,10 @@
             <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
             <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
           </div>
-          <paper-button class="green" on-tap="signIn">Sign In</paper-button>
+          <div class="column">
+            <paper-button class="green" on-tap="signIn">Sign In</paper-button>
+            <paper-button class="green" on-tap="checkSession">Check Session</paper-button>
+          </div>
         </div>
 
         <div class="column">
@@ -75,6 +85,11 @@
 
         password: {
           type: String
+        },
+
+        sessionInfo: {
+          type: Object,
+          observer: 'sessionInfoChanged'
         }
       },
 
@@ -100,6 +115,7 @@
         this.fire('spinner-toggle', false);
         if(response) {
           this.fire('toast-toggle', 'Login Succeed');
+          this.fire('route-home');
         } else {
           this.fire('toast-toggle', 'Login Failed');
         }
@@ -112,6 +128,15 @@
         };
 
         this.fire('dialog-open', event);
+      },
+
+      checkSession: function() {
+        var checkSessionAjax = this.$['check-session-ajax'];
+        checkSessionAjax.generateRequest();
+      },
+
+      sessionInfoChanged: function(sessionInfo) {
+        console.log(sessionInfo);
       }
     })
   </script>

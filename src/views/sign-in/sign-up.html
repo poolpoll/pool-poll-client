@@ -57,6 +57,10 @@
 				'autoValidator(account, name, password, confirmPassword, email)'
 			],
 
+			listeners: {
+				'sign-up-ajax.response': 'signUpResponsed'
+			},
+
 			signUp: function() {
 				var signUpAjax = this.$['sign-up-ajax'];
 				signUpAjax.body = {
@@ -67,6 +71,19 @@
 				};
 
 				signUpAjax.generateRequest();
+				this.fire('dialog-close');
+				this.fire('spinner-toggle', true);
+			},
+
+			signUpResponsed: function(response) {
+				this.fire('spinner-toggle', false);
+				if(response) {
+					app.route = 'sign_in';
+					app.title = 'Sign In';
+					this.fire('toast-toggle', 'Success to Sign Up');
+				} else {
+					this.fire('toast-toggle', 'Faield to Sign Up');
+				}
 			},
 
 			autoValidator: function(account, name, password, confirmPassword, email) {

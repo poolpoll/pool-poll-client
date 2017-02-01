@@ -69,15 +69,6 @@ element.
     },
 
     properties: {
-
-      /**
-       * base url
-       */
-      baseUrl: {
-        type: String,
-        value: 'http://localhost:3000/'
-      },
-
       /**
        * The URL target of the request.
        */
@@ -206,7 +197,7 @@ element.
        */
       withCredentials: {
         type: Boolean,
-        value: false
+        value: true
       },
 
       /**
@@ -346,7 +337,11 @@ element.
     ],
 
     _computeUrl: function(resourceUrl) {
-    	return  this.baseUrl + resourceUrl;
+      if(window.Polymer.baseUrl) {
+      	return  window.Polymer.baseUrl + resourceUrl;
+      } else {
+        return 'http://localhost:3000/' + resourceUrl;
+      }
     },
 
     /**
