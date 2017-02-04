@@ -85,11 +85,7 @@
 				if(this.validate()) {
 					var registPollAjax = this.$['regist-poll-ajax'];
 					registPollAjax.body = {
-						name: this.basicInfo.name,
-						description: this.basicInfo.description,
-						category_id: this.basicInfo.categoryId,
-						from_date: this.basicInfo.fromDate,
-						to_date: this.basicInfo.toDate,
+						basic_info: JSON.stringify(this.basicInfo),
 						question_list: JSON.stringify(this.questionList)
 					};
 					
