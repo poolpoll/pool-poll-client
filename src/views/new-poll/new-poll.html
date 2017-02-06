@@ -55,6 +55,12 @@
 			},
 
 			ready: function() {
+				document.addEventListener('new-poll-registed', function() {
+					this.$['basic'].clearValue();
+					this.$['detail'].clearValue();
+					this.moveToDetail();
+				}.bind(this))
+
 				document.addEventListener('swipe-to-right', function() {
 					if(this.step == 'detail') {
 						this.moveToBasic();

@@ -9,6 +9,7 @@
 		<custom-ajax
 			id="poll-ajax"
 		 	handle-as="json"
+		 	resource-url="polls/my_polls"
 		 	last-response="{{pollList}}">
  		</custom-ajax>
 
@@ -21,16 +22,15 @@
 			is: 'my-poll',
 
 			properties: {
-
 				pollList: {
 					type: Array
 				}
 			},
 
-			attached: function(userId) {
-				var pollAjax = this.$['poll-ajax'];
-				pollAjax.resourceUrl = 'polls/' + 1;
-				// pollAjax.generateRequest();
+			ready: function() {
+				document.addEventListener('refresh-poll-list', function(event) {
+					this.$['poll-ajax'].generateRequest();
+				}.bind(this))
 			},
 
 			_openDetail: function(event) {

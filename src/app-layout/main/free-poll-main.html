@@ -107,6 +107,10 @@
 			 * routeUrl이 변경될 때 마다 호출한다.
 			 */
 			_routeChanged: function(route) {
+				if(route == 'my_polls') {
+					this.fire('refresh-poll-list');
+				}
+				
 				this.$['drawer'].closeDrawer();
 			},
 

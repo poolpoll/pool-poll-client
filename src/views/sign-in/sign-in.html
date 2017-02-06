@@ -14,17 +14,13 @@
         @apply(--layout-vertical);
         @apply(--layout-flex);
       }
-      .row {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-      }
       .button {
-        font-size: 9pt;
+        font-size: 8pt;
         text-align: center
       }
       paper-button.green {
+        font-size: 8pt;
         background-color: var(--paper-green-500);
-        margin: 5%;
         color: white;
       }
     </style>
@@ -44,24 +40,16 @@
       last-response="{{sessionInfo}}">
     </custom-ajax>
 
-    <p style="font-size: 15pt"><b>Sign In</b></p>
-      <div id="container" class="card">
-        <div class="row">
-          <div class="column">
-            <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
-            <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
-          </div>
-          <div class="column">
-            <paper-button class="green" on-tap="signIn">Sign In</paper-button>
-            <paper-button class="green" on-tap="checkSession">Check Session</paper-button>
-          </div>
-        </div>
+    <div id="container" class="card">
+      <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
+      <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
 
-        <div class="column">
-          <paper-button class="button" on-tap="signUp"><u>Sign Up</u></paper-button>
-          <paper-button class="button"><u>Forget Your ID/Password?</u></paper-button>
-        </div>
+      <div class="column">
+        <paper-button class="green" on-tap="signIn">Sign In</paper-button>
+        <paper-button class="button" on-tap="signUp">Sign Up</paper-button>
+        <paper-button class="button">Forget Your ID/Password?</paper-button>
       </div>
+    </div>
   </template>
 
   <script>
@@ -114,7 +102,7 @@
         var response = event.currentTarget.lastResponse;
         this.fire('spinner-toggle', false);
         if(response) {
-          location.reload()
+          location.reload();
         } else {
           this.fire('toast-toggle', 'Login Failed');
         }

@@ -41,6 +41,10 @@
 				}
 			},
 
+      listeners: {
+        'regist-poll-ajax.response': 'registPollResponsed'
+      },			
+
 			ready: function() {
 				document.addEventListener('question-added', function(event) {
 					var questionObj = {
@@ -91,6 +95,20 @@
 					
 					registPollAjax.generateRequest();
 				}
+			},
+
+			registPollResponsed: function(response) {
+				if(response) {
+					app.route = 'my_polls';
+					app.title = 'My Polls';
+
+					this.fire('new-poll-registed');
+					this.fire('toast-toggle', 'New Poll is Successfully Registed!');
+				}
+			},
+
+			clearValue: function() {
+				this.questionList = [];
 			}
 		})
 	</script>

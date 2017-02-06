@@ -1,21 +1,49 @@
 <dom-module id="accordion-list">
 	<template>
 		<style>
+			.title {
+				@apply(--layout-horizontal);
+				border-top: 1px solid #000000;
+				border-left: 1px solid #000000;
+				border-right: 1px solid #000000;
+
+			}
+
+			.title iron-icon {
+				padding-right: 2%;
+			}
+			.flex {
+				@apply(--layout-flex);
+			}
 			.content {
-				padding: 15px;
-				border: 1px solid #dedede;
+				border-bottom: 1px solid #000000;
+				border-right: 1px solid #000000;
+				border-left: 1px solid #000000;
 				border-top: none;
-				border-bottom-left-radius: 5px;
-				border-bottom-right-radius: 5px;
-				@apply(--shadow-elevation-2dp);
+				@apply(--layout-vertical);
+			}
+
+			.content span {
+				font-size: 9pt;
+				padding-left: 4%;
+				padding-top: 2%;
+				padding-bottom: 2%;
+			}
+
+			.content span iron-icon {
+				padding-right: 2%;
 			}
 		</style>
-		<paper-item on-tap="_openDetail">[[item.name]] / [[item.description]]
-			<iron-icon icon="[[arrowIcon]]"></iron-icon>
-		</paper-item>
+			<paper-item class="title" on-tap="_openDetail">
+				<iron-icon icon="social:poll"></iron-icon>
+				<span class="flex">[[item.name]]</span>
+				<iron-icon icon="[[arrowIcon]]"></iron-icon>
+			</paper-item>
 
 		<iron-collapse id="collapse" class="content">
-			<paper-item>[[item.from_date]] ~ [[item.to_date]]</paper-item>
+			<span><iron-icon icon="icons:description"></iron-icon>[[item.description]]</span>
+			<span><iron-icon icon="icons:today"></iron-icon>[[item.from_date]] ~ [[item.to_date]]</span>
+			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
 		</iron-collapse>
 	</template>
 	<script>
@@ -41,3 +69,12 @@
 		})
 	</script>
 </dom-module>
+
+<style is="custom-style">
+  .flex-horizontal {
+    @apply(--layout-horizontal);
+  }
+  .flexchild {
+    @apply(--layout-flex);
+  }
+</style>
