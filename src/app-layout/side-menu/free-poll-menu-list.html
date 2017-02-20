@@ -8,7 +8,7 @@
 	 	</custom-ajax>
 
 	 	<paper-toolbar>
-	 		<span>Free Poll</span>
+	 		<free-poll-profile></free-poll-profile>
 	 	</paper-toolbar>
 
 		<template is="dom-repeat" items="{{menuList}}">
@@ -29,17 +29,14 @@
 
 			_menuListChanged: function(menuList) {
 				if(!menuList) {
-					app.route = 'sign_in';
-					app.title = 'Sign In';
+					page('/sign_in');
 				} else {
-					app.route = 'my_polls';
-					app.title = 'My Polls';
+					page('/my_polls');
 				}
 			},
 
 			_menuSelected: function(event) {
-				app.route = event.model.item.route;
-				app.title = event.model.item.name;
+				page('/' +  event.model.item.route);
 			}
 		})
 	</script>

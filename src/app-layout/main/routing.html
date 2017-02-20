@@ -1,0 +1,27 @@
+<script src="../../../bower_components/page/page.js"></script>
+
+<script>
+	page('/', function() {
+		page('/sign_in');
+	});
+
+	page('/sign_in', function() {
+		app.route = 'sign_in';
+		app.title = 'Sign In';
+	});
+
+	page('/new_poll', function() {
+		app.route = 'new_poll';
+		app.title = 'New Poll';
+	});
+
+	page('/my_polls', function() {
+		app.route = 'my_polls';
+		app.title = 'My Polls';
+	});
+
+	page({
+		hashbang: true
+	})
+
+</script>

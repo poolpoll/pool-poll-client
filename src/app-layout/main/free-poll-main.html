@@ -1,10 +1,7 @@
+<link rel="import" href="routing.html">
+
 <dom-module id="free-poll-main">
 	<template>
-		<style>
-			iron-pages {
-				height: 90%;
-			}
-		</style>
 		<paper-drawer-panel id="drawer">
 		  <paper-header-panel id="side-menu" drawer>
 	    	<free-poll-menu-list></free-poll-menu-list>
@@ -28,6 +25,7 @@
 		<paper-spinner id="spinner"></paper-spinner>
 		<dialog-opener id="dialog-opener"></dialog-opener>
 	</template>
+
 	<script>
 		Polymer({
 			is: 'free-poll-main',
@@ -49,10 +47,6 @@
 			},
 
 			ready: function() {
-				document.addEventListener('WebComponentsReady', function() {
-					this.setGlobalVariables();
-				}.bind(this));
-
 				document.addEventListener('side-menu-open', function() {
 					this.openSideMenu();
 				}.bind(this));
@@ -66,14 +60,6 @@
 					var isActive = event.detail;
 					this.toggleSpinner(isActive);
 				}.bind(this));
-			},
-
-			setGlobalVariables: function() {
-				if(!app.route || app.route == '') {
-					app.route = 'my_polls';
-					app.title = 'My Poll';
-					app.baseUrl = 'http://localhost:3000/'
-				};
 			},
 
 			handleTrack: function(event) {

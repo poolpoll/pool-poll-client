@@ -1,0 +1,25 @@
+<dom-module id="free-poll-profile">
+	<template>
+		<style>
+			.container {
+				@apply(--layout-horizontal);
+			}
+		</style>
+		<div class="container">
+			<span>Free Poll</span>
+			<iron-image src="[[imageUrl]]"></iron-image>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-profile',
+
+			properties: {
+				imageUrl: {
+					type: String,
+					value: 'https://elements.polymer-project.org/images/polymer.svg'
+				}
+			}
+		})
+	</script>
+</dom-module>
