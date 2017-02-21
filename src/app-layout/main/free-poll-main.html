@@ -2,6 +2,14 @@
 
 <dom-module id="free-poll-main">
 	<template>
+		<style>
+			#spinner {
+				z-index: 1;
+				@apply(--layout-flex);
+				@apply(--layout-center-justified);
+		    @apply(--layout-self-stretch);
+			}
+		</style>
 		<paper-drawer-panel id="drawer">
 		  <paper-header-panel id="side-menu" drawer>
 	    	<free-poll-menu-list></free-poll-menu-list>
@@ -13,16 +21,17 @@
 				<!-- main -->
 				<iron-pages attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
 					<!-- view list -->
+					<main-page route="main"></main-page>
 					<new-poll route="new_poll"></new-poll>
 					<my-poll route="my_polls"></my-poll>
 					<sign-in route="sign_in"></sign-in>
 				</iron-pages>
+				<paper-spinner id="spinner" active></paper-spinner>
 		  </paper-header-panel>
 		</paper-drawer-panel>
 
 		<!-- common utils -->
 		<paper-toast id="bottom-toast" class="fit-bottom" text="[[toastMsg]]"></paper-toast>
-		<paper-spinner id="spinner"></paper-spinner>
 		<dialog-opener id="dialog-opener"></dialog-opener>
 	</template>
 
