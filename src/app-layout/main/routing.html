@@ -2,7 +2,11 @@
 
 <script>
 	page('/', function() {
-		page('/sign_in');
+		page('/main');
+	});
+
+	page('/main', function() {
+		app.route = 'main';
 	});
 
 	page('/sign_in', function() {
