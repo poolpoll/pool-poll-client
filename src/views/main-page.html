@@ -1,13 +1,43 @@
 <dom-module id="main-page">
 	<template>
 		<style>
-			div {
+			:host {
+				@apply(--layout-flex);
+				@apply(--layout-vertical);
+			}
+			.flex {
+				@aaply(--layout-flex);
+			}
+			.horizontal {
+				@apply(--layout-horizontal);
+			}
+			paper-card {
 				@apply(--layout-flex);
 			}
 		</style>
-		<div>
-			<h1>Main</h1>
-		</h1>
+		<div class="content">
+			<div class="header flex horizontal">
+				<paper-card>
+					<h4>Header Left Section</h4>
+				</paper-card>
+
+				<paper-card>
+					<h4>Header Right Section</h4>
+				</paper-card>
+			</div>
+
+			<div class="body flex">
+				<paper-card>
+					<h4>Body Content</h4>
+				</paper-card>
+			</div>
+
+			<div class="tail flex">
+				<paper-card>
+					<h4>Tail content</h4>
+				</paper-card>
+			</div>
+		</div>
 	</template>
 	<script>
 		Polymer({
