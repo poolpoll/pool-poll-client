@@ -1,0 +1,177 @@
+<dom-module id="profile-view">
+	<template>
+		<style>
+			:host {
+				@apply(--layout-flex);
+				@apply(--layout-vertical);
+			}
+			.header {
+				@apply(--layout-horizontal);
+				padding: 10px;
+			}
+			.body {
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+				height: 300px;
+				padding: 3%;
+			}
+			.body-content {
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
+			.left-section {
+				@apply(--layout-vertical);
+				padding-right: 10px;
+			}
+			.left-section .image-section {
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+				@apply(--layout-flex);
+			}
+			iron-image {
+				width: 100px;
+				height: 100px;
+				border-radius: 100%;
+			}
+			.left-section paer-button {
+				@apply(--layout-end);
+			}
+			.right-section {
+				@apply(--layout-vertical);
+				@apply(--layout-flex-3);
+			}
+			.label {
+				padding-left: 3%;
+			}
+			section {
+				@apply(--layout-vertical);
+				width: 100%;
+				height: 300px;
+			}
+			section paper-dialog-scrollable {
+		    @apply(--layout-flex);
+				overflow-x: hidden;
+				background: white;
+		  }
+			.favorite-list {
+				padding: 3%;
+			}
+			paper-button {
+				@apply(--layout-flex);
+			}
+		</style>
+
+		<custom-ajax
+			id="user-info-ajax"
+			method="post"
+			content-type="application/x-www-form-urlencoded"
+			handle-as="json">
+		</custom-ajax>
+
+		<div class="header">
+			<div class="left-section">
+				<div class="image-section">
+					<iron-image src="http://lorempixel.com/600/400"></iron-image>
+				</div>
+				<paper-button id="save-btn" on-tap="saveBtnTapped">Save</paper-button>
+			</div>
+
+			<div class="right-section">
+				<paper-input label="Name" value="{{name}}"></paper-input>
+				<paper-input label="E-Mail" value="{{email}}"></paper-input>
+				<paper-input label="Birth Date" value="{{birthDate}}" type="date"></paper-input>
+				<paper-input label="Gender" value="{{gender}}"></paper-input>
+			</div>
+		</div>
+
+		<span class="label">My Favorite List</span>
+
+		<div class="favorite-list">
+			<section>
+			  <paper-dialog-scrollable>
+					<template is="dom-repeat" items="[[favoriteCategories]]">
+						<iron-swipeable-container>
+						  <paper-item id="[[item.id]]">[[item.name]] / [[item.description]]</paper-item>
+						</iron-swipeable-container>
+					</template>
+			  </paper-dialog-scrollable>
+			</section>
+		</div>
+
+		<paper-button on-tap="addCategory">ADD</paper-button>
+	</template>
+	<script>
+		Polymer({
+			is: 'profile-view',
+
+			properties: {
+
+				resourceUrl: {
+					type: String
+				},
+
+				userInfo: {
+					type: Object,
+					observer: 'userInfoChanged'
+				}
+			},
+
+			listeners: {
+				'user-info-ajax.response': 'userInfoAjaxResponsed',
+				'iron-swipe': 'itemSwiped'
+			},
+
+			ready: function() {
+				this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+			},
+
+			userInfoChanged: function(userInfo) {
+				if(userInfo) {
+					this.name =  userInfo.name;
+					this.email = userInfo.email;
+					this.birthDate = userInfo.birthDate;
+					this.gender = userInfo.gender;
+					this.favoriteCategories = JSON.parse(userInfo.favoriteCategories);
+				}
+			},
+
+			saveBtnTapped: function() {
+				var userInfoAjax = this.$['user-info-ajax'];
+				userInfoAjax.resourceUrl = 'users/' + this.userInfo.id;
+				userInfoAjax.body = {
+					name: this.name,
+					email: this.email,
+					birthDate: this.birthDate,
+					gender: this.gender
+				};
+				userInfoAjax.generateRequest();
+			},
+
+			addCategory: function() {
+				var addDialog = document.createElement('profile-view-category-add');
+				this.fire('dialog-open', {
+					content: addDialog,
+					openCallback: null,
+					closeCallback: null,
+					dialogConfig: {
+						modal: false,
+						entryAnimation: 'slide-from-top-animation',
+						exitAnimation: 'slide-up-animation'
+					}
+				});
+			},
+
+			userInfoAjaxResponsed: function() {
+				this.userInfo.name = this.name;
+				this.userInfo.email = this.email;
+				this.userInfo.birthDate = this.birthDate;
+				this.userInfo.gender = this.gender;
+				localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+			},
+
+			itemSwiped: function(event) {
+
+			}
+		})
+	</script>
+</dom-module>
