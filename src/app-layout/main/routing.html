@@ -7,6 +7,7 @@
 
 	page('/main', function() {
 		app.route = 'main';
+		app.title = 'Free Poll';
 	});
 
 	page('/sign_in', function() {
@@ -23,6 +24,11 @@
 		app.route = 'my_polls';
 		app.title = 'My Polls';
 	});
+
+	page('/profile', function() {
+		app.route = 'profile';
+		app.title = 'Profile';
+	})
 
 	page({
 		hashbang: true
