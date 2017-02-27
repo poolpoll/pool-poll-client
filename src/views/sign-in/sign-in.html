@@ -3,11 +3,10 @@
     <style include="shared-styles">
       :host {
         display: block;
-
         padding: 10px;
-      },
+      }
       #container {
-        @apply(--layout-horizontal);
+        @apply(--layout-vertical);
         @apply(--layout-flex);
       }
       .column {
@@ -30,7 +29,8 @@
       resource-url="auth/sign_in"
       method="POST"
       content-type="application/x-www-form-urlencoded"
-      handle-as="json">
+      handle-as="json"
+      last-response="{{userInfo}}">
     </custom-ajax>
 
     <custom-ajax
@@ -43,12 +43,9 @@
     <div id="container" class="card">
       <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
       <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
-
-      <div class="column">
-        <paper-button class="green" on-tap="signIn">Sign In</paper-button>
-        <paper-button class="button" on-tap="signUp">Sign Up</paper-button>
-        <paper-button class="button">Forget Your ID/Password?</paper-button>
-      </div>
+      <paper-button class="green" on-tap="signIn">Sign In</paper-button>
+      <paper-button class="button" on-tap="signUp">Sign Up</paper-button>
+      <paper-button class="button">Forget Your ID/Password?</paper-button>
     </div>
   </template>
 
@@ -78,6 +75,11 @@
         sessionInfo: {
           type: Object,
           observer: 'sessionInfoChanged'
+        },
+
+        userInfo: {
+          type: Object,
+          observer: 'userInfoChanged'
         }
       },
 
@@ -92,7 +94,6 @@
             account: this.account,
             password: this.password
           };
-
           this.fire('spinner-toggle', true);
           signInAjax.generateRequest();
         }
@@ -102,6 +103,7 @@
         var response = event.currentTarget.lastResponse;
         this.fire('spinner-toggle', false);
         if(response) {
+          this.fire('set-storage', { key: 'userInfo', value: response });
           location.reload();
         } else {
           this.fire('toast-toggle', 'Login Failed');
