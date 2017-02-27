@@ -7,9 +7,7 @@
 		 	last-response="{{menuList}}">
 	 	</custom-ajax>
 
-	 	<paper-toolbar>
-	 		<free-poll-profile></free-poll-profile>
-	 	</paper-toolbar>
+	 	<free-poll-sidebar-header></free-poll-sidebar-header>
 
 		<template is="dom-repeat" items="{{menuList}}">
 			<paper-item on-tap="_menuSelected">[[item.name]]</paper-item>
