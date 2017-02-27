@@ -5,7 +5,6 @@
 				display: block;
 				padding: 10px;
 			}
-
 			.input-container {
 				@apply(--layout-vertical);
 				@apply(--layour-flex);
@@ -15,7 +14,7 @@
 		<div class="input-container">
 			<paper-input label="Title" value="{{name}}"></paper-input>
 			<paper-input label="Description" value="{{description}}"></paper-input>
-			<drop-down-list label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>	
+			<drop-down-list label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
 			<paper-input label="Start Date" value="{{fromDate}}" type="date"></paper-input>
 			<paper-input label="Due Date" value="{{toDate}}" type="date"></paper-input>
 		</div>

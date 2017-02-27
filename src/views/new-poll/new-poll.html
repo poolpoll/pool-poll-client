@@ -1,13 +1,19 @@
 <dom-module id="new-poll">
 	<template>
+		<style>
+			:host {
+				@apply(--layout-flex);
+				height: 100%;
+			}
+		</style>
 		<neon-animated-pages attr-for-selected="step" selected="[[step]]">
 			<neon-animatable entry-animation="slide-from-left-animation" exit-animation="slide-left-animation" step="basic">
 				<new-poll-basic
-					id="basic" 
+					id="basic"
 					step="{{step}}">
 				</new-poll-basic>
 			</neon-animatable>
-			
+
 			<neon-animatable entry-animation="slide-from-right-animation" exit-animation="slide-right-animation" step="detail">
 				<new-poll-detail
 					id="detail"

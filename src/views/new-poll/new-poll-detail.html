@@ -1,6 +1,9 @@
 <dom-module id="new-poll-detail">
 	<template>
 		<style>
+			:host {
+				@apply(--layout-flex);
+			}
 			.input-container {
 				@apply(--layout-vertical);
 			}
@@ -43,7 +46,7 @@
 
       listeners: {
         'regist-poll-ajax.response': 'registPollResponsed'
-      },			
+      },
 
 			ready: function() {
 				document.addEventListener('question-added', function(event) {
@@ -92,7 +95,7 @@
 						basic_info: JSON.stringify(this.basicInfo),
 						question_list: JSON.stringify(this.questionList)
 					};
-					
+
 					registPollAjax.generateRequest();
 				}
 			},
