@@ -1,0 +1,68 @@
+<dom-module id="profile-view-category-add">
+  <template>
+    <custom-ajax
+      id="category-ajax"
+      resource-url="categories"
+      handle-as="json"
+      last-response="{{categories}}">
+    </custom-ajax>
+
+    <custom-ajax
+      id="add-category-ajax"
+      method="POST"
+      content-type="application/x-www-form-urlencoded"
+      handle-as="json">
+    </custom-ajax>
+
+
+    <template is="dom-repeat" items="[[categories]]">
+      <paper-item id="[[item.id]]" on-tap="itemSelected">[[item.name]] / [[item.description]]</paper-item>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'profile-view-category-add',
+
+      properties: {
+        categories: {
+          type: Array,
+          observer: 'categoriesResponsed'
+        }
+      },
+
+      attached: function() {
+        this.$['category-ajax'].generateRequest();
+      },
+
+      categoriesResponsed: function(categories) {
+        this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        this.userCategories = this.userInfo.favoriteCategories;
+
+        if(this.userCategories && this.userCategories.length > 0) {
+          this.userCategories.forEach(function(userCategory) {
+            for(var i = 0; i < categories.length; i++) {
+              if(userCategory.id == categories[i].id) {
+                categories.splice(i, 1);
+              }
+            }
+          })
+        }
+      },
+
+      itemSelected: function(event) {
+        var selectedCategory = event.model.item;
+        if(!this.userCategory || this.userCategory.length == 0) {
+          this.userCategory = [];
+        };
+        this.userCategory.push(selectedCategory);
+        var addCategoryAjax = this.$['add-category-ajax'];
+        addCategoryAjax.resourceUrl = 'users/categories/' + this.userInfo.id;
+        addCategoryAjax.body = {
+          favoriteCategories: JSON.stringify(this.userCategory)
+        };
+
+        addCategoryAjax.generateRequest();
+      }
+    })
+  </script>
+</dom-module>
