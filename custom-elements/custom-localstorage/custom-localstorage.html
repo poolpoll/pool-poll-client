@@ -1,0 +1,55 @@
+<dom-module id="custom-localstorage">
+	<template>
+	  <iron-localstorage
+	  	id="local-storage"
+	  	name="[[key]]"
+	    value="[[value]]">
+	  </iron-localstorage>
+	</template>
+	<script>
+		Polymer({
+			is: 'custom-localstorage',
+
+			properties: {
+				key: {
+					type: String
+				},
+
+				value: {
+					type: String
+				}
+			},
+
+			ready: function() {
+				document.addEventListener('set-storage', function(event) {
+					var key = event.detail.key;
+					var value = event.detail.value;
+					this.setStorage(key, value);
+				}.bind(this));
+
+				document.addEventListener('remove-storage', function(event) {
+					var key = event.detail.key;
+					this.removeStorage(key);
+				})
+			},
+
+			getStorageElement: function() {
+				return this.$['local-storage'];
+			},
+
+			setStorage: function(key, value) {
+				this.key = key;
+				this.value = value;
+
+				this.getStorageElement().save();
+			},
+
+			removeStorage: function(key) {
+				this.key = key;
+				this.value = null;
+
+				this.getStorageElement().save();
+			}
+		})
+	</script>
+</dom-module>

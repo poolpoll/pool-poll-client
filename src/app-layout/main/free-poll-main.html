@@ -24,15 +24,17 @@
 					<main-page route="main"></main-page>
 					<new-poll route="new_poll"></new-poll>
 					<my-poll route="my_polls"></my-poll>
+					<profile-view route="profile"></profile-view>
 					<sign-in route="sign_in"></sign-in>
 				</iron-pages>
-				<paper-spinner id="spinner" active></paper-spinner>
+				<paper-spinner id="spinner"></paper-spinner>
 		  </paper-header-panel>
 		</paper-drawer-panel>
 
 		<!-- common utils -->
 		<paper-toast id="bottom-toast" class="fit-bottom" text="[[toastMsg]]"></paper-toast>
 		<dialog-opener id="dialog-opener"></dialog-opener>
+		<custom-localstorage></custom-localstorage>
 	</template>
 
 	<script>
