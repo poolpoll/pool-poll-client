@@ -2,7 +2,7 @@
 	<template>
 		<style>
 		  paper-dialog {
-		    border: 1px solid;
+		    border-radius: 10px;
 		    padding: 5%;
 		    position: fixed;
         width: 90%;
@@ -15,7 +15,7 @@
 	<script>
 		Polymer({
 			is: 'dialog-opener',
-			
+
 			properties: {
 				entryAnimation: {
 					type: String,
@@ -74,6 +74,7 @@
 			},
 
 			setDialogConfig: function(config) {
+				this.title = (config.title) ? config.title : '';
 				this.modal = (config.modal) ? config.modal : false;
 				this.entryAnimation = (config.entryAnimation) ? config.entryAnimation : null;
 				this.exitAnimation = (config.exitAnimation) ? config.exitAnimation : null;

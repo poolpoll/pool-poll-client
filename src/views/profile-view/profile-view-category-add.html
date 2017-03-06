@@ -1,23 +1,44 @@
 <dom-module id="profile-view-category-add">
   <template>
+    <style>
+      .list {
+        @apply(--layout-flex);
+      }
+      .category-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        padding: 10px;
+      }
+      .category-list {
+        @apply(--layout-flex);
+      }
+      paper-button {
+        @apply(--layout-horizontal);
+        @aplly(--layout-flex);
+        background-color: var(--paper-green-500);
+        color: white;
+      }
+    </style>
     <custom-ajax
       id="category-ajax"
       resource-url="categories"
-      handle-as="json"
       last-response="{{categories}}">
     </custom-ajax>
 
     <custom-ajax
       id="add-category-ajax"
       method="POST"
-      content-type="application/x-www-form-urlencoded"
-      handle-as="json">
+      content-type="application/json">
     </custom-ajax>
 
-
-    <template is="dom-repeat" items="[[categories]]">
-      <paper-item id="[[item.id]]" on-tap="itemSelected">[[item.name]] / [[item.description]]</paper-item>
+    <template is="dom-repeat" items="[[categoryList]]">
+      <div class="category-container">
+        <div class="category-list">[[item.name]] / [[item.description]]</div>
+        <paper-checkbox checked="{{item.active}}"></paper-checkbox>
+      </div>
     </template>
+
+    <paper-button on-tap="saveBtnTapped">save</paper-button>
   </template>
   <script>
     Polymer({
@@ -27,41 +48,57 @@
         categories: {
           type: Array,
           observer: 'categoriesResponsed'
+        },
+
+        userCategories: {
+          type: Array
         }
       },
 
+      listeners: {
+        'add-category-ajax.response': 'saveAjaxReponsed'
+      },
+
       attached: function() {
+        this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
         this.$['category-ajax'].generateRequest();
       },
 
       categoriesResponsed: function(categories) {
-        this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        this.userCategories = this.userInfo.favoriteCategories;
+        this.userCategories.forEach(function(userCategory) {
+          categories.forEach(function(category) {
+            if(userCategory.id == category.id) {
+              category.active = true;
+            };
+          });
+        });
 
-        if(this.userCategories && this.userCategories.length > 0) {
-          this.userCategories.forEach(function(userCategory) {
-            for(var i = 0; i < categories.length; i++) {
-              if(userCategory.id == categories[i].id) {
-                categories.splice(i, 1);
-              }
-            }
-          })
-        }
+        this.categoryList = categories;
       },
 
-      itemSelected: function(event) {
-        var selectedCategory = event.model.item;
-        if(!this.userCategory || this.userCategory.length == 0) {
-          this.userCategory = [];
-        };
-        this.userCategory.push(selectedCategory);
+      saveBtnTapped: function() {
+        var userCategories = [];
+        this.categoryList.forEach(function(item) {
+          if(item.active == true) {
+            userCategories.push({
+              userId: this.userInfo.id,
+              categoryId: item.id
+            });
+          }
+        }.bind(this));
+
         var addCategoryAjax = this.$['add-category-ajax'];
-        addCategoryAjax.resourceUrl = 'users/categories/' + this.userInfo.id;
+        addCategoryAjax.resourceUrl = 'user_categories/' + this.userInfo.id;
         addCategoryAjax.body = {
-          favoriteCategories: JSON.stringify(this.userCategory)
+          userCategories: userCategories
         };
 
         addCategoryAjax.generateRequest();
+      },
+
+      saveAjaxReponsed: function(response) {
+        this.fire('dialog-close');
+        this.fire('category-changed');
       }
     })
   </script>

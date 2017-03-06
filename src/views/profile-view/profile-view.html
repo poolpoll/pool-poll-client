@@ -62,10 +62,25 @@
 		</style>
 
 		<custom-ajax
-			id="user-info-ajax"
+			id="update-user-info"
 			method="post"
-			content-type="application/x-www-form-urlencoded"
-			handle-as="json">
+			content-type="application/json">
+		</custom-ajax>
+
+		<custom-ajax
+			id="user-category-ajax"
+			method="get"
+			last-response="{{userCategories}}">
+		</custom-ajax>
+
+		<custom-ajax
+      id="save-category-ajax"
+      method="POST"
+      content-type="application/json">
+    </custom-ajax>
+
+		<custom-ajax
+			id="refresh-user-info">
 		</custom-ajax>
 
 		<div class="header">
@@ -89,7 +104,7 @@
 		<div class="favorite-list">
 			<section>
 			  <paper-dialog-scrollable>
-					<template is="dom-repeat" items="[[favoriteCategories]]">
+					<template is="dom-repeat" items="[[userCategories]]">
 						<iron-swipeable-container>
 						  <paper-item id="[[item.id]]">[[item.name]] / [[item.description]]</paper-item>
 						</iron-swipeable-container>
@@ -117,61 +132,95 @@
 			},
 
 			listeners: {
-				'user-info-ajax.response': 'userInfoAjaxResponsed',
-				'iron-swipe': 'itemSwiped'
+				'update-user-info.response': 'refreshUserInfo',
+				'iron-swipe': 'itemSwiped',
+				'refresh-user-info.response': 'refreshUserResponsed',
+				'save-category-ajax.response': 'refreshUserInfo'
 			},
 
 			ready: function() {
+				document.addEventListener('category-changed', function() {
+					this.refreshUserInfo();
+				}.bind(this));
+
 				this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
 			},
 
 			userInfoChanged: function(userInfo) {
-				if(userInfo) {
+				if(userInfo && userInfo.id) {
 					this.name =  userInfo.name;
 					this.email = userInfo.email;
 					this.birthDate = userInfo.birthDate;
 					this.gender = userInfo.gender;
-					this.favoriteCategories = JSON.parse(userInfo.favoriteCategories);
+
+					var userCategoryAjax = this.$['user-category-ajax'];
+					userCategoryAjax.resourceUrl = 'user_categories/' + userInfo.id;
+					userCategoryAjax.generateRequest();
 				}
 			},
 
 			saveBtnTapped: function() {
-				var userInfoAjax = this.$['user-info-ajax'];
-				userInfoAjax.resourceUrl = 'users/' + this.userInfo.id;
-				userInfoAjax.body = {
+				var updateUserInfoAjax = this.$['update-user-info'];
+				updateUserInfoAjax.resourceUrl = 'users/' + this.userInfo.id;
+				updateUserInfoAjax.body = {
 					name: this.name,
 					email: this.email,
 					birthDate: this.birthDate,
 					gender: this.gender
 				};
-				userInfoAjax.generateRequest();
+				updateUserInfoAjax.generateRequest();
 			},
 
 			addCategory: function() {
 				var addDialog = document.createElement('profile-view-category-add');
+				addDialog.userCategories = this.userCategories;
 				this.fire('dialog-open', {
 					content: addDialog,
 					openCallback: null,
 					closeCallback: null,
 					dialogConfig: {
-						modal: false,
+						title: 'Categories',
+						modal: true,
 						entryAnimation: 'slide-from-top-animation',
 						exitAnimation: 'slide-up-animation'
 					}
 				});
 			},
 
-			userInfoAjaxResponsed: function() {
-				this.userInfo.name = this.name;
-				this.userInfo.email = this.email;
-				this.userInfo.birthDate = this.birthDate;
-				this.userInfo.gender = this.gender;
-				localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+			refreshUserInfo: function() {
+				var refreshUserInfoAjax = this.$['refresh-user-info'];
+				refreshUserInfoAjax.resourceUrl = 'users/' + this.userInfo.id;
+				refreshUserInfoAjax.generateRequest();
 			},
 
-			itemSwiped: function(event) {
-
+			refreshUserResponsed: function(event) {
+				var userInfo = event.currentTarget.lastResponse;
+				this.fire('set-storage', { key: 'userInfo', value: userInfo });
+				this.userInfoChanged(userInfo)
 			}
+
+			// itemSwiped: function(event) {
+			// 	var removeCategoryId = event.detail.target.id;
+			// 	if(this.favoriteCategories.length > 0) {
+			// 		for(var i = 0; i < this.favoriteCategories.length; i++) {
+			// 			if(this.favoriteCategories[i].id == removeCategoryId) {
+			// 				this.favoriteCategories.splice(i, 1);
+			// 			}
+			// 		}
+			// 	}
+			//
+			// 	this.saveFavoriteCategories(this.favoriteCategories);
+			// },
+
+			// saveFavoriteCategories: function(favoriteCategories) {
+			// 	var saveCategoryAjax = this.$['save-category-ajax'];
+      //   saveCategoryAjax.resourceUrl = 'users/categories/' + this.userInfo.id;
+      //   saveCategoryAjax.body = {
+      //     favoriteCategories: JSON.stringify(favoriteCategories)
+      //   };
+			//
+      //   saveCategoryAjax.generateRequest();
+			// }
 		})
 	</script>
 </dom-module>

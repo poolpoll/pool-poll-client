@@ -28,16 +28,8 @@
       id="sign-in-ajax"
       resource-url="auth/sign_in"
       method="POST"
-      content-type="application/x-www-form-urlencoded"
-      handle-as="json"
+      content-type="application/json"
       last-response="{{userInfo}}">
-    </custom-ajax>
-
-    <custom-ajax
-      id="check-session-ajax"
-      resource-url="auth/check_session"
-      handle-as="json"
-      last-response="{{sessionInfo}}">
     </custom-ajax>
 
     <div id="container" class="card">
@@ -70,11 +62,6 @@
 
         password: {
           type: String
-        },
-
-        sessionInfo: {
-          type: Object,
-          observer: 'sessionInfoChanged'
         },
 
         userInfo: {
@@ -117,15 +104,6 @@
         };
 
         this.fire('dialog-open', event);
-      },
-
-      checkSession: function() {
-        var checkSessionAjax = this.$['check-session-ajax'];
-        checkSessionAjax.generateRequest();
-      },
-
-      sessionInfoChanged: function(sessionInfo) {
-        console.log(sessionInfo);
       }
     })
   </script>
