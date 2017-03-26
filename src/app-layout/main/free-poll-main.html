@@ -3,11 +3,8 @@
 <dom-module id="free-poll-main">
 	<template>
 		<style>
-			#spinner {
-				z-index: 1;
-				@apply(--layout-flex);
-				@apply(--layout-center-justified);
-		    @apply(--layout-self-stretch);
+			:host {
+				display: block;
 			}
 		</style>
 		<paper-drawer-panel id="drawer">
@@ -22,8 +19,8 @@
 				<iron-pages attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
 					<!-- view list -->
 					<main-page route="main"></main-page>
-					<new-poll route="new_poll"></new-poll>
 					<my-poll route="my_polls"></my-poll>
+					<new-poll route="new_poll"></new-poll>
 					<profile-view route="profile"></profile-view>
 					<sign-in route="sign_in"></sign-in>
 				</iron-pages>
@@ -107,7 +104,7 @@
 				if(route == 'my_polls') {
 					this.fire('refresh-poll-list');
 				}
-				
+
 				this.$['drawer'].closeDrawer();
 			},
 

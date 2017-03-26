@@ -25,6 +25,11 @@
 		app.title = 'My Polls';
 	});
 
+	page('/my_poll_detail/:poll_id', function(title) {
+		app.route = 'my_poll_detail';
+		app.title = title;
+	})
+
 	page('/profile', function() {
 		app.route = 'profile';
 		app.title = 'Profile';

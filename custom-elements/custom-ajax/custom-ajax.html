@@ -47,21 +47,21 @@ element.
      * Fired when a request is sent.
      *
      * @event request
-     * @event custom-ajax-request
+     * @event iron-ajax-request
      */
 
     /**
      * Fired when a response is received.
      *
      * @event response
-     * @event custom-ajax-response
+     * @event iron-ajax-response
      */
 
     /**
      * Fired when an error is received.
      *
      * @event error
-     * @event custom-ajax-error
+     * @event iron-ajax-error
      */
 
     hostAttributes: {
@@ -74,11 +74,11 @@ element.
        */
       url: {
         type: String,
-        computed: '_computeUrl(resourceUrl)'
+        computed: 'computedUrl(resourceUrl)'
       },
 
       resourceUrl: {
-      	type: String,
+        type: String
       },
 
       /**
@@ -108,11 +108,11 @@ element.
        *
        * Example:
        *
-       *     <custom-ajax
+       *     <iron-ajax
        *         auto
        *         url="http://somesite.com"
        *         headers='{"X-Requested-With": "XMLHttpRequest"}'
-       *         handle-as="json"></custom-ajax>
+       *         handle-as="json"></iron-ajax>
        *
        * Note: setting a `Content-Type` header here will override the value
        * specified by the `contentType` property of this element.
@@ -197,6 +197,7 @@ element.
        */
       withCredentials: {
         type: Boolean,
+        // value: false
         value: true
       },
 
@@ -226,7 +227,7 @@ element.
       },
 
       /**
-       * The most recent request made by this custom-ajax element.
+       * The most recent request made by this iron-ajax element.
        */
       lastRequest: {
         type: Object,
@@ -273,7 +274,7 @@ element.
       },
 
       /**
-       * An Array of all in-flight requests originating from this custom-ajax
+       * An Array of all in-flight requests originating from this iron-ajax
        * element.
        */
       activeRequests: {
@@ -309,8 +310,8 @@ element.
       },
 
       /**
-       * By default, custom-ajax's events do not bubble. Setting this attribute will cause its
-       * request and response events as well as its custom-ajax-request, -response,  and -error
+       * By default, iron-ajax's events do not bubble. Setting this attribute will cause its
+       * request and response events as well as its iron-ajax-request, -response,  and -error
        * events to bubble to the window object. The vanilla error event never bubbles when
        * using shadow dom even if this.bubbles is true because a scoped flag is not passed with
        * it (first link) and because the shadow dom spec did not used to allow certain events,
@@ -335,14 +336,6 @@ element.
       '_requestOptionsChanged(url, method, params.*, headers, contentType, ' +
           'body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)'
     ],
-
-    _computeUrl: function(resourceUrl) {
-      if(window.Polymer.baseUrl) {
-      	return  window.Polymer.baseUrl + resourceUrl;
-      } else {
-        return 'http://localhost:3000/' + resourceUrl;
-      }
-    },
 
     /**
      * The query string that should be appended to the `url`, serialized from
@@ -420,7 +413,7 @@ element.
 
     /**
      * Request options suitable for generating an `iron-request` instance based
-     * on the current state of the `custom-ajax` instance's properties.
+     * on the current state of the `iron-ajax` instance's properties.
      *
      * @return {{
      *   url: string,
@@ -444,6 +437,14 @@ element.
         withCredentials: this.withCredentials,
         timeout: this.timeout
       };
+    },
+
+    computedUrl: function(resourceUrl) {
+      if(window.Polymer.baseUrl) {
+        return window.Polymer.baseUrl + resourceUrl;
+      } else {
+        return 'http://localhost:3000/' + resourceUrl;
+      }
     },
 
     /**

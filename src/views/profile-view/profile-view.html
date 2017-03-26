@@ -74,14 +74,9 @@
 		</custom-ajax>
 
 		<custom-ajax
-      id="save-category-ajax"
-      method="POST"
-      content-type="application/json">
+      id="delete-category-ajax"
+      method="DELETE">
     </custom-ajax>
-
-		<custom-ajax
-			id="refresh-user-info">
-		</custom-ajax>
 
 		<div class="header">
 			<div class="left-section">
@@ -132,10 +127,7 @@
 			},
 
 			listeners: {
-				'update-user-info.response': 'refreshUserInfo',
-				'iron-swipe': 'itemSwiped',
-				'refresh-user-info.response': 'refreshUserResponsed',
-				'save-category-ajax.response': 'refreshUserInfo'
+				'iron-swipe': 'itemSwiped'
 			},
 
 			ready: function() {
@@ -162,12 +154,15 @@
 			saveBtnTapped: function() {
 				var updateUserInfoAjax = this.$['update-user-info'];
 				updateUserInfoAjax.resourceUrl = 'users/' + this.userInfo.id;
-				updateUserInfoAjax.body = {
+				var userInfo = {
+					id: this.userInfo.id,
 					name: this.name,
 					email: this.email,
 					birthDate: this.birthDate,
 					gender: this.gender
 				};
+				this.fire('set-storage', { key: 'userInfo', value: userInfo });
+				updateUserInfoAjax.body = userInfo;
 				updateUserInfoAjax.generateRequest();
 			},
 
@@ -188,39 +183,23 @@
 			},
 
 			refreshUserInfo: function() {
-				var refreshUserInfoAjax = this.$['refresh-user-info'];
-				refreshUserInfoAjax.resourceUrl = 'users/' + this.userInfo.id;
-				refreshUserInfoAjax.generateRequest();
+				var userCategoryAjax = this.$['user-category-ajax'];
+				userCategoryAjax.resourceUrl = 'user_categories/' + this.userInfo.id;
+				userCategoryAjax.generateRequest();
 			},
 
 			refreshUserResponsed: function(event) {
 				var userInfo = event.currentTarget.lastResponse;
 				this.fire('set-storage', { key: 'userInfo', value: userInfo });
 				this.userInfoChanged(userInfo)
+			},
+
+			itemSwiped: function(event) {
+				var deleteCategoryId = event.detail.target.id;
+				var deleteCategoryAjax = this.$['delete-category-ajax'];
+				deleteCategoryAjax.resourceUrl = 'user_categories/' + this.userInfo.id + '/' + deleteCategoryId;
+				deleteCategoryAjax.generateRequest();
 			}
-
-			// itemSwiped: function(event) {
-			// 	var removeCategoryId = event.detail.target.id;
-			// 	if(this.favoriteCategories.length > 0) {
-			// 		for(var i = 0; i < this.favoriteCategories.length; i++) {
-			// 			if(this.favoriteCategories[i].id == removeCategoryId) {
-			// 				this.favoriteCategories.splice(i, 1);
-			// 			}
-			// 		}
-			// 	}
-			//
-			// 	this.saveFavoriteCategories(this.favoriteCategories);
-			// },
-
-			// saveFavoriteCategories: function(favoriteCategories) {
-			// 	var saveCategoryAjax = this.$['save-category-ajax'];
-      //   saveCategoryAjax.resourceUrl = 'users/categories/' + this.userInfo.id;
-      //   saveCategoryAjax.body = {
-      //     favoriteCategories: JSON.stringify(favoriteCategories)
-      //   };
-			//
-      //   saveCategoryAjax.generateRequest();
-			// }
 		})
 	</script>
 </dom-module>

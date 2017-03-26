@@ -17,30 +17,28 @@
 				padding: 5px;
 			}
 		</style>
-		<iron-swipeable-container>
-			<paper-item on-tap="_openDetail">
-				<div class="title">[[title]]</div>
-				<iron-icon icon="[[arrowIcon]]"></iron-icon>
-			</paper-item>
+		<paper-item on-tap="_openDetail">
+			<div class="title">[[title]]</div>
+			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+		</paper-item>
 
-			<iron-collapse id="collapse" class="content">
-				<template is="dom-repeat" items="[[options]]">
-					<div class="container">
-						  <paper-icon-item class="item">
-						    <iron-icon icon="check" item-icon></iron-icon>
-						    [[item.option]]
-						  </paper-icon-item>
-				  </div>
-				</template>
-			</iron-collapse>
-	  </iron-swipeable-container>
+		<iron-collapse id="collapse" class="content">
+			<template is="dom-repeat" items="[[options]]">
+				<div class="container">
+					  <paper-icon-item class="item">
+					    <iron-icon icon="check" item-icon></iron-icon>
+					    [[item.option]]
+					  </paper-icon-item>
+			  </div>
+			</template>
+		</iron-collapse>
 	</template>
 	<script>
 		Polymer({
 			is: 'accordion-poll-detail',
 
 			properties: {
-				
+
 				options: {
 					type: Array,
 					value: []

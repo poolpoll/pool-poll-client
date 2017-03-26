@@ -1,0 +1,92 @@
+<dom-module id="new-poll-sheet">
+  <template>
+    <style>
+      .flex {
+        @apply(--layout-flex);
+      }
+      paper-item {
+        padding-left: 2%;
+        padding-right: 2%;
+        background-color: #c5e4f7;
+      }
+      .content {
+        background-color: white;
+      }
+      #opt-container paper-input {
+        padding-left: 2%;
+        padding-right: 2%;
+      }
+      .opt-item {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+    </style>
+
+    <paper-item class="question-box" on-tap="_toggleCollapse">
+			<paper-input class="flex" label="Question" value="{{question}}"></paper-input>
+			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+		</paper-item>
+
+    <iron-collapse id="collapse" class="content" opened>
+      <iron-swipeable-container id="opt-container">
+        <div class="opt-item">
+          <paper-input class="flex" label="Option"></paper-input>
+        </div>
+      </iron-swipeable-container>
+      <paper-button on-tap="_appendOption">add</paper-button>
+    </iron-collapse>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'new-poll-sheet',
+
+      properties: {
+        arrowIcon: {
+					type: String,
+					value: 'icons:arrow-drop-down'
+				}
+      },
+
+      _toggleCollapse: function() {
+        var collapse = this.$['collapse'];
+				collapse.toggle();
+				this.arrowIcon = (collapse.opened) ? 'icons:arrow-drop-up' : 'icons:arrow-drop-down';
+      },
+
+      closeCollapse: function() {
+        this.$['collapse'].opened = false;
+        this.arrowIcon = 'icons:arrow-drop-down';
+      },
+
+      _appendOption: function() {
+        var optContainer = this.$['opt-container'];
+
+        var optItem = document.createElement('div');
+        optItem.setAttribute('class', 'opt-item');
+
+        var input = document.createElement('paper-input');
+        input.setAttribute('class', 'flex');
+        input.setAttribute('label', 'Option');
+
+        optItem.appendChild(input);
+        optContainer.appendChild(optItem);
+      },
+
+      returnValues: function() {
+        var options = [];
+        var optContainer = this.$['opt-container'];
+        var optItems = optContainer.children;
+
+        for(var i = 0; i < optItems.length; i++) {
+          options.push(optItems[i].firstElementChild.value);
+        };
+
+        return {
+          question: this.question,
+          options: options
+        };
+      }
+    })
+  </script>
+</dom-module>

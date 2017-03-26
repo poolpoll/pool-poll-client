@@ -21,6 +21,7 @@
     </style>
     <custom-ajax
       id="category-ajax"
+      method="GET"
       resource-url="categories"
       last-response="{{categories}}">
     </custom-ajax>
@@ -89,9 +90,7 @@
 
         var addCategoryAjax = this.$['add-category-ajax'];
         addCategoryAjax.resourceUrl = 'user_categories/' + this.userInfo.id;
-        addCategoryAjax.body = {
-          userCategories: userCategories
-        };
+        addCategoryAjax.body = userCategories;
 
         addCategoryAjax.generateRequest();
       },

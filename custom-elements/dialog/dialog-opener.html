@@ -3,10 +3,9 @@
 		<style>
 		  paper-dialog {
 		    border-radius: 10px;
-		    padding: 5%;
-		    position: fixed;
+				padding: 5%;
         width: 90%;
-        height: 85%;
+        height: 90%;
         overflow: auto;
 		  }
 		</style>
@@ -41,11 +40,6 @@
 				}
 			},
 
-			listeners: {
-				'dialog.iron-overlay-opened': 'dialogOpened',
-				'dialog.iron-overlay-closed': 'dialogClosed'
-			},
-
 			ready: function() {
 				document.addEventListener('dialog-open', function(event) {
 					var request = event.detail;
@@ -67,9 +61,12 @@
 				var container = this.$['dialog'];
 				container.appendChild(this.content);
 				this.$['dialog'].open();
+				if(this.openCallback) this.openCallback();
 			},
 
 			closeDialog: function() {
+				if(this.closeCallback) this.closeCallback();
+				container.removeChild(this.content);
 				this.$['dialog'].close();
 			},
 
@@ -78,17 +75,6 @@
 				this.modal = (config.modal) ? config.modal : false;
 				this.entryAnimation = (config.entryAnimation) ? config.entryAnimation : null;
 				this.exitAnimation = (config.exitAnimation) ? config.exitAnimation : null;
-			},
-
-			dialogOpened: function() {
-				if(this.openCallback) this.openCallback();
-			},
-
-			dialogClosed: function() {
-				if(this.closeCallback) this.closeCallback();
-
-				var container = this.$['dialog'];
-				container.removeChild(this.content);
 			}
 		})
 	</script>

@@ -4,7 +4,13 @@
 			:host {
 				display: block;
 				padding: 10px;
-			}		
+			}
+			paper-fab {
+				@apply(--layout-vertical-reverse);
+				position: absolute;
+				bottom: 3%;
+				right: 5%;
+			}
 		</style>
 		<custom-ajax
 			id="poll-ajax"
@@ -14,8 +20,10 @@
  		</custom-ajax>
 
 		<template is="dom-repeat" items="[[pollList]]">
-			<accordion-list item="[[item]]"></accordion-list>		
+			<accordion-list item="[[item]]"></accordion-list>
 		</template>
+
+		<paper-fab mini noink icon="icons:add" on-tap="createNewPoll"></paper-fab>
 	</template>
 	<script>
 		Polymer({
@@ -36,6 +44,10 @@
 			_openDetail: function(event) {
 				var collapseId = event.model.item.id;
 				this.$$(collpaseId).toggle();
+			},
+
+			createNewPoll: function() {
+				page('/new_poll');
 			}
 		})
 	</script>

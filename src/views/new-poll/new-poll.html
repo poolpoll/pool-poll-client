@@ -1,93 +1,96 @@
 <dom-module id="new-poll">
 	<template>
 		<style>
-			:host {
+			.info-container {
+				background-color: white;
+			}
+			.horizontal {
+				@apply(--layout-horizontal);
+			}
+			.flex {
 				@apply(--layout-flex);
-				height: 100%;
+			}
+			.content {
+				@apply(--layout-flex);
+				padding-left: 2%;
+				padding-right: 2%;
 			}
 		</style>
-		<neon-animated-pages attr-for-selected="step" selected="[[step]]">
-			<neon-animatable entry-animation="slide-from-left-animation" exit-animation="slide-left-animation" step="basic">
-				<new-poll-basic
-					id="basic"
-					step="{{step}}">
-				</new-poll-basic>
-			</neon-animatable>
 
-			<neon-animatable entry-animation="slide-from-right-animation" exit-animation="slide-right-animation" step="detail">
-				<new-poll-detail
-					id="detail"
-					step="{{step}}"
-					basic-info="[[basicInfo]]">
-				</new-poll-detail>
-			</neon-animatable>
-		</neon-animated-pages>
+		<custom-ajax
+			id="regist-poll-ajax"
+			resource-url="polls/regist"
+			method="post"
+			content-type="application/json">
+		</custom-ajax>
+
+		<div class="info-container">
+			<div class="horizontal">
+				<paper-input class="content" label="Title" value="{{name}}"></paper-input>
+				<drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+			</div>
+
+			<paper-input class="content" label="Description" value="{{description}}"></paper-input>
+
+			<div class="horizontal">
+				<paper-input class="content" label="Start Date" value="{{fromDate}}" type="date"></paper-input>
+				<paper-input class="content" label="Due Date" value="{{toDate}}" type="date"></paper-input>
+			</div>
+		</div>
+
+		<div id="sheet-container" class="sheet-container">
+			<new-poll-sheet></new-poll-sheet>
+		</div>
+
+		<paper-button on-tap="appendNewPollSheet">add</paper-button>
+		<paper-button on-tap="registPoll">regist</paper-button>
+
 	</template>
 	<script>
 		Polymer({
 			is: 'new-poll',
 
-			properties: {
-
-				name: {
-					type: String,
-					notify: true
-				},
-
-				description: {
-					type: String,
-					notify: true
-				},
-
-				categoryId: {
-					type: Number,
-					notify: true
-				},
-
-				fromDate: {
-					type: String,
-					notify: true
-				},
-
-				toDate: {
-					type: String,
-					notify: true
-				},
-
-				step: {
-					type: String,
-					value: 'basic'
-				}
+			listeners: {
+				'regist-poll-ajax.response': 'pollAjaxResponsed'
 			},
 
-			ready: function() {
-				document.addEventListener('new-poll-registed', function() {
-					this.$['basic'].clearValue();
-					this.$['detail'].clearValue();
-					this.moveToDetail();
-				}.bind(this))
+			appendNewPollSheet: function() {
+				var sheetContainer = this.$['sheet-container'];
+				var sheetList = sheetContainer.children;
 
-				document.addEventListener('swipe-to-right', function() {
-					if(this.step == 'detail') {
-						this.moveToBasic();
-					}
-				}.bind(this));
+				for(var i = 0; i < sheetList.length; i++) {
+					sheetList[i].closeCollapse();
+				};
 
-				document.addEventListener('swipe-to-left', function() {
-					if(this.step == 'basic') {
-						this.moveToDetail();
-					}
-				}.bind(this));
+				var newPollSheet = document.createElement('new-poll-sheet');
+				sheetContainer.appendChild(newPollSheet);
 			},
 
-			moveToBasic: function() {
-				this.step = 'basic';
+			registPoll: function() {
+				var sheetContainer = this.$['sheet-container'];
+				var questionList = [];
+
+				var sheetList = sheetContainer.children;
+
+				for(var i = 0; i < sheetList.length; i++) {
+					questionList.push(sheetList[i].returnValues());
+				};
+
+				var registPollAjax = this.$['regist-poll-ajax'];
+				registPollAjax.body = {
+					name: this.name,
+					categoryId: this.categoryId,
+					description: this.description,
+					fromDate: this.fromDate,
+					toDate: this.toDate,
+					questionList: questionList
+				};
+				registPollAjax.generateRequest();
 			},
 
-			moveToDetail: function() {
-				if(this.$['basic'].validate()) {
-					this.basicInfo = this.$['basic'].getBasicInfo();
-					this.step = 'detail';
+			pollAjaxResponsed: function(event) {
+				if(event.currentTarget.lastResponse) {
+					page('/my_polls');
 				}
 			}
 		})
