@@ -1,4 +1,4 @@
-<dom-module id="accordion-list">
+<dom-module id="accordion-my-poll-list">
 	<template>
 		<style>
 			.title {
@@ -6,9 +6,7 @@
 				border-top: 1px solid #000000;
 				border-left: 1px solid #000000;
 				border-right: 1px solid #000000;
-
 			}
-
 			.title iron-icon {
 				padding-right: 2%;
 			}
@@ -47,7 +45,7 @@
 	</template>
 	<script>
 		Polymer({
-			is: 'accordion-list',
+			is: 'accordion-my-poll-list',
 
 			properties: {
 				item: {
@@ -57,6 +55,11 @@
 				arrowIcon: {
 					type: String,
 					value: 'icons:arrow-drop-down'
+				},
+
+				detailRoute: {
+					type: String,
+					value: '/my_poll_detail/'
 				}
 			},
 
@@ -67,7 +70,8 @@
 			},
 
 			pollDetailTapped: function() {
-				page('/my_poll_detail', this.item.name);
+				this.fire('my-poll-detail-selected', { poll: this.item });
+				page('/my_poll_detail/' + this.item.id);
 			}
 		})
 	</script>

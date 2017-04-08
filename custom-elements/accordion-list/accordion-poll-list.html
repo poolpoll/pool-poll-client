@@ -1,0 +1,73 @@
+<dom-module id="accordion-poll-list">
+	<template>
+		<style>
+			.title {
+				@apply(--layout-horizontal);
+				border-top: 1px solid #000000;
+				border-left: 1px solid #000000;
+				border-right: 1px solid #000000;
+			}
+			.title iron-icon {
+				padding-right: 2%;
+			}
+			.flex {
+				@apply(--layout-flex);
+			}
+			.content {
+				border-bottom: 1px solid #000000;
+				border-right: 1px solid #000000;
+				border-left: 1px solid #000000;
+				border-top: none;
+				@apply(--layout-vertical);
+			}
+			.content span {
+				font-size: 9pt;
+				padding-left: 4%;
+				padding-top: 2%;
+				padding-bottom: 2%;
+			}
+			.content span iron-icon {
+				padding-right: 2%;
+			}
+		</style>
+		<paper-item class="title" on-tap="_openDetail">
+			<iron-icon icon="social:poll"></iron-icon>
+			<span class="flex">[[item.name]]</span>
+			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+		</paper-item>
+
+		<iron-collapse id="collapse" class="content">
+			<span><iron-icon icon="icons:description"></iron-icon>[[item.description]]</span>
+			<span><iron-icon icon="icons:today"></iron-icon>[[item.fromDate]] ~ [[item.toDate]]</span>
+			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
+			<paper-button on-tap="pollDetailTapped">detail</paper-button>
+		</iron-collapse>
+	</template>
+	<script>
+		Polymer({
+			is: 'accordion-poll-list',
+
+			properties: {
+				item: {
+					type: Object
+				},
+
+				arrowIcon: {
+					type: String,
+					value: 'icons:arrow-drop-down'
+				}
+			},
+
+			_openDetail: function() {
+				var collapse = this.$['collapse'];
+				collapse.toggle();
+				this.arrowIcon = (collapse.opened) ? 'icons:arrow-drop-up' : 'icons:arrow-drop-down';
+			},
+
+			pollDetailTapped: function() {
+				this.fire('poll-list-selected', { poll: this.item });
+				page('/poll_list_detail/' + this.item.id);
+			}
+		})
+	</script>
+</dom-module>

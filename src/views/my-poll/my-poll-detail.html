@@ -1,0 +1,54 @@
+<dom-module id="my-poll-detail">
+  <template>
+    <custom-ajax
+      id="get-questions-ajax"
+      method="GET"
+      last-response="{{questions}}">
+    </custom-ajax>
+    <template is="dom-repeat" items="[[questions]]">
+      <div id="name">[[item.name]]</div>
+
+      <template is="dom-repeat" items="[[item.options]]">
+        <chart-bar id="bar-chart" data="[[item.count]]" tag="[[item.name]]"></chart-bar>
+      </template>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-poll-detail',
+
+      properties: {
+        poll: {
+          type: Object,
+          observer: '_pollChanged'
+        },
+
+        questions: {
+          type: Array,
+          observer: '_questoinsChanged'
+        }
+      },
+
+      ready: function() {
+        document.addEventListener('my-poll-detail-selected', function(event) {
+          this.pollDetailSelected(event.detail.poll);
+        }.bind(this));
+      },
+
+      pollDetailSelected: function(poll) {
+        this.poll = poll;
+      },
+
+      _pollChanged: function(poll) {
+        app.title = poll.name;
+        var questionsAjax = this.$['get-questions-ajax'];
+        questionsAjax.resourceUrl = 'questions/' + poll.id;
+        questionsAjax.generateRequest();
+      },
+
+      _questoinsChanged: function(questions) {
+        console.log(questions);
+      }
+    })
+  </script>
+</dom-module>

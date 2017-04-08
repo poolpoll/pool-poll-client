@@ -1,0 +1,69 @@
+<dom-module id="poll-list-detail">
+  <template>
+    <style>
+      .container {
+        padding: 2%;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+      .unit-question {
+        width: 95%;
+      }
+    </style>
+    <custom-ajax
+      id="get-questions-ajax"
+      method="GET"
+      last-response="{{questions}}">
+    </custom-ajax>
+
+    <template is="dom-repeat" items="[[questions]]">
+      <div class="container">
+        <paper-card class="unit-question">
+          <div id="name">[[item.name]]</div>
+
+          <template is="dom-repeat" items="[[item.options]]">
+            <chart-bar id="bar-chart" data="[[item.count]]" name="[[item.name]]"></chart-bar>
+          </template>
+        </paper-card>
+      </div>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-list-detail',
+
+      properties: {
+        poll: {
+          type: Object,
+          observer: '_pollChanged'
+        },
+
+        questions: {
+          type: Array,
+          observer: '_questoinsChanged'
+        }
+      },
+
+      ready: function() {
+        document.addEventListener('poll-list-selected', function(event) {
+          this.pollDetailSelected(event.detail.poll);
+        }.bind(this));
+      },
+
+      pollDetailSelected: function(poll) {
+        this.poll = poll;
+      },
+
+      _pollChanged: function(poll) {
+        app.title = poll.name;
+        var questionsAjax = this.$['get-questions-ajax'];
+        questionsAjax.resourceUrl = 'questions/' + poll.id;
+        questionsAjax.generateRequest();
+      },
+
+      _questoinsChanged: function(questions) {
+        console.log(questions);
+      }
+    })
+  </script>
+</dom-module>

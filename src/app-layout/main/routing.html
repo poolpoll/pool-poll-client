@@ -25,15 +25,25 @@
 		app.title = 'My Polls';
 	});
 
-	page('/my_poll_detail/:poll_id', function(title) {
+	page('/my_poll_detail/:pollId', function(ctx) {
+		app.pollId = ctx.params.pollId;
 		app.route = 'my_poll_detail';
-		app.title = title;
-	})
+	});
+
+	page('/polls', function() {
+		app.route = 'polls';
+		app.title = 'Polls';
+	});
+
+	page('/poll_list_detail/:pollId', function(ctx) {
+		app.pollId = ctx.params.pollId;
+		app.route = 'poll_list_detail';
+	});
 
 	page('/profile', function() {
 		app.route = 'profile';
 		app.title = 'Profile';
-	})
+	});
 
 	page({
 		hashbang: true

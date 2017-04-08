@@ -1,0 +1,48 @@
+<dom-module id="poll-list">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+    </style>
+
+    <custom-ajax
+			id="poll-ajax"
+		 	handle-as="json"
+		 	resource-url="polls"
+		 	last-response="{{pollList}}">
+ 		</custom-ajax>
+
+    <poll-list-header></poll-list-header>
+
+    <template is="dom-repeat" items="[[pollList]]">
+			<accordion-poll-list item="[[item]]"></accordion-poll-list>
+		</template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-list',
+
+      properties: {
+      },
+
+      ready: function() {
+        document.addEventListener('condition-changed', function(event) {
+          this.conditionChanged(event);
+        }.bind(this));
+      },
+
+      conditionChanged: function(event) {
+        var searchCondition = {};
+        if(event.detail.name) searchCondition.name = event.detail.name;
+        if(event.detail.categoryId) searchCondition.categoryId = event.detail.categoryId;
+
+        var pollAjax = this.$['poll-ajax'];
+        pollAjax.params = searchCondition;
+        pollAjax.generateRequest();
+      },
+    })
+  </script>
+</dom-module>

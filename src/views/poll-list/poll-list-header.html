@@ -1,0 +1,49 @@
+<dom-module id="poll-list-header">
+  <template>
+    <style>
+      .search-container {
+        @apply(--layout-horizontal)
+        @apply(--layout-flex);
+      }
+      .common-padding {
+        padding-left: 2%;
+        padding-right: 2%;
+      }
+    </style>
+    <div class="search-container">
+      <paper-input class="common-padding" label="Name" value="{{name}}"></paper-input>
+      <drop-down-list class="common-padding" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-list-header',
+
+      properties: {
+        name: {
+          type: String,
+          observer: '_nameChanged'
+        },
+
+        categoryId: {
+          type: Number,
+          observer: '_categoryChanged'
+        }
+      },
+
+      _nameChanged: function(name) {
+        this.fire('condition-changed', {
+          name: name,
+          categoryId: this.categoryId
+        });
+      },
+
+      _categoryChanged: function(categoryId) {
+        this.fire('condition-changed', {
+          name: this.name,
+          categoryId: categoryId
+        });
+      }
+    })
+  </script>
+</dom-module>
