@@ -29,18 +29,23 @@
 			.content span iron-icon {
 				padding-right: 2%;
 			}
+			.join-btn {
+		    background-color: var(--paper-green-400);
+				color: white;
+		  }
 		</style>
 		<paper-item class="title" on-tap="_openDetail">
 			<iron-icon icon="social:poll"></iron-icon>
 			<span class="flex">[[item.name]]</span>
-			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+			<!-- <iron-icon icon="[[arrowIcon]]"></iron-icon> -->
 		</paper-item>
 
 		<iron-collapse id="collapse" class="content">
 			<span><iron-icon icon="icons:description"></iron-icon>[[item.description]]</span>
-			<span><iron-icon icon="icons:today"></iron-icon>[[item.fromDate]] ~ [[item.toDate]]</span>
+			<span><iron-icon icon="icons:today"></iron-icon>시작일: [[item.fromDate]]</span>
+			<span><iron-icon icon="icons:today"></iron-icon>종료일: [[item.toDate]]</span>
 			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
-			<paper-button on-tap="pollDetailTapped">detail</paper-button>
+			<paper-button class="join-btn" on-tap="joinBtnTapped">join</paper-button>
 		</iron-collapse>
 	</template>
 	<script>
@@ -64,9 +69,9 @@
 				this.arrowIcon = (collapse.opened) ? 'icons:arrow-drop-up' : 'icons:arrow-drop-down';
 			},
 
-			pollDetailTapped: function() {
-				this.fire('poll-list-selected', { poll: this.item });
-				page('/poll_list_detail/' + this.item.id);
+			joinBtnTapped: function() {
+				page('/poll_join');
+				this.fire('poll-join-selected', this.item);
 			}
 		})
 	</script>

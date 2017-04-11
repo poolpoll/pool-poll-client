@@ -9,6 +9,7 @@
 
     <custom-ajax
 			id="poll-ajax"
+      auto
 		 	handle-as="json"
 		 	resource-url="polls"
 		 	last-response="{{pollList}}">
@@ -25,9 +26,6 @@
     Polymer({
       is: 'poll-list',
 
-      properties: {
-      },
-
       ready: function() {
         document.addEventListener('condition-changed', function(event) {
           this.conditionChanged(event);
@@ -41,7 +39,6 @@
 
         var pollAjax = this.$['poll-ajax'];
         pollAjax.params = searchCondition;
-        pollAjax.generateRequest();
       },
     })
   </script>

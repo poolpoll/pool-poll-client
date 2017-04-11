@@ -2,17 +2,17 @@
   <template>
     <style>
       .search-container {
-        @apply(--layout-horizontal)
-        @apply(--layout-flex);
+        @apply(--layout-horizontal);
       }
-      .common-padding {
-        padding-left: 2%;
-        padding-right: 2%;
-      }
+      .content {
+				@apply(--layout-flex);
+				padding-left: 2%;
+				padding-right: 2%;
+			}
     </style>
     <div class="search-container">
-      <paper-input class="common-padding" label="Name" value="{{name}}"></paper-input>
-      <drop-down-list class="common-padding" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+      <paper-input class="content" label="Name" value="{{name}}"></paper-input>
+      <drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
     </div>
   </template>
   <script>

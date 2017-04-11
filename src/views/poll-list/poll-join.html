@@ -1,0 +1,83 @@
+<dom-module id="poll-join">
+  <template>
+    <style>
+      .flex {
+        @apply(--layout-flex);
+      }
+      .vertical {
+        @apply(--layout-vertical);
+      }
+    </style>
+    <custom-ajax
+      id="get-questions-ajax"
+      method="get"
+      last-response="{{questionList}}">
+    </custom-ajax>
+
+    <neon-animated-pages class="vertical flex" id="container" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]" selected="[[selectedPage]]">
+    </neon-animated-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-join',
+
+      properties: {
+        selectedPage: {
+          type: Number,
+          value: 0
+        },
+
+        poll: {
+          type: Object,
+          observer: '_pollChanged'
+        },
+
+        questionList: {
+          type: Array,
+          observer: '_questionListChanged'
+        }
+      },
+
+      ready: function() {
+        document.addEventListener('poll-join-selected', function(event) {
+          this.poll = event.detail;
+        }.bind(this));
+
+        document.addEventListener('poll-join-next', function(event) {
+          this.pollJoinNext();
+        }.bind(this));
+
+        document.addEventListener('poll-join-previous', function(event) {
+          this.pollJoinPrevious();
+        }.bind(this));
+      },
+
+      _pollChanged: function(poll) {
+        var getQuestionsAjax = this.$['get-questions-ajax'];
+        getQuestionsAjax.resourceUrl = 'questions/' + poll.id;
+        getQuestionsAjax.generateRequest();
+      },
+
+      _questionListChanged: function(questionList) {
+        questionList.forEach(function(questionInfo) {
+          var pollJoinDetail = document.createElement('poll-join-detail');
+          pollJoinDetail.questionInfo = questionInfo;
+          this.$['container'].appendChild(pollJoinDetail);
+        }.bind(this));
+      },
+
+      pollJoinNext: function() {
+        this.entryAnimation = 'slide-from-right-animation';
+        this.exitAnimation = 'slide-left-animation';
+
+        if(this.selectedPage < this.questionList.length - 1) this.selectedPage++;
+      },
+
+      pollJoinPrevious: function() {
+        this.entryAnimation = 'slide-from-left-animation';
+        this.exitAnimation = 'slide-right-animation';
+        if(this.selectedPage > 0) this.selectedPage--;
+      }
+    })
+  </script>
+</dom-module>

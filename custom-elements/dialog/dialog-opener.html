@@ -66,6 +66,7 @@
 
 			closeDialog: function() {
 				if(this.closeCallback) this.closeCallback();
+				var container = this.$['dialog'];
 				container.removeChild(this.content);
 				this.$['dialog'].close();
 			},

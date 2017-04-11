@@ -1,0 +1,75 @@
+<dom-module id="poll-join-detail">
+  <template>
+    <style>
+      .flex {
+        @apply(--layout-flex);
+      }
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .vertical {
+        @apply(--layout-vertical);
+      }
+      .container {
+        padding: 3%;
+      }
+      #check-box {
+        padding: 5%;
+      }
+    </style>
+    <neon-animatable class="container">
+      <paper-item>
+        <iron-icon icon="av:playlist-add-check"></iron-icon>
+        <span class="container">[[questionInfo.name]]</span>
+      </paper-item>
+
+      <div class="vertical container" id="checkbox-list">
+        <template is="dom-repeat" items="[[questionInfo.options]]">
+          <paper-radio-button id="check-box" on-tap="_checkBoxTapped" noink>[[item.name]]</paper-radio-button>
+        </template>
+      </div>
+
+      <div class="horizontal">
+        <paper-button on-tap="nextBtnTapped">next</paper-button>
+        <paper-button on-tap="previousBtnTapped">previous</paper-button>
+      </div>
+    </neon-animatable>
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-join-detail',
+
+      properties: {
+        questionInfo: {
+          type: Object
+        }
+      },
+
+      nextBtnTapped: function() {
+        this.fire('poll-join-next');
+      },
+
+      previousBtnTapped: function() {
+        this.fire('poll-join-previous');
+      },
+
+      _checkBoxTapped: function(event) {
+        var containerElements = this.$['checkbox-list'].children;
+        var checkboxList = [];
+        var trueCount = 0;
+
+        for(var i = 0; i < containerElements.length; i++) {
+          if(containerElements[i].id == 'check-box') {
+            checkboxList.push(containerElements[i]);
+          };
+        };
+
+        checkboxList.forEach(function(checkbox) {
+          if(checkbox.active) trueCount++;
+        });
+
+        if(trueCount > this.questionInfo.multyCheckLimit) event.target.active = false;
+      }
+    })
+  </script>
+</dom-module>

@@ -1,8 +1,16 @@
 <dom-module id="drop-down-list">
 	<template>
 		<style>
+			.horizontal {
+				@apply(--layout-horizontal);
+			}
 			.drop-down-menu {
 				@apply(--layout-vertical);
+			}
+			.mini-icon {
+				margin-top: 13%;
+				width: 20%;
+				height: 20%;
 			}
 		</style>
 		<custom-ajax
@@ -11,13 +19,16 @@
 		 	last-response="{{items}}">
 	 	</custom-ajax>
 
-		<paper-dropdown-menu class="drop-down-menu" id="drop-down-menu" label="[[label]]" selected-item-label="[[selectedItemLabel]]" value="[[value]]">
-		  <paper-listbox class="dropdown-content">
-		  	<template is="dom-repeat" items="[[items]]">
-			    <paper-item item-id="[[item.id]]" on-tap="itemSelected">[[item.name]]</paper-item>
-		  	</template>
-		  </paper-listbox>
-		</paper-dropdown-menu>	
+		<div class="horizontal">
+			<paper-dropdown-menu class="drop-down-menu" id="drop-down-menu" label="[[label]]" selected-item-label="[[selectedItemLabel]]" value="[[value]]">
+			  <paper-listbox class="dropdown-content">
+			  	<template is="dom-repeat" items="[[items]]">
+				    <paper-item item-id="[[item.id]]" on-tap="itemSelected">[[item.name]]</paper-item>
+			  	</template>
+			  </paper-listbox>
+			</paper-dropdown-menu>
+			<paper-icon-button class="mini-icon" icon="icons:close" on-tap="_clearButtonTapped"></paper-icon-button>
+		</div>
 	</template>
 	<script>
 		Polymer({
@@ -60,6 +71,12 @@
 				var item = event.model.item;
 				this.selectedItemLabel = item.name;
 				this.value = item.id;
+			},
+
+			_clearButtonTapped: function() {
+				var dropDownMenu = this.$['drop-down-menu'];
+				dropDownMenu._setSelectedItem(null);
+				this.value = null;
 			}
 		})
 	</script>

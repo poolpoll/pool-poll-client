@@ -1,9 +1,6 @@
 <dom-module id="new-poll">
 	<template>
 		<style>
-			.info-container {
-				background-color: white;
-			}
 			.horizontal {
 				@apply(--layout-horizontal);
 			}
@@ -24,18 +21,16 @@
 			content-type="application/json">
 		</custom-ajax>
 
-		<div class="info-container">
-			<div class="horizontal">
-				<paper-input class="content" label="Title" value="{{name}}"></paper-input>
-				<drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
-			</div>
+		<div class="horizontal">
+			<paper-input class="content" label="Title" value="{{name}}"></paper-input>
+			<drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+		</div>
 
-			<paper-input class="content" label="Description" value="{{description}}"></paper-input>
+		<paper-input class="content" label="Description" value="{{description}}"></paper-input>
 
-			<div class="horizontal">
-				<paper-input class="content" label="Start Date" value="{{fromDate}}" type="date"></paper-input>
-				<paper-input class="content" label="Due Date" value="{{toDate}}" type="date"></paper-input>
-			</div>
+		<div class="horizontal">
+			<paper-input class="content" label="Start Date" value="{{fromDate}}" type="date"></paper-input>
+			<paper-input class="content" label="Due Date" value="{{toDate}}" type="date"></paper-input>
 		</div>
 
 		<div id="sheet-container" class="sheet-container">

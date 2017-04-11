@@ -79,7 +79,7 @@
 				if(response) {
 					app.route = 'sign_in';
 					app.title = 'Sign In';
-					this.fire('toast-toggle', 'Success to Sign Up');
+					this.fire('dialog-close');
 				} else {
 					this.fire('toast-toggle', 'Faield to Sign Up');
 				}

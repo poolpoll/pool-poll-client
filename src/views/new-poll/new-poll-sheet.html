@@ -4,12 +4,19 @@
       .flex {
         @apply(--layout-flex);
       }
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .vertical {
+        @apply(--layout-vertical);
+      }
+      .center {
+        @apply(--layout-center);
+        height: 100px;
+      }
       paper-item {
         padding-left: 2%;
         padding-right: 2%;
-        background-color: #c5e4f7;
-      }
-      .content {
         background-color: white;
       }
       #opt-container paper-input {
@@ -20,20 +27,44 @@
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
+      div paper-toggle-button {
+        padding-left: 3%;
+        width: 80%;
+      }
+      div paper-input {
+        padding-right: 3%;
+        width: 20%;
+      }
     </style>
 
-    <paper-item class="question-box" on-tap="_toggleCollapse">
-			<paper-input class="flex" label="Question" value="{{question}}"></paper-input>
-			<iron-icon icon="[[arrowIcon]]"></iron-icon>
+    <paper-item>
+      <paper-input class="flex" label="Question" value="{{question}}"></paper-input>
+      <paper-icon-button icon="[[arrowIcon]]" on-tap="_toggleCollapse"></paper-icon-button>
 		</paper-item>
 
-    <iron-collapse id="collapse" class="content" opened>
+    <iron-collapse id="collapse" opened>
       <iron-swipeable-container id="opt-container">
         <div class="opt-item">
           <paper-input class="flex" label="Option"></paper-input>
         </div>
       </iron-swipeable-container>
-      <paper-button on-tap="_appendOption">add</paper-button>
+
+      <div class="vertical flex">
+        <div class="horizontal">
+          <paper-toggle-button checked="{{multyCheck}}">Multy Check</paper-toggle-button>
+          <paper-input
+            type="number"
+            label="Limit"
+            max="{{optCount}}"
+            min="1"
+            auto-validate
+            error-message="Invalid Input!"
+            value="{{multyCheckLimit}}"
+            disabled="{{!multyCheck}}">
+        </paper-input>
+        </div>
+        <paper-button on-tap="_appendOption">add</paper-button>
+      </div>
     </iron-collapse>
 
   </template>
@@ -45,7 +76,23 @@
         arrowIcon: {
 					type: String,
 					value: 'icons:arrow-drop-down'
-				}
+				},
+
+        multyCheck: {
+          type: Boolean,
+          value: false,
+          observer: '_multyCheckChanged'
+        },
+
+        multyCheckLimit: {
+          type: Number,
+          value: 1
+        },
+
+        optCount: {
+          type: Number,
+          value: 1
+        }
       },
 
       _toggleCollapse: function() {
@@ -71,6 +118,17 @@
 
         optItem.appendChild(input);
         optContainer.appendChild(optItem);
+        this.optCount = optContainer.childElementCount;
+        if(this.multyCheck) this.multyCheckLimit = this.optCount;
+      },
+
+      _multyCheckChanged: function(multyCheck) {
+        if(multyCheck) {
+          this.multyCheckLimit = this.optCount;
+        } else {
+          this.multyCheckLimit = null;
+        }
+
       },
 
       returnValues: function() {
@@ -83,7 +141,9 @@
         };
 
         return {
-          question: this.question,
+          name: this.question,
+          multyCheck: this.multyCheck,
+          multyCheckLimit: (this.multyCheckLimit) ? this.multyCheckLimit : 1,
           options: options
         };
       }

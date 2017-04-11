@@ -99,7 +99,7 @@
 		<div class="favorite-list">
 			<section>
 			  <paper-dialog-scrollable>
-					<template is="dom-repeat" items="[[userCategories]]">
+					<template is="dom-repeat" items="{{userCategories}}">
 						<iron-swipeable-container>
 						  <paper-item id="[[item.id]]">[[item.name]] / [[item.description]]</paper-item>
 						</iron-swipeable-container>
@@ -171,13 +171,14 @@
 				addDialog.userCategories = this.userCategories;
 				this.fire('dialog-open', {
 					content: addDialog,
-					openCallback: null,
-					closeCallback: null,
+					closeCallback: function() {
+						this.fire('category-changed');
+					},
 					dialogConfig: {
 						title: 'Categories',
 						modal: true,
-						entryAnimation: 'slide-from-top-animation',
-						exitAnimation: 'slide-up-animation'
+						entryAnimation: 'slide-from-left-animation',
+						exitAnimation: 'slide-right-animation'
 					}
 				});
 			},
