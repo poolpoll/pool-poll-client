@@ -3,10 +3,6 @@
 <dom-module id="chart-bar">
   <template>
     <style>
-      #chart-section {
-        height: 20px;
-        width: 100%;
-      }
       .horizontal {
         @apply(--layout-horizontal);
         @apply(--layout-flex);
@@ -15,6 +11,10 @@
         @apply(--layout-horizontal);
         @apply(--layout-flex);
         padding: 3%;
+      }
+      .chart-section svg {
+        height: 20px;
+        width: 100%;
       }
       .flex {
         @apply(--layout-flex);
@@ -27,7 +27,8 @@
     </div>
 
     <div class="chart-section">
-      <svg id="chart-section"></svg><paper-checkbox></paper-checkbox>
+      <svg id="chart-section"></svg>
+      <paper-checkbox></paper-checkbox>
     </div>
   </template>
   <script>
