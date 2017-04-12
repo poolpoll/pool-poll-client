@@ -14,8 +14,7 @@
       last-response="{{questionList}}">
     </custom-ajax>
 
-    <neon-animated-pages class="vertical flex" id="container" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]" selected="[[selectedPage]]">
-    </neon-animated-pages>
+    <iron-pages class="vertical flex" id="container" selected="[[selectedPage]]"></iron-pages>
   </template>
   <script>
     Polymer({
@@ -67,16 +66,35 @@
       },
 
       pollJoinNext: function() {
-        this.entryAnimation = 'slide-from-right-animation';
-        this.exitAnimation = 'slide-left-animation';
-
-        if(this.selectedPage < this.questionList.length - 1) this.selectedPage++;
+        if(this.selectedPage < this.questionList.length - 1) {
+          this.selectedPage++;
+        } else if (this.selectedPage == this.questionList.length - 1) {
+          if(this.checkValidations()) this.saveAnswers();
+        }
       },
 
       pollJoinPrevious: function() {
-        this.entryAnimation = 'slide-from-left-animation';
-        this.exitAnimation = 'slide-right-animation';
         if(this.selectedPage > 0) this.selectedPage--;
+      },
+
+      checkValidations: function() {
+        var pollJoinDetails = this.$['container'].children;
+
+        for(var i = 0; i <= this.questionList.length - 1; i++) {
+          if(!pollJoinDetails[i].checkValidation()) {
+            this.selectedPage = i;
+            return false;
+          }
+        }
+        return true;
+      },
+
+      saveAnswers: function() {
+        var pollJoinDetails = this.$['container'].children;
+
+        for(var i=0; i <= this.questionList.length - 1; i++) {
+          pollJoinDetails[i].saveAnswer();
+        };
       }
     })
   </script>
