@@ -1,0 +1,57 @@
+<dom-module id="poll-chart-bar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+    </style>
+    <div id="chart-section"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-chart-bar',
+
+      properties: {
+        questionDetail: {
+          type: Array,
+          observer: '_questionDetailChanged'
+        }
+      },
+
+      _questionDetailChanged: function(questionDetail) {
+        questionDetail.forEach(function(question) {
+          this.setBarChart(question);
+        }.bind(this));
+      },
+
+      setBarChart: function(question) {
+        var label = question.name;
+        var labels = [];
+        var bgColors = [];
+        var data = [];
+
+        question.options.forEach(function(option) {
+          labels.push(option.name);
+          data.push(option.count);
+        });
+
+        var canvas = document.createElement('canvas');
+        this.$['chart-section'].appendChild(canvas);
+
+        var barChart = new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: label,
+              data: data,
+              borderWidth: 1
+            }]
+          }
+        });
+      }
+    })
+  </script>
+</dom-module>

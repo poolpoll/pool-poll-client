@@ -4,15 +4,19 @@
       .search-container {
         @apply(--layout-horizontal);
       }
-      .content {
+      .flex {
 				@apply(--layout-flex);
-				padding-left: 2%;
-				padding-right: 2%;
 			}
+      paper-input {
+        padding-right: 1%;
+      }
+      drop-down-list {
+        padding-left: 1%;
+      }
     </style>
     <div class="search-container">
-      <paper-input class="content" label="Name" value="{{name}}"></paper-input>
-      <drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+      <paper-input class="flex" label="Name" value="{{name}}"></paper-input>
+      <drop-down-list class="flex" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
     </div>
   </template>
   <script>

@@ -13,6 +13,9 @@
 			.flex {
 				@apply(--layout-flex);
 			}
+			.horizontal {
+				@apply(--layout-horizontal);
+			}
 			.content {
 				border-bottom: 1px solid #000000;
 				border-right: 1px solid #000000;
@@ -29,10 +32,6 @@
 			.content span iron-icon {
 				padding-right: 2%;
 			}
-			.join-btn {
-		    background-color: var(--paper-green-400);
-				color: white;
-		  }
 		</style>
 		<paper-item class="title" on-tap="_openDetail">
 			<iron-icon icon="social:poll"></iron-icon>
@@ -45,7 +44,10 @@
 			<span><iron-icon icon="icons:today"></iron-icon>시작일: [[item.fromDate]]</span>
 			<span><iron-icon icon="icons:today"></iron-icon>종료일: [[item.toDate]]</span>
 			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
-			<paper-button class="join-btn" on-tap="joinBtnTapped">join</paper-button>
+			<div class="horizontal">
+				<paper-button class="flex" on-tap="showDetailBtnTapped">detail</paper-button>
+				<paper-button class="flex" on-tap="joinBtnTapped">join</paper-button>
+			</div>
 		</iron-collapse>
 	</template>
 	<script>
@@ -69,9 +71,14 @@
 				this.arrowIcon = (collapse.opened) ? 'icons:arrow-drop-up' : 'icons:arrow-drop-down';
 			},
 
+			showDetailBtnTapped: function() {
+				this.fire('poll-detail-selected', { pollId: this.item.id });
+				page('/poll_charts/' + this.item.id);
+			},
+
 			joinBtnTapped: function() {
-				page('/poll_join');
 				this.fire('poll-join-selected', this.item);
+				page('/poll_join/' + this.item.id);
 			}
 		})
 	</script>

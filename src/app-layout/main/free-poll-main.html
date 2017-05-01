@@ -7,7 +7,7 @@
 				display: block;
 			}
 		</style>
-		<paper-drawer-panel id="drawer">
+		<paper-drawer-panel id="drawer" right-drawer disable-swipe>
 		  <paper-header-panel id="side-menu" drawer>
 	    	<free-poll-menu-list></free-poll-menu-list>
 		  </paper-header-panel>
@@ -20,10 +20,10 @@
 					<!-- view list -->
 					<main-page route="main"></main-page>
 					<my-poll route="my_polls"></my-poll>
-					<my-poll-detail route="my_poll_detail"></my-poll-detail>
 					<new-poll route="new_poll"></new-poll>
 					<poll-list route="polls"></poll-list>
-					<poll-join route="poll-join"></poll-join>
+					<poll-join route="poll_join"></poll-join>
+					<poll-charts route="poll_charts"></poll-charts>
 					<profile-view route="profile"></profile-view>
 					<sign-in route="sign_in"></sign-in>
 				</iron-pages>
@@ -35,6 +35,7 @@
 		<paper-toast id="bottom-toast" class="fit-bottom" text="[[toastMsg]]"></paper-toast>
 		<dialog-opener id="dialog-opener"></dialog-opener>
 		<custom-localstorage></custom-localstorage>
+		<message-dialog></message-dialog>
 	</template>
 
 	<script>

@@ -18,13 +18,6 @@
       }
     </style>
 
-    <custom-ajax
-      id="add-option-count-ajax"
-      resource-url="options/add"
-      method="POST"
-      content-type="application/json">
-    </custom-ajax>
-
     <paper-item>
       <iron-icon icon="av:playlist-add-check"></iron-icon>
       <span class="container">[[questionInfo.name]]</span>
@@ -32,12 +25,11 @@
 
     <paper-card class="vertical container" id="checkbox-list">
       <template is="dom-repeat" items="[[questionInfo.options]]">
-        <paper-radio-button id="check-box" option-id="[[item.id]]" on-tap="_checkBoxTapped" noink>[[item.name]]</paper-radio-button>
+        <paper-radio-button id="check-box" option-id="[[item.id]]" current-count="[[item.count]]" on-tap="_checkBoxTapped" noink>[[item.name]]</paper-radio-button>
       </template>
     </paper-card>
 
     <div class="horizontal">
-      <paper-button on-tap="checkQuestionInfo">+</paper-button>
       <paper-button on-tap="nextBtnTapped">next</paper-button>
       <paper-button on-tap="previousBtnTapped">previous</paper-button>
     </div>
@@ -51,10 +43,7 @@
           type: Object
         }
       },
-      checkQuestionInfo: function() {
-        console.log(this.questionInfo.options);
-      },
-
+      
       nextBtnTapped: function() {
         this.fire('poll-join-next');
       },
@@ -93,14 +82,15 @@
         return (this._getCheckBoxActveCount() == 0) ? false : true;
       },
 
-      saveAnswer: function() {
-        var addOptionCountAjax = this.$['add-option-count-ajax'];
+      getAnswer: function() {
+        var answerIds = [];
         this._getCheckBoxList().forEach(function(checkBox) {
           if(checkBox.active) {
-            addOptionCountAjax.body = { id: checkBox.optionId };
-            addOptionCountAjax.generateRequest();
+            answerIds.push(checkBox.optionId);
           }
-        })
+        });
+
+        return answerIds;
       }
     })
   </script>

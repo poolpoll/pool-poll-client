@@ -1,0 +1,110 @@
+<script src="../../../bower_components/chart.js/dist/Chart.bundle.js"></script>
+
+<dom-module id="poll-charts">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-flex);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .vertical {
+        @apply(--layout-vertical);
+      }
+      .justified {
+        @apply(--layout-justified);
+      }
+      .info-card {
+        background-color: white;
+        padding: 3%;
+        @apply(--layout-flex);
+      }
+
+      .subtitle {
+        font-size: 14px;
+        opacity: 0.5;
+        padding-left: 5%;
+      }
+      .date-range {
+        font-size: 14px;
+        opacity: 0.5;
+        padding-right: 5%;
+      }
+      iron-pages {
+        padding: 3%;
+      }
+    </style>
+
+    <custom-ajax
+      id="get-poll-detail-ajax"
+      last-response="{{pollDetail}}">
+    </custom-ajax>
+
+    <custom-ajax
+      id="get-question-detail-ajax"
+      last-response="{{questionDetail}}">
+    </custom-ajax>
+
+    <div class="horizontal justified flex padding">
+      <paper-icon-button icon="icons:list" type="table" on-tap="typeChanged"></paper-icon-button>
+      <paper-icon-button icon="editor:insert-chart" type="bar" on-tap="typeChanged"></paper-icon-button>
+      <paper-icon-button icon="editor:pie-chart-outlined" type="pie" on-tap="typeChanged"></paper-icon-button>
+      <paper-icon-button icon="editor:show-chart" type="line" on-tap="typeChanged"></paper-icon-button>
+    </div>
+
+    <div class="info-card">
+      <span class="title">[[pollDetail.name]]</span>
+      <span class="subtitle">[[pollDetail.description]]</span></br>
+      <span class="date-range">[[pollDetail.fromDate]] - [[pollDetail.toDate]]</span>
+    </div>
+
+    <iron-pages attr-for-selected="type" selected="{{type}}">
+      <poll-chart-table type="table" question-detail="[[questionDetail]]"></poll-chart-table>
+      <poll-chart-bar type="bar" question-detail="[[questionDetail]]"></poll-chart-bar>
+      <poll-chart-pie type="pie" question-detail="[[questionDetail]]"></poll-chart-pie>
+      <poll-chart-line type="line" question-detail="[[questionDetail]]"></poll-chart-line>
+    </iron-pages>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-charts',
+
+      properties: {
+        type: {
+          type: String,
+          value: 'table'
+        }
+      },
+
+      ready: function() {
+        document.addEventListener('poll-detail-selected', function(event) {
+          this.getPollDetail(event.detail.pollId);
+        }.bind(this));
+      },
+
+      listenser: {
+        'get-poll-detail-ajax.response': 'pollsResponsed'
+      },
+
+      typeChanged: function(event) {
+        this.type = event.target.getAttribute('type');
+      },
+
+      getPollDetail: function(pollId) {
+        var getPollDetailAjax = this.$['get-poll-detail-ajax'];
+        getPollDetailAjax.resourceUrl = 'polls/' + pollId;
+        getPollDetailAjax.generateRequest();
+
+        var getQuestionDetailAjax = this.$['get-question-detail-ajax'];
+        getQuestionDetailAjax.resourceUrl = 'questions/' + pollId;
+        getQuestionDetailAjax.generateRequest();
+      }
+    })
+  </script>
+</dom-module>

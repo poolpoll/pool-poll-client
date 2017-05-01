@@ -8,10 +8,25 @@
         @apply(--layout-vertical);
       }
     </style>
+
     <custom-ajax
       id="get-questions-ajax"
       method="get"
       last-response="{{questionList}}">
+    </custom-ajax>
+
+    <custom-ajax
+      id="add-option-count-ajax"
+      resource-url="options/add_count"
+      method="POST"
+      content-type="application/json">
+    </custom-ajax>
+
+    <custom-ajax
+      id="add-poll-count-ajax"
+      resource-url="polls/add_count"
+      method="POST"
+      content-type="application/json">
     </custom-ajax>
 
     <iron-pages class="vertical flex" id="container" selected="[[selectedPage]]"></iron-pages>
@@ -37,6 +52,10 @@
         }
       },
 
+      listeners: {
+        'add-option-count-ajax.response': 'addOptionCountResponsed'
+      },
+
       ready: function() {
         document.addEventListener('poll-join-selected', function(event) {
           this.poll = event.detail;
@@ -52,8 +71,9 @@
       },
 
       _pollChanged: function(poll) {
+        this.poll = poll;
         var getQuestionsAjax = this.$['get-questions-ajax'];
-        getQuestionsAjax.resourceUrl = 'questions/' + poll.id;
+        getQuestionsAjax.resourceUrl = 'questions/' + this.poll.id;
         getQuestionsAjax.generateRequest();
       },
 
@@ -92,9 +112,40 @@
       saveAnswers: function() {
         var pollJoinDetails = this.$['container'].children;
 
-        for(var i=0; i <= this.questionList.length - 1; i++) {
-          pollJoinDetails[i].saveAnswer();
+        var selectedOptions = [];
+        for(var i = 0; i <= this.questionList.length - 1; i++) {
+          pollJoinDetails[i].getAnswer().forEach(function(answer) {
+            selectedOptions.push(answer);
+          })
         };
+
+        var addOptionCntAjax = this.$['add-option-count-ajax'];
+        addOptionCntAjax.body = {
+          pollId: this.poll.id,
+          options: selectedOptions
+        };
+
+        addOptionCntAjax.generateRequest();
+        this.fire('show-message-dialog', {
+          title: 'Saving your answer',
+          text: 'Now Your Answeris Saving...'
+        })
+      },
+
+      addOptionCountResponsed: function(event) {
+        var response = event.currentTarget.lastResponse;
+        if(response) {
+          this.fire('show-message-dialog', {
+            title: 'Thank you for Join the poll',
+            message: 'Your answers successfully applied.'
+          })
+        } else {
+          this.fire('show-message-dialog', {
+            title: 'Soory for you',
+            message: 'Your answers not applied successfully.'
+          })
+        }
+        page('/polls');
       }
     })
   </script>

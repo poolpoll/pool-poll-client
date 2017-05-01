@@ -1,0 +1,47 @@
+<dom-module id="poll-chart-table">
+  <template>
+    <style>
+      .title {
+        font-weight: bold;
+        border-top: 3%;
+      }
+      .space {
+        width: 3%;
+      }
+      .count {
+        text-align: right;
+      }
+    </style>
+
+    <table width="100%">
+      <template is="dom-repeat" items="[[questionDetail]]">
+        <tr>
+          <td class="title" colspan="3">[[item.name]]</td>
+        </tr>
+
+        <template is="dom-repeat" items="[[item.options]]">
+          <tr>
+            <td class="space"></td>
+            <td>[[item.name]]</td>
+            <td class="count">[[item.count]]</td>
+          </tr>
+        </template>
+      </template>
+    </table>
+  </template>
+  <script>
+    Polymer({
+      is: 'poll-chart-table',
+
+      properties: {
+        questionDetail: {
+          type: Array
+        }
+      },
+
+      showDetail: function() {
+        console.log('questionDetail', this.questionDetail);
+      }
+    })
+  </script>
+</dom-module>

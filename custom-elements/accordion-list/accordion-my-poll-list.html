@@ -30,6 +30,13 @@
 				padding-right: 2%;
 			}
 		</style>
+
+		<custom-ajax
+			id="poll-activate-ajax"
+			method="POST"
+			content-type="application/json">
+		</custom-ajax>
+
 		<paper-item class="title" on-tap="_openDetail">
 			<iron-icon icon="social:poll"></iron-icon>
 			<span class="flex">[[item.name]]</span>
@@ -40,6 +47,7 @@
 			<span><iron-icon icon="icons:description"></iron-icon>[[item.description]]</span>
 			<span><iron-icon icon="icons:today"></iron-icon>[[item.fromDate]] ~ [[item.toDate]]</span>
 			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
+			<span><paper-toggle-button id="active-btn" checked="[[item.activeFlag]]" on-tap="activeBtnTapped"></paper-toggle-button></span>
 			<paper-button on-tap="pollDetailTapped">detail</paper-button>
 		</iron-collapse>
 	</template>
@@ -55,11 +63,6 @@
 				arrowIcon: {
 					type: String,
 					value: 'icons:arrow-drop-down'
-				},
-
-				detailRoute: {
-					type: String,
-					value: '/my_poll_detail/'
 				}
 			},
 
@@ -70,8 +73,16 @@
 			},
 
 			pollDetailTapped: function() {
-				this.fire('my-poll-detail-selected', { poll: this.item });
-				page('/my_poll_detail/' + this.item.id);
+				this.fire('poll-detail-selected', { pollId: this.item.id });
+				page('/poll_charts/' + this.item.id);
+			},
+
+			activeBtnTapped: function(event) {
+				var isActive = this.$['active-btn'].checked;
+				var pollActivateAjax = this.$['poll-activate-ajax'];
+				pollActivateAjax.resourceUrl = 'polls/active/' + this.item.id;
+				pollActivateAjax.body = {	activeFlag: isActive };
+				pollActivateAjax.generateRequest();
 			}
 		})
 	</script>

@@ -1,0 +1,59 @@
+<dom-module id="message-dialog">
+  <template>
+    <style>
+      .vertical {
+        @apply(--layout-vertical);
+      }
+      .title {
+        color: tomato;
+        font-weight: bold;
+      }
+    </style>
+    <paper-dialog id="message-dialog" modal>
+      <div class="vertical">
+        <span class="title">[[title]]</span>
+        <span class="message">[[message]]</span>
+        <paper-button id="confirm" on-tap="confirmBtnTapped">confirm</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'message-dialog',
+
+      properties: {
+
+        title: {
+          type: String,
+          value: 'Titile is not defined.'
+        },
+
+        message: {
+          type: String,
+          value: 'Message is not defined yet.'
+        }
+      },
+
+      ready: function() {
+        document.addEventListener('show-message-dialog', function(event) {
+          var title = event.detail.title;
+          var message = event.detail.message;
+
+          this.showMessageDialog(title, message);
+        }.bind(this));
+      },
+
+      showMessageDialog: function(title, message) {
+        this.title = title;
+        this.message = message;
+
+        this.$['message-dialog'].open();
+      },
+
+      confirmBtnTapped: function() {
+        this.$['message-dialog'].close();
+      }
+    })
+  </script>
+
+</dom-module>

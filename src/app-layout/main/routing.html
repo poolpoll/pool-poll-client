@@ -25,9 +25,9 @@
 		app.title = 'My Polls';
 	});
 
-	page('/my_poll_detail/:pollId', function(ctx) {
+	page('/poll_charts/:pollId', function(ctx) {
 		app.pollId = ctx.params.pollId;
-		app.route = 'my_poll_detail';
+		app.route = 'poll_charts';
 	});
 
 	page('/polls', function() {
@@ -35,8 +35,9 @@
 		app.title = 'Polls';
 	});
 
-	page('/poll_join', function() {
-		app.route = 'poll-join';
+	page('/poll_join/:pollId', function(ctx) {
+		app.pollId = ctx.params.pollId;
+		app.route = 'poll_join';
 	});
 
 	page('/profile', function() {
