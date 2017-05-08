@@ -29,6 +29,13 @@
       content-type="application/json">
     </custom-ajax>
 
+    <custom-ajax
+      id="add-poll-history-ajax"
+      method="POST"
+      resource-url="poll_histories"
+      content-type="application/json">
+    </custom-ajax>
+
     <iron-pages class="vertical flex" id="container" selected="[[selectedPage]]"></iron-pages>
   </template>
   <script>
@@ -53,7 +60,8 @@
       },
 
       listeners: {
-        'add-option-count-ajax.response': 'addOptionCountResponsed'
+        'add-option-count-ajax.response': 'addOptionCountResponsed',
+        'add-poll-history-ajax.response': 'duplicateCheckResponsed'
       },
 
       ready: function() {
@@ -78,6 +86,8 @@
       },
 
       _questionListChanged: function(questionList) {
+        this.clearContainer();
+                
         questionList.forEach(function(questionInfo) {
           var pollJoinDetail = document.createElement('poll-join-detail');
           pollJoinDetail.questionInfo = questionInfo;
@@ -110,26 +120,39 @@
       },
 
       saveAnswers: function() {
-        var pollJoinDetails = this.$['container'].children;
+        var addHistoryAjax = this.$['add-poll-history-ajax'];
+        addHistoryAjax.body = { pollId: this.poll.id };
+        addHistoryAjax.generateRequest();
+      },
 
-        var selectedOptions = [];
-        for(var i = 0; i <= this.questionList.length - 1; i++) {
-          pollJoinDetails[i].getAnswer().forEach(function(answer) {
-            selectedOptions.push(answer);
-          })
-        };
+      duplicateCheckResponsed: function(event) {
+        var response = event.detail.response;
+        if(response) {
+          var pollJoinDetails = this.$['container'].children;
 
-        var addOptionCntAjax = this.$['add-option-count-ajax'];
-        addOptionCntAjax.body = {
-          pollId: this.poll.id,
-          options: selectedOptions
-        };
+          var selectedOptions = [];
+          for(var i = 0; i <= this.questionList.length - 1; i++) {
+            pollJoinDetails[i].getAnswer().forEach(function(answer) {
+              selectedOptions.push(answer);
+            })
+          };
 
-        addOptionCntAjax.generateRequest();
-        this.fire('show-message-dialog', {
-          title: 'Saving your answer',
-          text: 'Now Your Answeris Saving...'
-        })
+          var addOptionCntAjax = this.$['add-option-count-ajax'];
+          addOptionCntAjax.body = {
+            pollId: this.poll.id,
+            options: selectedOptions
+          };
+
+          addOptionCntAjax.generateRequest();          
+        } else {
+          this.fire('show-message-dialog', {
+            title: '설문을 등록할 수 없습니다.',
+            message: '이미 참여한 설문 입니다.'
+          });
+
+          this.clearContainer();
+          page('/polls');
+        }
       },
 
       addOptionCountResponsed: function(event) {
@@ -137,16 +160,28 @@
         if(response) {
           this.fire('show-message-dialog', {
             title: 'Thank you for Join the poll',
-            message: 'Your answers successfully applied.'
+            message: 'Your answers successfully applied.',
+            confirmCallback: function() {
+              this.fire('condition-changed')
+            }.bind(this),
+            cancelCallback: function() {
+              this.fire('condition-changed')
+            }.bind(this)
           })
         } else {
           this.fire('show-message-dialog', {
-            title: 'Soory for you',
+            title: 'Sorry for you',
             message: 'Your answers not applied successfully.'
           })
         }
+
         page('/polls');
-      }
+      },
+
+      clearContainer: function() {
+        var container = this.$['container'];
+        while(container.hasChildNodes()) { container.removeChild(container.childNodes[0]); };
+      }      
     })
   </script>
 </dom-module>

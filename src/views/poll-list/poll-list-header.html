@@ -17,6 +17,7 @@
     <div class="search-container">
       <paper-input class="flex" label="Name" value="{{name}}"></paper-input>
       <drop-down-list class="flex" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+      <paper-toggle-button class="flex" id="show-all-btn" checked="{{showAll}}">전부보기</paper-toggle-button>
     </div>
   </template>
   <script>
@@ -32,20 +33,28 @@
         categoryId: {
           type: Number,
           observer: '_categoryChanged'
+        },
+
+        showAll: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
       },
 
       _nameChanged: function(name) {
         this.fire('condition-changed', {
           name: name,
-          categoryId: this.categoryId
+          categoryId: this.categoryId,
+          showAll: this.showAll
         });
       },
 
       _categoryChanged: function(categoryId) {
         this.fire('condition-changed', {
           name: this.name,
-          categoryId: categoryId
+          categoryId: categoryId,
+          showAll: this.showAll
         });
       }
     })

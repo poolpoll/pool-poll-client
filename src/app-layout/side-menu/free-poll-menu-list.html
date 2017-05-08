@@ -1,16 +1,22 @@
 <dom-module id="free-poll-menu-list">
 	<template>
+		<style>
+			.vertical {
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
+		</style>
 		<custom-ajax
 			auto
 		 	resource-url="menus"
 		 	last-response="{{menuList}}">
 	 	</custom-ajax>
 
-	 	<free-poll-sidebar-header></free-poll-sidebar-header>
-
-		<template is="dom-repeat" items="{{menuList}}">
-			<paper-item on-tap="_menuSelected">[[item.name]]</paper-item>
-		</template>
+		<div class="vertical">
+			<template is="dom-repeat" items="{{menuList}}">
+				<paper-item on-tap="_menuSelected">[[item.name]]</paper-item>
+			</template>
+		</div>
 	</template>
 	<script>
 		Polymer({

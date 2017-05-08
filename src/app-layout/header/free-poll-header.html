@@ -4,11 +4,17 @@
 			.flex {
 				@apply(--layout-flex);
 			}
+			.toolbar {
+				height: 50px;
+				font-size: 16px;
+				color: #ffffff;
+				background: linear-gradient( to bottom, #3BB5A3, #00A2D9 );
+			}
 		</style>
-		<paper-toolbar class="toolbar">
+		<app-toolbar class="toolbar">
 			<span class="flex">[[title]]</span>
 			<iron-icon icon="menu" on-tap="_drawerToggled"></iron-icon>
-		</paper-toolbar>
+		</app-toolbar>
 	</template>
 	<script>
 		Polymer({

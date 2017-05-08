@@ -3,22 +3,14 @@
 		<style>
 			.title {
 				@apply(--layout-horizontal);
-				border-top: 1px solid #000000;
-				border-left: 1px solid #000000;
-				border-right: 1px solid #000000;
-			}
-			.title iron-icon {
-				padding-right: 2%;
+				background: linear-gradient( to bottom, #ffffff, #eeeeee );
 			}
 			.flex {
 				@apply(--layout-flex);
 			}
 			.content {
-				border-bottom: 1px solid #000000;
-				border-right: 1px solid #000000;
-				border-left: 1px solid #000000;
-				border-top: none;
 				@apply(--layout-vertical);
+				background: linear-gradient( to bottom, #ffffff, #eeeeee );
 			}
 			.content span {
 				font-size: 9pt;
@@ -29,12 +21,27 @@
 			.content span iron-icon {
 				padding-right: 2%;
 			}
+			.button-group {
+				@apply(--layout-horizontal);
+			}
+			.toggle-btn {
+				padding-left: 3%;
+				font-size: 12px;
+			}
+			.btn {
+				font-size: 12px;
+			}
 		</style>
 
 		<custom-ajax
 			id="poll-activate-ajax"
 			method="POST"
 			content-type="application/json">
+		</custom-ajax>
+
+		<custom-ajax
+			id="poll-delete-ajax"
+			method="DELETE">
 		</custom-ajax>
 
 		<paper-item class="title" on-tap="_openDetail">
@@ -47,8 +54,12 @@
 			<span><iron-icon icon="icons:description"></iron-icon>[[item.description]]</span>
 			<span><iron-icon icon="icons:today"></iron-icon>[[item.fromDate]] ~ [[item.toDate]]</span>
 			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
-			<span><paper-toggle-button id="active-btn" checked="[[item.activeFlag]]" on-tap="activeBtnTapped"></paper-toggle-button></span>
-			<paper-button on-tap="pollDetailTapped">detail</paper-button>
+
+			<div class="button-group">
+				<paper-toggle-button class="flex toggle-btn" id="active-btn" on-tap="activeBtnTapped" checked="[[item.activeFlag]]">Activation</paper-toggle-button>
+				<paper-button class="flex btn" on-tap="pollDetailTapped">detail</paper-button>
+				<paper-button class="flex btn" on-tap="pollDeleteTapped">delete</paper-button>
+			</div>
 		</iron-collapse>
 	</template>
 	<script>
@@ -66,10 +77,33 @@
 				}
 			},
 
+			listeners: {
+				'poll-delete-ajax.response': '_pollDeleteAjaxResponsed'
+			},
+
 			_openDetail: function() {
 				var collapse = this.$['collapse'];
 				collapse.toggle();
 				this.arrowIcon = (collapse.opened) ? 'icons:arrow-drop-up' : 'icons:arrow-drop-down';
+			},
+
+			activeBtnTapped: function(event) {
+				var isActive = this.$['active-btn'].checked;
+				var message = isActive ? 'Activate' : 'Deactivate';
+
+				this.fire('show-message-dialog', {
+					title: 'Are you sure to ' + message + ' this poll?',
+					message: 'It will ' + message + ' your poll.',
+					confirmCallback: function() {
+						var pollActivateAjax = this.$['poll-activate-ajax'];
+						pollActivateAjax.resourceUrl = 'polls/active/' + this.item.id;
+						pollActivateAjax.body = {	activeFlag: isActive };
+						pollActivateAjax.generateRequest();
+					}.bind(this),
+					cancelCallback: function() {
+						this.$['active-btn'].checked = !isActive;
+					}.bind(this)
+				})
 			},
 
 			pollDetailTapped: function() {
@@ -77,12 +111,20 @@
 				page('/poll_charts/' + this.item.id);
 			},
 
-			activeBtnTapped: function(event) {
-				var isActive = this.$['active-btn'].checked;
-				var pollActivateAjax = this.$['poll-activate-ajax'];
-				pollActivateAjax.resourceUrl = 'polls/active/' + this.item.id;
-				pollActivateAjax.body = {	activeFlag: isActive };
-				pollActivateAjax.generateRequest();
+			pollDeleteTapped: function() {
+				this.fire('show-message-dialog', {
+					title: 'Are you sure to Delete this poll?',
+					message: 'It will remove every related data with this poll.',
+					confirmCallback: function() {
+						var deleteAjax = this.$['poll-delete-ajax'];
+						deleteAjax.resourceUrl = 'polls/' + this.item.id;
+						deleteAjax.generateRequest();
+					}.bind(this)
+				})
+			},
+
+			_pollDeleteAjaxResponsed: function(event) {
+				this.fire('refresh-poll-list');
 			}
 		})
 	</script>

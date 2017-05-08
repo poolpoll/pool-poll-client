@@ -3,13 +3,16 @@
     <style>
       .title {
         font-weight: bold;
-        border-top: 3%;
       }
       .space {
         width: 3%;
       }
+      .option {
+        opacity: 0.5;
+      }
       .count {
         text-align: right;
+        opacity: 0.5;
       }
     </style>
 
@@ -22,7 +25,7 @@
         <template is="dom-repeat" items="[[item.options]]">
           <tr>
             <td class="space"></td>
-            <td>[[item.name]]</td>
+            <td class="option">[[item.name]]</td>
             <td class="count">[[item.count]]</td>
           </tr>
         </template>

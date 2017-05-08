@@ -46,7 +46,7 @@
 			section {
 				@apply(--layout-vertical);
 				width: 100%;
-				height: 300px;
+				height: 250px;
 			}
 			section paper-dialog-scrollable {
 		    @apply(--layout-flex);
@@ -63,13 +63,13 @@
 
 		<custom-ajax
 			id="update-user-info"
-			method="post"
+			method="POST"
 			content-type="application/json">
 		</custom-ajax>
 
 		<custom-ajax
 			id="user-category-ajax"
-			method="get"
+			method="GET"
 			last-response="{{userCategories}}">
 		</custom-ajax>
 
@@ -78,10 +78,19 @@
       method="DELETE">
     </custom-ajax>
 
+    <custom-ajax
+    	id="file-upload-ajax"
+    	method="POST">
+  	</custom-ajax>
+
+  	<form id="file-form" method="POST">
+    	<input id="file-input" type="file" name="profile-image" on-change="_fileInputChanged" hidden>
+    </form>
+
 		<div class="header">
 			<div class="left-section">
 				<div class="image-section">
-					<iron-image src="http://lorempixel.com/600/400"></iron-image>
+					<iron-image src="[[imageSrc]]" on-tap="changeProfilePicture"></iron-image>
 				</div>
 				<paper-button id="save-btn" on-tap="saveBtnTapped">Save</paper-button>
 			</div>
@@ -123,11 +132,17 @@
 				userInfo: {
 					type: Object,
 					observer: 'userInfoChanged'
+				},
+
+				imageSrc: {
+					type: String,
+					value: 'http://lorempixel.com/600/400'
 				}
 			},
 
 			listeners: {
-				'iron-swipe': 'itemSwiped'
+				'iron-swipe': 'itemSwiped',
+				'delete-category-ajax.response': 'deleteCategoryResponsed'
 			},
 
 			ready: function() {
@@ -144,6 +159,7 @@
 					this.email = userInfo.email;
 					this.birthDate = userInfo.birthDate;
 					this.gender = userInfo.gender;
+					this.imageSrc = userInfo.attachment.path + '/' + userInfo.attachment.id + '.svg';
 
 					var userCategoryAjax = this.$['user-category-ajax'];
 					userCategoryAjax.resourceUrl = 'user_categories/' + userInfo.id;
@@ -200,6 +216,25 @@
 				var deleteCategoryAjax = this.$['delete-category-ajax'];
 				deleteCategoryAjax.resourceUrl = 'user_categories/' + this.userInfo.id + '/' + deleteCategoryId;
 				deleteCategoryAjax.generateRequest();
+			},
+
+			deleteCategoryResponsed: function() {
+				this.fire('category-changed');
+			},
+
+			changeProfilePicture: function() {
+				this.$['file-input'].click();
+			},
+
+			_fileInputChanged: function(event) {
+				var file = event.target.files[0];
+				var fileForm = this.$['file-form'];
+				var formData = new FormData(fileForm);
+				
+				var fileUploadAjax = this.$['file-upload-ajax'];
+				fileUploadAjax.resourceUrl = 'users/profile/upload';
+				fileUploadAjax.body = formData;
+				fileUploadAjax.generateRequest();
 			}
 		})
 	</script>

@@ -30,8 +30,8 @@
     </paper-card>
 
     <div class="horizontal">
-      <paper-button on-tap="nextBtnTapped">next</paper-button>
-      <paper-button on-tap="previousBtnTapped">previous</paper-button>
+      <paper-button class="flex" on-tap="previousBtnTapped">previous</paper-button>
+      <paper-button class="flex" on-tap="nextBtnTapped">next</paper-button>
     </div>
   </template>
   <script>
@@ -65,7 +65,7 @@
         return checkboxList
       },
 
-      _getCheckBoxActveCount: function() {
+      _getCheckBoxActiveCount: function() {
         var trueCount = 0;
         this._getCheckBoxList().forEach(function(checkbox) {
           if(checkbox.active) trueCount++;
@@ -75,11 +75,11 @@
       },
 
       _checkBoxTapped: function(event) {
-        if(this._getCheckBoxActveCount() > this.questionInfo.multyCheckLimit) event.target.active = false;
+        if(this._getCheckBoxActiveCount() > this.questionInfo.multyCheckLimit) event.target.active = false;
       },
 
       checkValidation: function() {
-        return (this._getCheckBoxActveCount() == 0) ? false : true;
+        return (this._getCheckBoxActiveCount() == 0) ? false : true;
       },
 
       getAnswer: function() {

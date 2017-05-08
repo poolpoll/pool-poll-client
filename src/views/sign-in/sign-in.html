@@ -100,9 +100,6 @@
         var content = document.createElement('sign-up');
         var event = {
           content: content,
-          closeCallback: function() {
-            this.fire('toast-toggle', 'Success to Sign Up');
-          },
           dialogConfig: {
             modal: true,
             entryAnimation: 'slide-from-left-animation',

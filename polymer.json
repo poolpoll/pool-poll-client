@@ -1,15 +1,14 @@
 {
   "entrypoint": "index.html",
-  "shell": "elements.html",
   "fragments": [],
-  "sourceGlobs": [
+  "sources": [
    "src/**/*",
    "images/**/*",
    "bower.json",
    "custom-elements/**/*",
    "bower_components/**/*"
   ],
-  "includeDependencies": [
+  "extraDependencies": [
     "manifest.json",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]

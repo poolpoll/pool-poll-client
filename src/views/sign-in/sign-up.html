@@ -7,6 +7,12 @@
 				padding-left: 10px;
 				padding-right: 10px;
 			}
+			.button-group {
+				@apply(--layout-horizontal);
+			}
+			.flex {
+				@apply(--layout-flex);
+			}
 		</style>
 		<custom-ajax
 			id="sign-up-ajax"
@@ -22,7 +28,10 @@
 			<paper-input id="confirm-pwd-input" label="Confirm Password" value="{{confirmPassword}}" type="password"></paper-input>
 			<paper-input id="email-input" label="E-Mail" value="{{email}}"></paper-input>
 
-			<paper-button id="sign-up-btn" on-tap="signUp" disabled>Sign up</paper-button>
+			<div class="button-group">
+				<paper-button id="cancel-btn" class="flex" on-tap="cancelSignUp">Cancel</paper-button>
+				<paper-button id="sign-up-btn" class="flex" on-tap="signUp" disabled>Sign up</paper-button>
+			</div>
 		</div>
 
 	</template>
@@ -60,6 +69,18 @@
 				'sign-up-ajax.response': 'signUpResponsed'
 			},
 
+			clearScreen: function() {
+				this.account = '';
+				this.name = '';
+				this.password = '';
+				this.emai = '';
+			},
+
+			cancelSignUp: function() {
+				this.clearScreen();
+				this.fire('dialog-close');
+			},
+
 			signUp: function() {
 				var signUpAjax = this.$['sign-up-ajax'];
 				signUpAjax.body = {
@@ -70,7 +91,6 @@
 				};
 
 				signUpAjax.generateRequest();
-				this.fire('dialog-close');
 				this.fire('spinner-toggle', true);
 			},
 
@@ -79,7 +99,10 @@
 				if(response) {
 					app.route = 'sign_in';
 					app.title = 'Sign In';
-					this.fire('dialog-close');
+
+					this.fire('dialog-close', {
+						closeCallback: function() { this.fire('toast-toggle', 'Success to Sign Up');}.bind(this)
+					});
 				} else {
 					this.fire('toast-toggle', 'Faield to Sign Up');
 				}

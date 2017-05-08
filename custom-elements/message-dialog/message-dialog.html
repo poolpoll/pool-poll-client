@@ -1,19 +1,37 @@
 <dom-module id="message-dialog">
   <template>
     <style>
+      paper-dialog {
+        width: 80%;
+      }
       .vertical {
         @apply(--layout-vertical);
       }
       .title {
         color: tomato;
         font-weight: bold;
+        padding: 3%;
+      }
+      .message {
+        opacity: 0.5;
+        padding: 3%;
+      }
+      .button-group {
+        @apply(--layout-horizontal);
+      }
+      .flex {
+        @apply(--layout-flex);
       }
     </style>
     <paper-dialog id="message-dialog" modal>
       <div class="vertical">
         <span class="title">[[title]]</span>
         <span class="message">[[message]]</span>
-        <paper-button id="confirm" on-tap="confirmBtnTapped">confirm</paper-button>
+
+        <div class="button-group">
+          <paper-button class="flex" id="cacel" on-tap="cancelBtnTapped">cancle</paper-button>
+          <paper-button class="flex" id="confirm" on-tap="confirmBtnTapped">confirm</paper-button>
+        </div>
       </div>
     </paper-dialog>
   </template>
@@ -38,20 +56,30 @@
         document.addEventListener('show-message-dialog', function(event) {
           var title = event.detail.title;
           var message = event.detail.message;
+          var confirmCallback = event.detail.confirmCallback;
+          var cancelCallback = event.detail.cancelCallback;
 
-          this.showMessageDialog(title, message);
+          this.showMessageDialog(title, message, confirmCallback, cancelCallback);
         }.bind(this));
       },
 
-      showMessageDialog: function(title, message) {
+      showMessageDialog: function(title, message, confirmCallback, cancelCallback) {
         this.title = title;
         this.message = message;
+        this.confirmCallback = confirmCallback;
+        this.cancelCallback = cancelCallback;
 
         this.$['message-dialog'].open();
       },
 
       confirmBtnTapped: function() {
         this.$['message-dialog'].close();
+        if(this.confirmCallback) this.confirmCallback();
+      },
+
+      cancelBtnTapped: function() {
+        this.$['message-dialog'].close();
+        if(this.cancelCallback) this.cancelCallback();
       }
     })
   </script>

@@ -12,9 +12,11 @@
       .category-list {
         @apply(--layout-flex);
       }
-      paper-button {
+      .button-group {
         @apply(--layout-horizontal);
-        @aplly(--layout-flex);
+      }
+      paper-button {
+        @apply(--layout-flex);
         background-color: var(--paper-green-500);
         color: white;
       }
@@ -39,7 +41,10 @@
       </div>
     </template>
 
-    <paper-button on-tap="saveBtnTapped">save</paper-button>
+    <div class="button-group">
+      <paper-button on-tap="cancelBtnTapped">cacel</paper-button>
+      <paper-button on-tap="saveBtnTapped">save</paper-button>
+    </div>
   </template>
   <script>
     Polymer({
@@ -93,6 +98,10 @@
         addCategoryAjax.body = userCategories;
 
         addCategoryAjax.generateRequest();
+      },
+
+      cancelBtnTapped: function() {
+        this.fire('dialog-close');
       },
 
       saveAjaxReponsed: function(response) {

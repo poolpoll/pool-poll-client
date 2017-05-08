@@ -46,8 +46,9 @@
 					this.openDialog(request.content, request.openCallback, request.closeCallback, request.dialogConfig);
 				}.bind(this));
 
-				document.addEventListener('dialog-close', function() {
-					this.closeDialog();
+				document.addEventListener('dialog-close', function(event) {
+					var request = event.detail;
+					this.closeDialog(request.closeCallback);
 				}.bind(this));
 			},
 
@@ -64,8 +65,13 @@
 				if(this.openCallback) this.openCallback();
 			},
 
-			closeDialog: function() {
-				if(this.closeCallback) this.closeCallback();
+			closeDialog: function(closeCallback) {
+				if(closeCallback) {
+					closeCallback();
+				} else if(this.closeCallback) {
+					this.closeCallback();
+				}
+				
 				var container = this.$['dialog'];
 				container.removeChild(this.content);
 				this.$['dialog'].close();

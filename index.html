@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
     <title>Free Poll</title>
-    <meta name="description" content="My App description">
+    <meta name="description" content="Free Poll description">
 
     <link rel="icon" href="/images/favicon.ico">
 
@@ -27,19 +27,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="My App">
+    <meta name="application-name" content="Free Poll">
 
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="My App">
+    <meta name="apple-mobile-web-app-title" content="Free Poll">
 
     <!-- Homescreen icons -->
-    <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
+    <link rel="apple-touch-icon" href="/images/manifest/logo.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/logo.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/logo.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/logo.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/logo.png">
+<!--     <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
     <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
     <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png"> -->
 
     <!-- Tile icon for Windows 8 (144x144 + tile color) -->
     <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
@@ -50,8 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // Setup Polymer options
       window.Polymer = {
         dom: 'shadow',
-        lazyRegister: true,
-        baseUrl: 'http://localhost:3000'
+        lazyRegister: true
       };
 
       // Load webcomponentsjs polyfill if browser does not support native Web Components
@@ -77,7 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (!webComponentsSupported) {
           var script = document.createElement('script');
           script.async = true;
-          script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+          script.src = './bower_components/webcomponentsjs/webcomponents-lite.min.js';
           script.onload = onload;
           document.head.appendChild(script);
         } else {
@@ -88,13 +92,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // Load pre-caching Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service-worker.js');
+          navigator.serviceWorker.register('service-worker.js');
         });
-      }
+      }      
     </script>
-
-    <link rel="import" href="/src/elements.html">
-    <link rel="import" href="/src/custom-elements.html">
+    <!-- <script src="./cordova.js"></script> -->
+    <link rel="import" href="./src/elements.html">
+    <link rel="import" href="./src/custom-elements.html">
 
     <style>
       body {
@@ -102,7 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-family: 'Roboto', 'Noto', sans-serif;
         line-height: 1.5;
         min-height: 100vh;
-        background-color: #eeeeee;
+        background: linear-gradient( to bottom, #ffffff, #eeeeee );
       }
     </style>
   </head>

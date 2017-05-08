@@ -3,12 +3,7 @@
 		<style>
 			.title {
 				@apply(--layout-horizontal);
-				border-top: 1px solid #000000;
-				border-left: 1px solid #000000;
-				border-right: 1px solid #000000;
-			}
-			.title iron-icon {
-				padding-right: 2%;
+				background: linear-gradient( to bottom, #ffffff, #eeeeee );
 			}
 			.flex {
 				@apply(--layout-flex);
@@ -17,11 +12,8 @@
 				@apply(--layout-horizontal);
 			}
 			.content {
-				border-bottom: 1px solid #000000;
-				border-right: 1px solid #000000;
-				border-left: 1px solid #000000;
-				border-top: none;
 				@apply(--layout-vertical);
+				background: linear-gradient( to bottom, #ffffff, #eeeeee );
 			}
 			.content span {
 				font-size: 9pt;
@@ -32,11 +24,14 @@
 			.content span iron-icon {
 				padding-right: 2%;
 			}
+			.btn {
+				font-size: 12px;
+			}			
 		</style>
 		<paper-item class="title" on-tap="_openDetail">
 			<iron-icon icon="social:poll"></iron-icon>
 			<span class="flex">[[item.name]]</span>
-			<!-- <iron-icon icon="[[arrowIcon]]"></iron-icon> -->
+			<iron-icon icon="[[arrowIcon]]"></iron-icon>
 		</paper-item>
 
 		<iron-collapse id="collapse" class="content">
@@ -45,8 +40,8 @@
 			<span><iron-icon icon="icons:today"></iron-icon>종료일: [[item.toDate]]</span>
 			<span><iron-icon icon="icons:done-all"></iron-icon>[[item.count]] 명</span>
 			<div class="horizontal">
-				<paper-button class="flex" on-tap="showDetailBtnTapped">detail</paper-button>
-				<paper-button class="flex" on-tap="joinBtnTapped">join</paper-button>
+				<paper-button class="flex btn" on-tap="showDetailBtnTapped">detail</paper-button>
+				<paper-button class="flex btn" on-tap="joinBtnTapped" disabled="[[item.join]]">join</paper-button>
 			</div>
 		</iron-collapse>
 	</template>

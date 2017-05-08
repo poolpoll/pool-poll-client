@@ -19,6 +19,7 @@
 			<div class="header flex horizontal">
 				<paper-card>
 					<h4>Header Left Section</h4>
+					<paper-button id="vibrate-ctl" on-tap="vibrateCtl">Vibrate</paper-button>
 				</paper-card>
 
 				<paper-card>
@@ -44,6 +45,10 @@
 			is: 'main-page',
 
 			properties: {
+			},
+
+			vibrateCtl: function() {
+				navigator.vibrate(3000);
 			}
 		})
 	</script>

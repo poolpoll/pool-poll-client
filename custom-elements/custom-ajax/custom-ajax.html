@@ -441,9 +441,10 @@ element.
 
     computedUrl: function(resourceUrl) {
       if(window.Polymer.baseUrl) {
-        return window.Polymer.baseUrl + resourceUrl;
+        return 'http://192.168.0.100:3000/' + resourceUrl;
+        // return window.Polymer.baseUrl + resourceUrl;
       } else {
-        return 'http://localhost:3000/' + resourceUrl;
+        return 'http://192.168.0.100:3000/' + resourceUrl;
       }
     },
 

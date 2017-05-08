@@ -8,16 +8,15 @@
     </style>
 
     <custom-ajax
-			id="poll-ajax"
       auto
-		 	handle-as="json"
+			id="poll-ajax"
 		 	resource-url="polls"
 		 	last-response="{{pollList}}">
  		</custom-ajax>
 
-    <poll-list-header></poll-list-header>
+    <poll-list-header show-all="{{showAll}}"></poll-list-header>
 
-    <template is="dom-repeat" items="[[pollList]]">
+    <template is="dom-repeat" items="[[displayPollList]]">
 			<accordion-poll-list item="[[item]]"></accordion-poll-list>
 		</template>
 
@@ -25,6 +24,25 @@
   <script>
     Polymer({
       is: 'poll-list',
+
+      properties: {
+        showAll: {
+          type: Boolean,
+          observer: '_showAllChanged'
+        },
+
+        pollList: {
+          type: Array
+        },
+
+        displayPollList: {
+          type: Array
+        }
+      },
+
+      listeners: {
+        'poll-ajax.response': '_pollAjaxResponsed'
+      },
 
       ready: function() {
         document.addEventListener('condition-changed', function(event) {
@@ -40,6 +58,24 @@
         var pollAjax = this.$['poll-ajax'];
         pollAjax.params = searchCondition;
       },
+
+      _pollAjaxResponsed: function(event) {
+        this.filterPollList();
+      },
+
+      _showAllChanged: function(showAll) {
+        this.filterPollList();
+      },
+
+      filterPollList: function() {
+        if(this.pollList && this.showAll) {
+          this.displayPollList = this.pollList;
+        } else if (this.pollList) {
+          this.displayPollList = this.pollList.filter(function(poll) {
+            return (!poll.join);
+          })
+        }
+      }
     })
   </script>
 </dom-module>

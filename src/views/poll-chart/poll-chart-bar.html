@@ -29,15 +29,20 @@
       setBarChart: function(question) {
         var label = question.name;
         var labels = [];
-        var bgColors = [];
+        var backgroundColor = [];
+        var borderColor = [];
         var data = [];
 
         question.options.forEach(function(option) {
+          var randomColor = '#' + Math.round(Math.random() * 0xFFFFFF).toString(16);
           labels.push(option.name);
           data.push(option.count);
+          backgroundColor.push(randomColor);
+          borderColor.push(randomColor);          
         });
 
         var canvas = document.createElement('canvas');
+        canvas.setAttribute('id', 'chart-bar-' + question.id);
         this.$['chart-section'].appendChild(canvas);
 
         var barChart = new Chart(canvas, {
@@ -47,8 +52,20 @@
             datasets: [{
               label: label,
               data: data,
-              borderWidth: 1
+              borderWidth: 1,
+              borderColor: borderColor,
+              backgroundColor: backgroundColor              
             }]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  stepSize: 1
+                }
+              }]
+            }
           }
         });
       }

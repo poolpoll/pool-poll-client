@@ -7,7 +7,7 @@
 			}
 			paper-fab {
 				@apply(--layout-vertical-reverse);
-				position: absolute;
+				position: fixed;
 				bottom: 3%;
 				right: 5%;
 			}
@@ -23,7 +23,7 @@
 			<accordion-my-poll-list item="[[item]]"></accordion-my-poll-list>
 		</template>
 
-		<paper-fab mini noink icon="icons:add" on-tap="createNewPoll"></paper-fab>
+		<paper-fab mini icon="icons:add" on-tap="createNewPoll"></paper-fab>
 	</template>
 	<script>
 		Polymer({
