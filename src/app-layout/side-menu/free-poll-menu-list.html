@@ -24,20 +24,37 @@
 
 			properties: {
 
+				/**
+				 * ajax 호출을 통해 menus 테이블에서 조회한 menu 리스트
+				 * @type {Array}
+				 */
 				menuList: {
 					type: Array,
 					observer: '_menuListChanged'
 				}
 			},
 
+			/**
+			 * menuList가 변경될 때 마다 호출되며
+			 * menuList의 값이 없을 경우 sign_in 페이지로 이동 (menuList의 값이 없다는 것은 인증이 안되었다고 가정)
+			 * menuList의 값이 있을 경우 main 페이지로 이동 (인증이 완료되었다고 가정)
+			 * @param  {Array} menuList
+			 */
 			_menuListChanged: function(menuList) {
 				if(!menuList) {
 					page('/sign_in');
+					this.fire('switch-menu-btn', { hideMenuBtn: true });
 				} else {
 					page('/main');
+					this.fire('switch-menu-btn', { hideMenuBtn: false });
 				}
 			},
 
+			/**
+			 * 사이드 메뉴에서 메뉴를 선택 했을 때 호출 되며
+			 * 선택한 route로 화면을 전환
+			 * @param  {Object} event 사이드 메뉴에서 메뉴 클릭시 발생한 이벤트
+			 */
 			_menuSelected: function(event) {
 				page('/' +  event.model.item.route);
 			}

@@ -6,21 +6,10 @@
         padding: 10px;
       }
       #container {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        padding: 20% 20% 0 20%;
       }
-      .column {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
-      }
-      .button {
-        font-size: 8pt;
-        text-align: center
-      }
-      paper-button.green {
-        font-size: 8pt;
-        background-color: var(--paper-green-500);
-        color: white;
+      mg-input #container {
+        border-width: : 1px 1px 1px 1px;
       }
     </style>
 
@@ -32,14 +21,15 @@
       last-response="{{userInfo}}">
     </custom-ajax>
 
-    <div id="container" class="card">
-      <paper-input label="[[inputId]]" value="{{account}}"></paper-input>
-      <paper-input label="[[inputPw]]" type="password" value="{{password}}"></paper-input>
-      <paper-button class="green" on-tap="signIn">Sign In</paper-button>
-      <paper-button class="button" on-tap="signUp">Sign Up</paper-button>
-      <paper-button class="button">Forget Your ID/Password?</paper-button>
+    <div id="container">
+      <mg-input hide-label hide-clear-btn placeholder="ID" value="{{account}}"></mg-input>
+      <mg-input hide-label hide-clear-btn placeholder="Password" type="password" value="{{password}}"></mg-input>
     </div>
+    <mg-button button-text="LOG IN" on-tap="signIn"></mg-button>
   </template>
+
+      <!-- <paper-button class="button" on-tap="signUp">Sign Up</paper-button>
+      <paper-button class="button">Forget Your ID/Password?</paper-button> -->
 
   <script>
     Polymer({
@@ -89,6 +79,7 @@
         var response = event.currentTarget.lastResponse;
         this.fire('spinner-toggle', false);
         if(response) {
+          console.log(response);
           this.fire('set-storage', { key: 'userInfo', value: response });
           location.reload();
         } else {

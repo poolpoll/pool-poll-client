@@ -40,7 +40,9 @@
     "paper-toggle-button": "PolymerElements/paper-toggle-button#^1.3.0",
     "paper-radio-group": "PolymerElements/paper-radio-group#^1.2.1",
     "iron-list": "PolymerElements/iron-list#^1.4.5",
-    "chart.js": "^2.5.0"
+    "chart.js": "^2.5.0",
+    "mg-input": "possible819/mg-input#^1.0.0",
+    "mg-button": "possible819/mg-button#^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

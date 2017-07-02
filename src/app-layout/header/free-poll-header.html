@@ -10,10 +10,21 @@
 				color: #ffffff;
 				background: linear-gradient( to bottom, #3BB5A3, #00A2D9 );
 			}
+			#swipe-back-icon {
+				width: 1em;
+			}
+			#header-icon {
+				display: block;
+				margin: auto;
+				width: 5.5vh;
+			}
 		</style>
 		<app-toolbar class="toolbar">
-			<span class="flex">[[title]]</span>
-			<iron-icon icon="menu" on-tap="_drawerToggled"></iron-icon>
+			<img id="swipe-back-icon" src="./images/swipe_back_icon.png">
+			<img id="header-icon" src="./images/header_icon.png">
+			<div hidden="[[hideMenuBtn]]">
+				<iron-icon icon="menu" on-tap="_drawerToggled"></iron-icon>
+			</div>
 		</app-toolbar>
 	</template>
 	<script>
@@ -25,7 +36,18 @@
 				title: {
 					type: String,
 					value: 'Title is not inited.'
+				},
+
+				hideMenuBtn: {
+					type: Boolean,
+					value: false
 				}
+			},
+
+			ready: function() {
+				document.addEventListener('switch-menu-btn', function(event) {
+					this.hideMenuBtn = event.detail.hideMenuBtn;
+				}.bind(this))
 			},
 
 			_drawerToggled: function(event) {

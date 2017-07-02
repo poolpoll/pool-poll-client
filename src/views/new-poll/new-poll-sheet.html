@@ -1,3 +1,5 @@
+<!-- 새 설문 등록에서 질문과 선택지를 입력하는 부분 -->
+
 <dom-module id="new-poll-sheet">
   <template>
     <style>
@@ -73,11 +75,20 @@
       is: 'new-poll-sheet',
 
       properties: {
+
+        /**
+         * iron-collapse의 상태를 알려주는 화살표 모양의 아이콘
+         * @type {String}
+         */
         arrowIcon: {
 					type: String,
 					value: 'icons:arrow-drop-down'
 				},
 
+        /**
+         * 질문에 대한 선택을 다중 선택하게 할지 여부에 대한 변수
+         * @type {Boolean}
+         */
         multyCheck: {
           type: Boolean,
           value: false,

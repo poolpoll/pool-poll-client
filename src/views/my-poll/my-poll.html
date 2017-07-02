@@ -1,3 +1,5 @@
+<!-- 나의 설문조사 화면 -->
+
 <dom-module id="my-poll">
 	<template>
 		<style>
@@ -30,22 +32,37 @@
 			is: 'my-poll',
 
 			properties: {
+
+				/**
+				 * 조회를 통해 얻은 pollList (나의 설문 리스트)
+				 * @type {Array}
+				 */
 				pollList: {
 					type: Array
 				}
 			},
 
 			ready: function() {
+				// 화면이 로드 되고 이벤트 리스너를 등록한다 my_poll로 route가 변경 될 때 발생하는 refresh-poll-list를 통
+				// 서버에서 나의 설문 리스트를 조회한다.
 				document.addEventListener('refresh-poll-list', function(event) {
 					this.$['poll-ajax'].generateRequest();
 				}.bind(this))
 			},
 
+			/**
+			 * 화면에 나타난 나의 설문 리스트의 디테일 버튼을 클릭했을 때 호출되
+			 * iron-collpase를 toggle하여 펼치거나 접는다.
+			 * @param  {Object} event
+			 */
 			_openDetail: function(event) {
 				var collapseId = event.model.item.id;
 				this.$$(collpaseId).toggle();
 			},
 
+			/**
+			 * fab 버튼 클릭시 발생하는 이벤트로 새 설문 등록 화면으로 이동한다.
+			 */
 			createNewPoll: function() {
 				page('/new_poll');
 			}

@@ -83,9 +83,10 @@
     	method="POST">
   	</custom-ajax>
 
-  	<form id="file-form" method="POST">
-    	<input id="file-input" type="file" name="profile-image" on-change="_fileInputChanged" hidden>
-    </form>
+  	<custom-ajax
+  		id="profile-read-ajax"
+  		method="POST">
+		</custom-ajax>
 
 		<div class="header">
 			<div class="left-section">
@@ -142,7 +143,8 @@
 
 			listeners: {
 				'iron-swipe': 'itemSwiped',
-				'delete-category-ajax.response': 'deleteCategoryResponsed'
+				'delete-category-ajax.response': 'deleteCategoryResponsed',
+				'profile-read-ajax.response': '_profileReadResponsed'
 			},
 
 			ready: function() {
@@ -154,17 +156,34 @@
 			},
 
 			userInfoChanged: function(userInfo) {
+				console.log(userInfo)
 				if(userInfo && userInfo.id) {
 					this.name =  userInfo.name;
 					this.email = userInfo.email;
 					this.birthDate = userInfo.birthDate;
 					this.gender = userInfo.gender;
-					this.imageSrc = userInfo.attachment.path + '/' + userInfo.attachment.id + '.svg';
+					var imagePath = (userInfo.attachment && userInfo.attachment.path && userInfo.attachment.id) ? userInfo.attachment.path + '/' + userInfo.attachment.id : '404 image here';
+					this.readImageMeta(imagePath)
 
 					var userCategoryAjax = this.$['user-category-ajax'];
 					userCategoryAjax.resourceUrl = 'user_categories/' + userInfo.id;
 					userCategoryAjax.generateRequest();
 				}
+			},
+
+			readImageMeta: function(imagePath) {
+				var profileReadAjax = this.$['profile-read-ajax'];
+				profileReadAjax.resourceUrl = 'attachments/read';
+				profileReadAjax.body = {
+					path: imagePath
+				};
+
+				profileReadAjax.generateRequest();
+			},
+
+			_profileReadResponsed: function(event) {
+				var response = event.detail.response;
+				this.imageSrc = this.response.imageSrc;
 			},
 
 			saveBtnTapped: function() {
@@ -206,7 +225,7 @@
 			},
 
 			refreshUserResponsed: function(event) {
-				var userInfo = event.currentTarget.lastResponse;
+				var userInfo = event.detail.response;
 				this.fire('set-storage', { key: 'userInfo', value: userInfo });
 				this.userInfoChanged(userInfo)
 			},
@@ -223,18 +242,38 @@
 			},
 
 			changeProfilePicture: function() {
-				this.$['file-input'].click();
+				navigator.camera.cleanup();				
+
+				var options = {
+					quality: 100,
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
+					allowEdit: true,
+					encodingType: Camera.EncodingType.JPEG,
+					targetWidth: 100,
+					targetHeight: 100,
+					mediaType: Camera.MediaType.PICTURE
+				};
+
+				navigator.camera.getPicture(image => {
+					this.saveImageFIle(image)
+				}, error => {
+					alert(error);
+				}, options);  
 			},
 
-			_fileInputChanged: function(event) {
-				var file = event.target.files[0];
-				var fileForm = this.$['file-form'];
-				var formData = new FormData(fileForm);
-				
-				var fileUploadAjax = this.$['file-upload-ajax'];
-				fileUploadAjax.resourceUrl = 'users/profile/upload';
-				fileUploadAjax.body = formData;
-				fileUploadAjax.generateRequest();
+			saveImageFIle: function(image) {
+				var options = new FileUploadOptions();
+				options.fileKey = 'profile-image';
+				options.fileName = image.substr(image.lastIndexOf('/') + 1);
+				options.mimeType = 'image/jpeg';
+
+				var fileTransfer = new FileTransfer();
+					fileTransfer.upload(image, encodeURI('http://192.168.0.103:3000/users/profile/upload'), function(response) {
+					console.log(response);
+				}, function(error) {
+					console.error(error);
+				}, options);
 			}
 		})
 	</script>
