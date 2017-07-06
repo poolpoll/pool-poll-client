@@ -5,6 +5,12 @@
 				@apply(--layout-vertical);
 				@apply(--layout-flex);
 			}
+			li {
+				color: #ffffff;
+				padding-left: 3%;
+				font-size: 2vh;
+				width: 100%;
+			}
 		</style>
 		<custom-ajax
 			auto
@@ -14,7 +20,9 @@
 
 		<div class="vertical">
 			<template is="dom-repeat" items="{{menuList}}">
-				<paper-item on-tap="_menuSelected">[[item.name]]</paper-item>
+				<div class="horizontal">
+					<paper-item on-tap="_menuSelected"><li>[[item.name]]</li></paper-item>
+				</div>
 			</template>
 		</div>
 	</template>
@@ -57,6 +65,7 @@
 			 */
 			_menuSelected: function(event) {
 				page('/' +  event.model.item.route);
+				this.fire('mg-side-menu-toggle');
 			}
 		})
 	</script>

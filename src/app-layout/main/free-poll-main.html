@@ -16,9 +16,7 @@
 
 		<app-drawer-layout fullbleed>
 			<!-- Drawer content -->
-			<app-drawer id="drawer" align="right">
-				<free-poll-menu-list></free-poll-menu-list>
-			</app-drawer>
+			<mg-side-menu id="drawer" menu-element="free-poll-menu-list" reverse></mg-side-menu>
 
 			<!-- Main content -->
 			<app-header-layout has-scrolling-region>
@@ -132,7 +130,7 @@
 			 * side menu drawer open
 			 */
 			openSideMenu: function() {
-				this.$.drawer.open();
+				
 			},
 
 			/**

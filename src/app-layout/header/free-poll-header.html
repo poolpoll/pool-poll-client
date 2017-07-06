@@ -11,19 +11,21 @@
 				background: linear-gradient( to bottom, #3BB5A3, #00A2D9 );
 			}
 			#swipe-back-icon {
-				width: 1em;
+				width: 1em;			
 			}
 			#header-icon {
-				display: block;
 				margin: auto;
-				width: 5.5vh;
+			}
+			#menu-icon {
+				width: 1em;
+				height: 1em;
 			}
 		</style>
 		<app-toolbar class="toolbar">
-			<img id="swipe-back-icon" src="./images/swipe_back_icon.png">
-			<img id="header-icon" src="./images/header_icon.png">
+			<iron-icon id="swipe-back-icon" src="./images/swipe_back_icon.png"></iron-icon>
+			<iron-icon id="header-icon" src="./images/header_icon.png"></iron-icon>
 			<div hidden="[[hideMenuBtn]]">
-				<iron-icon icon="menu" on-tap="_drawerToggled"></iron-icon>
+				<iron-icon id="menu-icon" src="./images/menu_icon.png" on-tap="_drawerToggled"></iron-icon>
 			</div>
 		</app-toolbar>
 	</template>
@@ -51,7 +53,7 @@
 			},
 
 			_drawerToggled: function(event) {
-				this.fire('side-menu-open', event);
+				this.fire('mg-side-menu-toggle', event);
 			}
 		})
 	</script>
