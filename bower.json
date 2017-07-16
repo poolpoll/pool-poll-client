@@ -43,7 +43,9 @@
     "chart.js": "^2.5.0",
     "mg-input": "possible819/mg-input#^1.0.0",
     "mg-button": "possible819/mg-button#^1.0.0",
-    "mg-side-menu": "possible819/mg-side-menu#^1.0.0"
+    "mg-side-menu": "possible819/mg-side-menu#^1.0.0",
+    "mg-tab-view": "possible819/mg-tab-view#^1.0.0",
+    "mg-image-card": "possible819/mg-image-card#^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

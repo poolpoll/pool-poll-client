@@ -333,8 +333,7 @@ element.
     },
 
     observers: [
-      '_requestOptionsChanged(url, method, params.*, headers, contentType, ' +
-          'body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)'
+      '_requestOptionsChanged(url, method, params.*, headers, contentType, body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)'
     ],
 
     /**
@@ -441,10 +440,10 @@ element.
 
     computedUrl: function(resourceUrl) {
       if(window.Polymer.baseUrl) {
-        return 'http://192.168.0.103:3000/' + resourceUrl;
+        return 'http://localhost:3000/' + resourceUrl;
         // return window.Polymer.baseUrl + resourceUrl;
       } else {
-        return 'http://192.168.0.103:3000/' + resourceUrl;
+        return 'http://localhost:3000/' + resourceUrl;
       }
     },
 

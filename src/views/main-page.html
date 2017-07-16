@@ -2,6 +2,7 @@
 	<template>
 		<style>
 			:host {
+				display: block;
 				@apply(--layout-flex);
 				@apply(--layout-vertical);
 			}
@@ -10,33 +11,22 @@
 			}
 			.horizontal {
 				@apply(--layout-horizontal);
+				margin: 0.75%;
 			}
 			paper-card {
 				@apply(--layout-flex);
 			}
 		</style>
 		<div class="content">
-			<div class="header flex horizontal">
-				<paper-card>
-					<h4>Header Left Section</h4>
-					<paper-button id="vibrate-ctl" on-tap="vibrateCtl">Vibrate</paper-button>
-				</paper-card>
-
-				<paper-card>
-					<h4>Header Right Section</h4>
-				</paper-card>
+			<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="./images/search_icon.png" on-tap="searchIconTapped">
+			<mg-tab-view id="tab-view" headers="[[headers]]" selected="my-poll"></mg-tab-view>
+			<div class="horizontal">
+				<mg-image-card></mg-image-card>
+				<mg-image-card></mg-image-card>
 			</div>
-
-			<div class="body flex">
-				<paper-card>
-					<h4>Body Content</h4>
-				</paper-card>
-			</div>
-
-			<div class="tail flex">
-				<paper-card>
-					<h4>Tail content</h4>
-				</paper-card>
+			<div class="horizontal">
+				<mg-image-card></mg-image-card>
+				<mg-image-card></mg-image-card>
 			</div>
 		</div>
 	</template>
@@ -45,10 +35,30 @@
 			is: 'main-page',
 
 			properties: {
+				headers: {
+					type: Array,
+					value: function() {
+						return [{
+              id: 'my-poll',
+              title: 'MY POLL'
+            }, {
+              id: 'top',
+              title: 'TOP 100'
+            }, {
+              id: 'tag',
+              title: '# TAG'
+            }]
+					}
+				}
 			},
 
-			vibrateCtl: function() {
-				navigator.vibrate(3000);
+			ready: function() {
+				var searchIcon = this.$['search-icon'];
+				this.$['tab-view'].appendTab(searchIcon);
+			},
+
+			searchIconTapped: function(event) {
+				console.log(event);
 			}
 		})
 	</script>

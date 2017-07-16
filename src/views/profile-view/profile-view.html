@@ -156,7 +156,6 @@
 			},
 
 			userInfoChanged: function(userInfo) {
-				console.log(userInfo)
 				if(userInfo && userInfo.id) {
 					this.name =  userInfo.name;
 					this.email = userInfo.email;
@@ -178,7 +177,7 @@
 					path: imagePath
 				};
 
-				profileReadAjax.generateRequest();
+				// profileReadAjax.generateRequest();
 			},
 
 			_profileReadResponsed: function(event) {

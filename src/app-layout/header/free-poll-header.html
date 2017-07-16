@@ -5,28 +5,28 @@
 				@apply(--layout-flex);
 			}
 			.toolbar {
-				height: 50px;
+				height: 8.5vh;
 				font-size: 16px;
 				color: #ffffff;
 				background: linear-gradient( to bottom, #3BB5A3, #00A2D9 );
+				display: flex;
+				flex-direction: row;
 			}
 			#swipe-back-icon {
-				width: 1em;			
+				width: 5vw;			
 			}
 			#header-icon {
+				width: 23vw;
 				margin: auto;
 			}
 			#menu-icon {
-				width: 1em;
-				height: 1em;
+				width: 5.9vw;
 			}
 		</style>
 		<app-toolbar class="toolbar">
-			<iron-icon id="swipe-back-icon" src="./images/swipe_back_icon.png"></iron-icon>
-			<iron-icon id="header-icon" src="./images/header_icon.png"></iron-icon>
-			<div hidden="[[hideMenuBtn]]">
-				<iron-icon id="menu-icon" src="./images/menu_icon.png" on-tap="_drawerToggled"></iron-icon>
-			</div>
+			<img id="swipe-back-icon" src="./images/swipe_back_icon.png">
+			<img id="header-icon" src="./images/header_icon.png">
+			<img id="menu-icon" src="./images/menu_icon.png" on-tap="_drawerToggled" hidden="[[hideMenuBtn]]">
 		</app-toolbar>
 	</template>
 	<script>
