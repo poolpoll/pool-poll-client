@@ -68,12 +68,6 @@
 		</custom-ajax>
 
 		<custom-ajax
-			id="user-category-ajax"
-			method="GET"
-			last-response="{{userCategories}}">
-		</custom-ajax>
-
-		<custom-ajax
       id="delete-category-ajax"
       method="DELETE">
     </custom-ajax>
@@ -97,28 +91,15 @@
 			</div>
 
 			<div class="right-section">
-				<paper-input label="Name" value="{{name}}"></paper-input>
-				<paper-input label="E-Mail" value="{{email}}"></paper-input>
-				<paper-input label="Birth Date" value="{{birthDate}}" type="date"></paper-input>
-				<paper-input label="Gender" value="{{gender}}"></paper-input>
+				<mg-input placeholder="Name" hide-label value="{{name}}"></mg-input>
+				<mg-input placeholder="E-Mail" hide-label value="{{email}}"></mg-input>
+				<mg-input placeholder="Birth Date" hide-label value="{{birthDate}}"></mg-input>
+				<mg-input placeholder="Gender" hide-label value="{{gender}}"></mg-input>
 			</div>
 		</div>
 
-		<span class="label">My Favorite List</span>
+		<span class="label">Tags</span>
 
-		<div class="favorite-list">
-			<section>
-			  <paper-dialog-scrollable>
-					<template is="dom-repeat" items="{{userCategories}}">
-						<iron-swipeable-container>
-						  <paper-item id="[[item.id]]">[[item.name]] / [[item.description]]</paper-item>
-						</iron-swipeable-container>
-					</template>
-			  </paper-dialog-scrollable>
-			</section>
-		</div>
-
-		<paper-button on-tap="addCategory">ADD</paper-button>
 	</template>
 	<script>
 		Polymer({
@@ -162,11 +143,7 @@
 					this.birthDate = userInfo.birthDate;
 					this.gender = userInfo.gender;
 					var imagePath = (userInfo.attachment && userInfo.attachment.path && userInfo.attachment.id) ? userInfo.attachment.path + '/' + userInfo.attachment.id : '404 image here';
-					this.readImageMeta(imagePath)
-
-					var userCategoryAjax = this.$['user-category-ajax'];
-					userCategoryAjax.resourceUrl = 'user_categories/' + userInfo.id;
-					userCategoryAjax.generateRequest();
+					this.readImageMeta(imagePath);
 				}
 			},
 

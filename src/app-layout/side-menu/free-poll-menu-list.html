@@ -51,10 +51,10 @@
 			_menuListChanged: function(menuList) {
 				if(!menuList) {
 					page('/sign_in');
-					this.fire('switch-menu-btn', { hideMenuBtn: true });
+					this.fire('route-changed-to-sign_in');
 				} else {
 					page('/main');
-					this.fire('switch-menu-btn', { hideMenuBtn: false });
+					this.fire('route-changed-to-main');
 				}
 			},
 

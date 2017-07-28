@@ -1,15 +1,57 @@
 <dom-module id="sign-in">
   <template>
-    <style include="shared-styles">
+    <style>
       :host {
         display: block;
-        padding: 10px;
+        background: linear-gradient( to bottom, #3CB5A3, #23ACDB );
       }
-      #container {
-        padding: 20% 20% 0 20%;
+      .top {
+        height: 28vh;
       }
-      mg-input #container {
-        border-width: : 1px 1px 1px 1px;
+      .logo-img {
+        display: block;
+        margin: auto;
+        height: 16vh;
+      }
+      .container {
+        height: 100%;
+        background-color: #FFFFFF;
+        border-radius: 5px;
+        margin: 0 10vw 0 10vw;
+        padding-top: 5vh;
+      }
+      .container mg-input {
+        padding: 1vh 0 1vh 0;
+      }
+      .inner-container {
+        margin: auto;
+        padding: 1vh 0 1vh 0;
+      }
+      .text-container {
+        display: block;
+        margin: auto;
+        width: 55vw;
+      }
+      mg-input {
+        --mg-input-height: 6vh;
+        --mg-input-width: 55vw;
+        --mg-font-size: 3vh;
+      }
+      mg-button {
+        --mg-button-color: linear-gradient( to bottom, #3BB5A3, #00A2D9 );
+        --mg-button-height: 6vh;
+        --mg-button-width: 55vw;
+        --mg-button-font-size: 3vh;
+      }
+      .sign-up-btn {
+        font-size: 2vh;
+        padding: 1vh 0 1vh 0;
+        color: #FE0000;
+      }
+      .forget-account-btn {
+        font-size: 2vh;
+        padding: 1vh 0 1vh 0;
+        color: #00A100;
       }
     </style>
 
@@ -21,15 +63,28 @@
       last-response="{{userInfo}}">
     </custom-ajax>
 
-    <div id="container">
-      <mg-input hide-label hide-clear-btn placeholder="ID" value="{{account}}"></mg-input>
-      <mg-input hide-label hide-clear-btn placeholder="Password" type="password" value="{{password}}"></mg-input>
-    </div>
-    <mg-button button-text="LOG IN" on-tap="signIn"></mg-button>
+    <div class="top"></div>
+    
+    <img class="logo-img" src="./images/sign_in_logo.png">
+    
+      <div class="container">
+        <div class="inner-container">
+          <mg-input hide-label hide-clear-btn placeholder="  이메일" value="{{account}}"></mg-input>
+        </div>
+        <div class="inner-container">
+          <mg-input hide-label hide-clear-btn placeholder="  비밀번호" type="password" value="{{password}}" on-keypress="_keyPressed"></mg-input>
+        </div>
+        <div class="inner-container">
+          <mg-button button-text="들어가기" on-tap="signIn"></mg-button>
+        </div>
+        <div class="inner-container">
+          <div class="text-container">
+            <li class="sign-up-btn" on-tap="signUp">새로운 계정을 생성합니다</li>
+            <li class="forget-account-btn" on-tap="forgetAccount">아이디/비밀번호 찾기</li>
+          </div>
+        </div>
+      </div>
   </template>
-
-      <!-- <paper-button class="button" on-tap="signUp">Sign Up</paper-button>
-      <paper-button class="button">Forget Your ID/Password?</paper-button> -->
 
   <script>
     Polymer({
@@ -61,6 +116,16 @@
 
       listeners: {
         'sign-in-ajax.response': 'signInResponsed'
+      },
+
+      ready: function() {
+        this.fire('hide-header-toolbar');
+      },
+
+      _keyPressed: function(event) {
+        if(event.charCode == 13) {
+          this.signIn();
+        }
       },
 
       signIn: function() {

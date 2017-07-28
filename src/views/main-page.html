@@ -9,56 +9,96 @@
 			.flex {
 				@aaply(--layout-flex);
 			}
-			.horizontal {
+			.card-container {
 				@apply(--layout-horizontal);
-				margin: 0.75%;
+				margin: 1vw;
 			}
 			paper-card {
 				@apply(--layout-flex);
 			}
 		</style>
-		<div class="content">
-			<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="./images/search_icon.png" on-tap="searchIconTapped">
-			<mg-tab-view id="tab-view" headers="[[headers]]" selected="my-poll"></mg-tab-view>
-			<div class="horizontal">
-				<mg-image-card></mg-image-card>
-				<mg-image-card></mg-image-card>
-			</div>
-			<div class="horizontal">
-				<mg-image-card></mg-image-card>
-				<mg-image-card></mg-image-card>
-			</div>
+		<custom-ajax
+			id="my-poll-ajax"
+		 	resource-url="polls/my_polls"
+		 	last-response="{{myPolls}}">
+	 	</custom-ajax>
+
+	 	<custom-ajax
+	 		id="top-100-ajax"
+	 		resource-url="polls/top/100"
+	 		last-response="{{top100}}">
+ 		</custom-ajax>
+
+ 		<custom-ajax
+ 			id="poll-by-tags"
+ 			resource-url="polls/tags"
+ 			last-response="{{pollsByTags}}">
+		</custom-ajax>
+
+		<div id="content" class="content">
+			<div class="card-container"></div>
 		</div>
 	</template>
 	<script>
 		Polymer({
 			is: 'main-page',
 
-			properties: {
-				headers: {
-					type: Array,
-					value: function() {
-						return [{
-              id: 'my-poll',
-              title: 'MY POLL'
-            }, {
-              id: 'top',
-              title: 'TOP 100'
-            }, {
-              id: 'tag',
-              title: '# TAG'
-            }]
-					}
-				}
-			},
-
+			observers: [
+				'_dataChanged(myPolls)',
+				'_dataChanged(top100)',
+				'_dataChanged(pollsByTags)'
+			],
+		
 			ready: function() {
-				var searchIcon = this.$['search-icon'];
-				this.$['tab-view'].appendTab(searchIcon);
+				document.addEventListener('mg-tab-view-selected', function(event) {
+					var selectedTap = event.detail;
+					this._clearCards();
+					if(selectedTap == 'my-poll') {
+						this.$['my-poll-ajax'].generateRequest();
+					} else if (selectedTap == 'top') {
+						this.$['top-100-ajax'].generateRequest();
+					} else if (selectedTap == 'tag') {
+						this.$['poll-by-tags'].generateRequest();
+					}
+				}.bind(this));
 			},
 
 			searchIconTapped: function(event) {
 				console.log(event);
+			},
+
+			_clearCards: function(event) {
+				var content = this.querySelector('#content');
+				while(content.childElementCount) {
+					content.removeChild(content.firstChild);
+				}
+
+				var cardContainer = document.createElement('div');
+				cardContainer.classList.add('card-container');
+				cardContainer.classList.add('main-page');
+
+				content.appendChild(cardContainer);
+			},
+
+			_dataChanged: function(data) {
+				if(!data) return;
+				data.forEach(function(item) {
+					var cardElement = document.createElement('mg-image-card');
+					cardElement.setData(item);
+					var containers = this.querySelectorAll('.card-container');
+					var lastContainer = containers[containers.length - 1];
+
+					if(lastContainer.childElementCount == 2) {
+						lastContainer = document.createElement('div');
+						lastContainer.classList.add('card-container');
+						lastContainer.classList.add('main-page');
+
+						var content = this.querySelector('.content');
+						content.appendChild(lastContainer);
+					}
+
+					lastContainer.appendChild(cardElement);
+				}.bind(this));
 			}
 		})
 	</script>

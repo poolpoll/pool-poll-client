@@ -23,7 +23,8 @@
 
 		<div class="horizontal">
 			<paper-input class="content" label="Title" value="{{name}}"></paper-input>
-			<drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list>
+			<paper-input class="content" label="Tags" value="{{tags}}"></paper-input>
+			<!-- <drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list> -->
 		</div>
 
 		<paper-input class="content" label="Description" value="{{description}}"></paper-input>
@@ -74,7 +75,7 @@
 				var registPollAjax = this.$['regist-poll-ajax'];
 				registPollAjax.body = {
 					name: this.name,
-					categoryId: this.categoryId,
+					tags: this.tags,
 					description: this.description,
 					fromDate: this.fromDate,
 					toDate: this.toDate,

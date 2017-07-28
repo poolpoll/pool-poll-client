@@ -21,16 +21,27 @@
 			},
 
 			ready: function() {
-				document.addEventListener('set-storage', function(event) {
+				document.addEventListener('set-local-storage', function(event) {
 					var key = event.detail.key;
 					var value = event.detail.value;
 					this.setStorage(key, value);
 				}.bind(this));
 
-				document.addEventListener('remove-storage', function(event) {
+				document.addEventListener('set-local-storage', function(event) {
+					var key = event.detail.key;
+					var value = event.detail.value;
+					this.setStorage(key, value);
+				}.bind(this));
+
+				document.addEventListener('remove-local-storage', function(event) {
 					var key = event.detail.key;
 					this.removeStorage(key);
-				})
+				}.bind(this));
+
+				document.addEventListener('remove-local-storage', function(event) {
+					var key = event.detail.key;
+					this.removeStorage(key);
+				}.bind(this));
 			},
 
 			getStorageElement: function() {
