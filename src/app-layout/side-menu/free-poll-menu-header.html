@@ -26,7 +26,8 @@
 				height: 10vh;
 				border-style: solid;
 				border-color: white;
-				border-radius: 100%
+				border-radius: 100%;
+				--iron-image-width: 100%;
 			}
 			.name {
 				text-align: center;
@@ -42,6 +43,13 @@
 				font-size: smaller;
 			}
 		</style>
+
+		<custom-ajax
+			id="upload-ajax"
+			method="POST"
+			resource-url="users/profile">
+		</custom-ajax>
+
 		<div class="container">
 			<iron-icon id="swipe-back-icon" src="./images/setting_icon.png" on-tap="settingBtnTapped"></iron-icon>
 		</div>
@@ -52,9 +60,11 @@
 				<span>[[userInfo.name]]</span>
 			</div>
 			<div class="level">
-				<span class="prefix">Lv.</span><span class="level">[[userLevel]]</span>
+				<span class="prefix">Lv.</span><span class="level">[[userInfo.level]]</span>
 			</div>
 		</div>
+
+		<input id="upload-input" type="file" on-change="_fileSelected" accept="image/*" hidden>
 	</template>
 	<script>
 		Polymer({
@@ -63,17 +73,16 @@
 			properties: {
 				imageSrc: {
 					type: String,
-					value: 'http://lorempixel.com/600/400'
+					computed: '_computeImageSrc(userInfo)'
 				},
 
-				userName: {
-					type: String
-				},
-
-				userLevel: {
-					type: Number,
-					value: 15
+				userInfo: {
+					type: Object
 				}
+			},
+
+			listeners: {
+				'upload-ajax.response': '_uploadResponsed'
 			},
 
 			ready: function() {
@@ -85,7 +94,29 @@
 			},
 
 			changeProfilePicture: function() {
-				console.log('picture change tapped');
+				var fileUpload = document.getElementById('upload-input');
+				fileUpload.click();
+			},
+
+			_fileSelected: function(event) {
+				var formData = new FormData();
+				formData.append('profile', event.target.files[0]);
+
+				var uploadAjax = this.$['upload-ajax'];
+				uploadAjax.body = formData;
+				uploadAjax.contentType = undefined;
+				uploadAjax.generateRequest();
+			},
+
+			_computeImageSrc: function(userInfo) {
+				// base url 전역 변수로 수정해야 함
+				if(userInfo.attachmentId)	return 'http://localhost:3000/users/profile/' + userInfo.attachmentId;
+			},
+
+			_uploadResponsed: function(response) {
+				this.userInfo = response.detail.response;
+				this.fire('set-local-storage', { key: 'userInfo', value: this.userInfo });
+
 			}
 		})
 	</script>

@@ -218,24 +218,25 @@
 			},
 
 			changeProfilePicture: function() {
-				navigator.camera.cleanup();				
+				// navigator.camera.cleanup();				
 
-				var options = {
-					quality: 100,
-					destinationType: Camera.DestinationType.FILE_URI,
-					sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
-					allowEdit: true,
-					encodingType: Camera.EncodingType.JPEG,
-					targetWidth: 100,
-					targetHeight: 100,
-					mediaType: Camera.MediaType.PICTURE
-				};
+				// var options = {
+				// 	quality: 100,
+				// 	destinationType: Camera.DestinationType.FILE_URI,
+				// 	sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
+				// 	allowEdit: true,
+				// 	encodingType: Camera.EncodingType.JPEG,
+				// 	targetWidth: 100,
+				// 	targetHeight: 100,
+				// 	mediaType: Camera.MediaType.PICTURE
+				// };
 
-				navigator.camera.getPicture(image => {
-					this.saveImageFIle(image)
-				}, error => {
-					alert(error);
-				}, options);  
+				// navigator.camera.getPicture(image => {
+				// 	this.saveImageFIle(image)
+				// }, error => {
+				// 	alert(error);
+				// }, options);
+				// docum
 			},
 
 			saveImageFIle: function(image) {

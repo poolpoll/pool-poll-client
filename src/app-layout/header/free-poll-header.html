@@ -37,7 +37,7 @@
 		</app-toolbar>
 
 		<mg-tab-view id="tab-view" headers="[[headers]]" selected="my-poll" hidden="[[hideHeaderTab]]"></mg-tab-view>
-		<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="./images/search_icon.png" on-tap="searchIconTapped">		
+		<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="./images/search_icon.png" on-tap="searchIconTapped">
 	</template>
 	<script>
 		Polymer({
@@ -97,6 +97,10 @@
 
 				var searchIcon = this.$['search-icon'];
 				this.$['tab-view'].appendTab(searchIcon);
+			},
+
+			searchIconTapped: function(event) {
+				this.$['upload-input'].tap();
 			},
 
 			_drawerToggled: function(event) {

@@ -144,7 +144,7 @@
         var response = event.currentTarget.lastResponse;
         this.fire('spinner-toggle', false);
         if(response) {
-          this.fire('set-storage', { key: 'userInfo', value: response });
+          this.fire('set-local-storage', { key: 'userInfo', value: response });
           location.reload();
         } else {
           this.fire('toast-toggle', 'Login Failed');
