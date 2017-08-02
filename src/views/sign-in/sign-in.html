@@ -69,10 +69,10 @@
     
       <div class="container">
         <div class="inner-container">
-          <mg-input hide-label hide-clear-btn placeholder="  이메일" value="{{account}}"></mg-input>
+          <mg-input hide-label hide-clear-btn placeholder="이메일" value="{{account}}"></mg-input>
         </div>
         <div class="inner-container">
-          <mg-input hide-label hide-clear-btn placeholder="  비밀번호" type="password" value="{{password}}" on-keypress="_keyPressed"></mg-input>
+          <mg-input hide-label hide-clear-btn placeholder="비밀번호" type="password" value="{{password}}" on-keypress="_keyPressed"></mg-input>
         </div>
         <div class="inner-container">
           <mg-button button-text="들어가기" on-tap="signIn"></mg-button>
@@ -163,6 +163,15 @@
         };
 
         this.fire('dialog-open', event);
+      },
+
+      forgetAccount: function() {
+        this.fire('dialog-open', {
+          content: document.createElement('free-poll-setting-dialog'),
+          dialogConfig: {
+            modal: true
+          }
+        });
       }
     })
   </script>

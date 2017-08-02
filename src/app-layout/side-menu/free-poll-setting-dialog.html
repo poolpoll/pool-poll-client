@@ -1,0 +1,64 @@
+<dom-module id="free-poll-setting-dialog">
+	<template>
+		<style>
+			.container {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.btn-container {
+				padding: 2vh;
+				display: flex;
+				flex-direction: row;
+			}
+			.input {
+				width: 100%;
+				--mg-input-width: 80%;
+				--mg-input-height: 5vh;
+			}
+			.submit-btn {
+				--mg-button-width: 10vh;
+				--mg-button-height: 10vw;
+				--mg-button-color: limegreen;
+				padding-right: 1vw;
+			}
+			.cancel-btn {
+				--mg-button-width: 10vh;
+				--mg-button-height: 10vw;
+				--mg-button-color: tomato;
+				padding-left: 1vw;
+			}
+		</style>
+		<div class="container">
+			<mg-input class="input" hide-label placeholder=" Base URL" value="{{baseUrl}}">[[baseUrl]]</mg-input>
+			<div class="btn-container">
+				<mg-button class="submit-btn" on-tap="_submitBaseUrl" button-text="Submit"></mg-button>
+				<mg-button class="cancel-btn" on-tap="_cancelBtnTapped" button-text="Cancel"></mg-button>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'free-poll-setting-dialog',
+
+			properties: {
+				baseUrl: {
+					type: String
+				}
+			},
+
+			ready: function() {
+				this.baseUrl = window.localStorage.getItem('baseUrl');
+			},
+
+			_submitBaseUrl: function() {
+				window.localStorage.setItem('baseUrl', this.baseUrl);
+				location.reload();
+			},
+
+			_cancelBtnTapped: function() {
+				this.fire('dialog-close');
+			}
+		})
+	</script>
+</dom-module>

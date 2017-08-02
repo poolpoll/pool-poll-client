@@ -19,7 +19,7 @@
 			.profile-container {
 				padding-bottom: 3%;
 			}
-			iron-image {
+			img {
 				display: block;
 				margin: auto;
 				width: 10vh;
@@ -27,9 +27,9 @@
 				border-style: solid;
 				border-color: white;
 				border-radius: 100%;
-				--iron-image-width: 100%;
 			}
 			.name {
+				padding-top: 2vh;
 				text-align: center;
 				color: #ffffff;
 				font-size: smaller;
@@ -55,7 +55,7 @@
 		</div>
 
 		<div class="profile-container">
-			<iron-image src="[[imageSrc]]" on-tap="changeProfilePicture"></iron-image><br>
+			<img src="[[imageSrc]]" on-tap="changeProfilePicture">
 			<div class="name">
 				<span>[[userInfo.name]]</span>
 			</div>
@@ -90,12 +90,42 @@
 			},
 
 			settingBtnTapped: function() {
-				console.log('setting button tapped');
+				this.fire('dialog-open', {
+					content: document.createElement('free-poll-setting-dialog')
+				});
 			},
 
 			changeProfilePicture: function() {
-				var fileUpload = document.getElementById('upload-input');
-				fileUpload.click();
+				// Cordova 환경에서 실행
+				if(navigator.camera) {
+					var options = {
+		        quality: 100,
+		        destinationType: Camera.DestinationType.FILE_URI,
+		        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+		        allowEdit: true,
+		        encodingType: Camera.EncodingType.PNG,
+		        saveToPhotoAlbum: false
+					};
+
+					navigator.camera.getPicture(function(fileURL) {
+						var options = new FileUploadOptions();
+						options.fileKey = 'profile';
+						options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+						options.mimeType = 'image/png';
+
+						var ft = new FileTransfer();
+						ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/users/profile'), function() {
+							console.log('success');
+						}, function(error) {
+							console.error(error);
+						}, options);
+
+					}, function(error) {
+						throw error;
+					}, options);					
+				} else { // Bowser 환경에서 실행
+					this.$['upload-input'].click();
+				}
 			},
 
 			_fileSelected: function(event) {
@@ -110,7 +140,7 @@
 
 			_computeImageSrc: function(userInfo) {
 				// base url 전역 변수로 수정해야 함
-				if(userInfo.attachmentId)	return 'http://localhost:3000/users/profile/' + userInfo.attachmentId;
+				if(userInfo && userInfo.attachmentId)	return window.localStorage.baseUrl + '/users/profile/' + userInfo.attachmentId;
 			},
 
 			_uploadResponsed: function(response) {

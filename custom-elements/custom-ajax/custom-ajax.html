@@ -439,9 +439,9 @@ element.
     },
 
     computedUrl: function(resourceUrl) {
-      if(window.Polymer.baseUrl) {
-        return 'http://localhost:3000/' + resourceUrl;
-        // return window.Polymer.baseUrl + resourceUrl;
+      var baseUrl = window.localStorage.getItem('baseUrl');
+      if(baseUrl) {
+        return baseUrl + '/' + resourceUrl;
       } else {
         return 'http://localhost:3000/' + resourceUrl;
       }
@@ -536,7 +536,6 @@ element.
         if (this.url == null) {
           return;
         }
-
         if (this.auto) {
           this.generateRequest();
         }
