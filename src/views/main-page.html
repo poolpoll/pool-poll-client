@@ -80,7 +80,8 @@
 				if(!data) return;
 				data.forEach(function(item) {
 					var cardElement = document.createElement('mg-image-card');
-					item.profileSrc = window.localStorage.baseUrl + '/users/profile/' + item.user.attachmentId;
+					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+					item.profileSrc = baseUrl + '/users/profile/' + item.user.attachmentId;
 					cardElement.setData(item);
 					var containers = this.querySelectorAll('.card-container');
 					var lastContainer = containers[containers.length - 1];

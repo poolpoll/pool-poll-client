@@ -7,22 +7,22 @@
 
 	page('/main', function() {
 		app.route = 'main';
-		app.title = 'Free Poll';
 	});
 
 	page('/sign_in', function() {
 		app.route = 'sign_in';
-		app.title = 'Sign In';
 	});
+
+	page('/sign_up', function() {
+		app.route = 'sign_up';
+	})
 
 	page('/new_poll', function() {
 		app.route = 'new_poll';
-		app.title = 'New Poll';
 	});
 
 	page('/my_polls', function() {
 		app.route = 'my_polls';
-		app.title = 'My Polls';
 	});
 
 	page('/poll_charts/:pollId', function(ctx) {
@@ -32,7 +32,6 @@
 
 	page('/polls', function() {
 		app.route = 'polls';
-		app.title = 'Polls';
 	});
 
 	page('/poll_join/:pollId', function(ctx) {
@@ -42,7 +41,6 @@
 
 	page('/profile', function() {
 		app.route = 'profile';
-		app.title = 'Profile';
 	});
 
 	page({

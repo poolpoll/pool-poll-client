@@ -3,6 +3,7 @@
     <style>
       :host {
         display: block;
+        overflow-y: hidden;
         background: linear-gradient( to bottom, #3CB5A3, #23ACDB );
       }
       .top {
@@ -14,9 +15,9 @@
         height: 16vh;
       }
       .container {
-        height: 100%;
+        height: 56vh;
         background-color: #FFFFFF;
-        border-radius: 5px;
+        border-radius: 5px 5px 0 0;
         margin: 0 10vw 0 10vw;
         padding-top: 5vh;
       }
@@ -152,17 +153,7 @@
       },
 
       signUp: function() {
-        var content = document.createElement('sign-up');
-        var event = {
-          content: content,
-          dialogConfig: {
-            modal: true,
-            entryAnimation: 'slide-from-left-animation',
-            exitAnimation: 'slide-right-animation'
-          }
-        };
-
-        this.fire('dialog-open', event);
+        page('/sign_up');
       },
 
       forgetAccount: function() {

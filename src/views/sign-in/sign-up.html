@@ -2,17 +2,97 @@
 	<template>
 		<style>
 			.container {
-				@apply(--layout-vertical);
-				@apply(--layout-flex);
-				padding-left: 10px;
-				padding-right: 10px;
+				background: linear-gradient( to bottom, #3CB5A3, #23ACDB );
+				display: flex;
+				flex-direction: column;
 			}
-			.button-group {
-				@apply(--layout-horizontal);
+			.container div {
+				display: flex;
+				padding: 2vw;
+				flex-direction: row;
+				background-color: #FFFFFF;
+				align-items: center;
 			}
-			.flex {
-				@apply(--layout-flex);
+			.div-border-bottom {
+				border-bottom: 1px solid #CBCCCB;
 			}
+			.div-margin-bottom {
+				margin-bottom: 5vh;
+			}
+			.container .close-btn-container {
+				display: block;
+				border: none;
+				background-color: transparent;
+			}
+			.close-btn {
+				padding: 3vw;
+				float: right;
+				width: 5vw;
+				height: 5vw;
+			}
+      .logo-img {
+        display: block;
+        margin: auto;
+        height: 14vh;
+      }
+      .profile-img {
+      	float: right;
+      	margin: auto;
+      	width: 30vw;
+      	padding: 10vw;
+      }
+      .name-field {
+      	border-top: 1px solid #CBCCCB;
+      }
+      .input-common {
+      	--mg-input-border: none;
+      	--mg-font-size: 2.8vh;
+      	--mg-input-width: 100%;
+      }
+      .input-rtl {
+      	--mg-input-direction: rtl;
+      }
+      .input-small {
+      	--mg-input-width: 80%;
+      }
+      .input-center {
+      	--mg-input-text-align: center;
+      }
+      .common-checkbox {
+      	--mg-checkbox-size: 5vw;
+      	--mg-checkbox-bg: url('./images/check_box_off.png') no-repeat;
+      	--mg-checkbox-bg-checked: url('./images/check_box_on.png') no-repeat;
+      	padding: 0 5% 0 5%;      	
+      }
+      span {
+      	font-size: 2.8vh;
+      	width: 60vw;
+      }
+      .span-center {
+      	text-align: center;
+      	color: #979799;
+      }
+     	bottom-margin {
+     		margin-bottom: 5vh;
+     	}
+      .phone-field {
+      	text-align: center;
+      }
+      .national-code {
+      	border-right: 1px solid #CBCCCB;
+      }
+      mg-button {
+      	--mg-button-border-radius: 0px;
+      	--mg-button-width: 24vw;
+      	--mg-button-height: 4vh;
+      	--mg-button-font-size: 2.8vh;
+      	--mg-button-color: #32B6B0;
+      }
+      .submit-btn-field {
+      	width: 100%;
+      	border: 1px 0 1px 0 solid #CBCCCB;
+      	flex-direction: row;
+      }
 		</style>
 		<custom-ajax
 			id="sign-up-ajax"
@@ -22,17 +102,69 @@
  		</custom-ajax>
 
 		<div class="container">
-			<paper-input id="id-input" label="ID" value="{{account}}"></paper-input>
-			<paper-input id="name-input" label="Name" value="{{name}}"></paper-input>
-			<paper-input id="pwd-input" label="Password" value="{{password}}" type="password"></paper-input>
-			<paper-input id="confirm-pwd-input" label="Confirm Password" value="{{confirmPassword}}" type="password"></paper-input>
-			<paper-input id="email-input" label="E-Mail" value="{{email}}"></paper-input>
+			<div class="close-btn-container">
+				<img class="close-btn" src="./images/close_icon.png" />
+			</div>
+			<img class="logo-img" src="./images/sign_in_logo.png" />
+			<img class="profile-img" src="./images/profile_empty.png" />
 
-			<div class="button-group">
-				<paper-button id="cancel-btn" class="flex" on-tap="cancelSignUp">Cancel</paper-button>
-				<paper-button id="sign-up-btn" class="flex" on-tap="signUp" disabled>Sign up</paper-button>
+			<div class="div-border-bottom name-field">
+				<span>별명</span>
+				<mg-input class="input-common" hide-label value="[[name]]"></mg-input>
+				<mg-checkbox class="common-checkbox" id="name-valid"></mg-checkbox>
+			</div>
+
+			<div class="div-border-bottom">
+				<span>성별</span>
+				<span class="span-center">남자</span>
+				<mg-checkbox class="common-checkbox" id="gender-male-check" checked="[[isMale]]"></mg-checkbox>
+				<span class="span-center">여자</span>
+				<mg-checkbox class="common-checkbox" id="gender-female-check" checked="[[!isMale]]"></mg-checkbox>
+			</div>
+
+			<div class="div-border-bottom div-margin-bottom">
+				<span>생일</span>
+				<mg-input class="input-common" hide-label type="date" value="[[birthDate]]"></mg-input>
+			</div>
+
+			<div class="div-border-bottom">
+				<span>이메일</span>
+				<mg-input class="input-common input-rtl" hide-label type="email" value="[[email]]"></mg-input>
+			</div>
+
+			<div class="div-border-bottom">
+				<span>비밀번호</span>
+				<mg-input class="input-common input-rtl" hide-label type="password" value="[[password]]"></mg-input>
+			</div>
+
+			<div class="div-border-bottom div-margin-bottom">
+				<span>비밀번호 확인</span>
+				<mg-input class="input-common input-rtl" hide-label type="password" value="[[confirmPassword]]"></mg-input>
+			</div>
+
+			<div class="div-border-bottom phone-field">
+				<span class="national-code">+82</span> <!-- TODO: 국가번호 코드화 -->
+				<mg-input class="input-common input-center" hide-label type="tel" value="[[phoneNum]]" placeholder="휴대전화"></mg-input>
+				<mg-button button-text="인증번호"></mg-button>
+			</div>
+
+			<div class="div-border-bottom div-margin-bottom">
+				<span>인증번호 입력</span>
+				<mg-input class="input-common input-center" hide-label value="[[authNumber]]"></mg-input>
+				<mg-button button-text="확 인"></mg-button>
+			</div>
+
+			<div class="submit-btn-field">
+				<mg-button button-text="참여하기"></mg-button>
 			</div>
 		</div>
+				
+
+<!-- 			<mg-input id="id-input" label="ID" value="{{account}}"></mg-input>
+			<mg-input id="name-input" label="Name" value="{{name}}"></mg-input>
+			<mg-input id="pwd-input" label="Password" value="{{password}}" type="password"></mg-input>
+			<mg-input id="confirm-pwd-input" label="Confirm Password" value="{{confirmPassword}}" type="password"></mg-input>
+			<mg-input id="email-input" label="E-Mail" value="{{email}}"></mg-input> -->
 
 	</template>
 	<script>
@@ -46,6 +178,17 @@
 
 				name: {
 					type: String
+				},
+
+				isMale: {
+					type: Boolean
+				},				
+
+				birthDate: {
+					type: String,
+					value: function() {
+						return new Date();
+					}
 				},
 
 				password: {

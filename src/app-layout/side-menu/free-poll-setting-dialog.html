@@ -30,10 +30,9 @@
 			}
 		</style>
 		<div class="container">
-			<mg-input class="input" hide-label placeholder=" Base URL" value="{{baseUrl}}">[[baseUrl]]</mg-input>
+			<mg-input class="input" hide-label placeholder="Base URL" type="url" value="{{baseUrl}}">[[baseUrl]]</mg-input>
 			<div class="btn-container">
 				<mg-button class="submit-btn" on-tap="_submitBaseUrl" button-text="Submit"></mg-button>
-				<mg-button class="cancel-btn" on-tap="_cancelBtnTapped" button-text="Cancel"></mg-button>
 			</div>
 		</div>
 	</template>
@@ -54,10 +53,6 @@
 			_submitBaseUrl: function() {
 				window.localStorage.setItem('baseUrl', this.baseUrl);
 				location.reload();
-			},
-
-			_cancelBtnTapped: function() {
-				this.fire('dialog-close');
 			}
 		})
 	</script>
