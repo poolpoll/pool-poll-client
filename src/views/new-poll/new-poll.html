@@ -1,94 +1,597 @@
 <dom-module id="new-poll">
-	<template>
-		<style>
-			.horizontal {
-				@apply(--layout-horizontal);
-			}
-			.flex {
-				@apply(--layout-flex);
-			}
-			.content {
-				@apply(--layout-flex);
-				padding-left: 2%;
-				padding-right: 2%;
-			}
-		</style>
+  <template>
+    <style>
+    	:host {
+    		display: block;
+    		background-color: #FFFFFF;
+    	}
+      mg-input {
+        --mg-input-border: none;
+        --mg-font-size: 14pt;
+      }
+      .small-input {
+        --mg-font-size: 10pt;
+      }
+      .flex-width {
+        --mg-input-width: 100%;
+      }
+    	div {
+    		align-items: center;
+    	}
+      .input-right {
+        --mg-input-text-align: right;
+      }
+    	.row-flex {
+    		display: flex;
+    		flex-direction: row;
+        padding: 3%;
+    	}
+      .full-width {
+        width: 94%;
+      }
+      .column-flex {
+        display: flex;
+        flex-direction: column;
+      }
+    	.label {
+    		width: 34vw;
+    	}
+      .grey-color {
+        color: #939499;
+      }
+      .theme-color {
+        color: #39B1A8;
+      }
+      .span-flex {
+        width: 100%;
+      }
+    	.border-bottom {
+    		border-bottom: 1px #C2C4C7 solid;
+    	}
+      .picture-img {
+        height: 3vh;
+      }
+      .plus-img {
+        margin: auto;
+        height: 3vh;
+      }
+      .content-section {
+        min-height: 15vh;
+        display: block;
+        margin: auto;
+        width: 94%;
+        font-size: 12pt;
+        resize: none;
+      }
+      .main-preview {
+        padding: 5%;
+        width: 90%;
+        height: auto;
+      }      
+      .preview {
+        padding: 5%;
+        width: 40vw;
+      }
+      mg-button {
+        --mg-button-border-radius: 0px;
+        --mg-button-width: 24vw;
+        --mg-button-height: 4vh;
+        --mg-button-font-size: 2.8vh;
+        --mg-button-color: #32B6B0;
+      }      
+      mg-checkbox {
+        --mg-checkbox-size: 5vw;
+        --mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
+        --mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
+      }
+    </style>
 
-		<custom-ajax
-			id="regist-poll-ajax"
-			resource-url="polls/regist"
-			method="post"
-			content-type="application/json">
-		</custom-ajax>
+    <custom-ajax
+      id="poll-regist-ajax"
+      resource-url="polls"
+      method="POST">
+    </custom-ajax>
 
-		<div class="horizontal">
-			<paper-input class="content" label="Title" value="{{name}}"></paper-input>
-			<paper-input class="content" label="Tags" value="{{tags}}"></paper-input>
-			<!-- <drop-down-list class="content" label="Category" resource-name="categories" value="{{categoryId}}"></drop-down-list> -->
-		</div>
+    <custom-ajax
+      id="option-regist-ajax"
+      resource-url="options"
+      method="POST">
+    </custom-ajax>
 
-		<paper-input class="content" label="Description" value="{{description}}"></paper-input>
+    <custom-ajax
+      id="upload-ajax"
+      method="POST"
+      resource-url="polls/thumbnails">
+    </custom-ajax>    
 
-		<div class="horizontal">
-			<paper-input class="content" label="Start Date" value="{{fromDate}}" type="date"></paper-input>
-			<paper-input class="content" label="Due Date" value="{{toDate}}" type="date"></paper-input>
-		</div>
+    <div class="row-flex border-bottom">
+    	<span class="label grey-color">제목</span>
+    	<mg-input id="namg-input" class="flex-width" hide-label value="{{name}}"></mg-input>
+    </div>
 
-		<div id="sheet-container" class="sheet-container">
-			<new-poll-sheet></new-poll-sheet>
-		</div>
+    <div class="row-flex border-bottom">
+    	<span class="label grey-color">마감 일시</span>
+    	<mg-input class="small-input" hide-label type="date" value="{{expireDate}}" placeholder="2017-01-01"></mg-input>
+      <mg-input class="small-input" hide-label type="time" value="{{expireTime}}" placehodler=""></mg-input>
+    </div>
 
-		<paper-button on-tap="appendNewPollSheet">add</paper-button>
-		<paper-button on-tap="registPoll">regist</paper-button>
+    <div class="row-flex border-bottom">
+     <span class="span-flex">복수 선택 가능</span>
+     <mg-input id="limit-input" class="input-right" hide-label type="number" min="[[minLimit]]" max="[[maxLimit]]" placeholder="2"  value="{{multyCheckLimit}}" hidden="[[isHideMultyCheck]]"></mg-input>
+     <span style="padding-right: 5%;" hidden="[[isHideMultyCheck]]">개</span>
+     <mg-checkbox on-tap="_multyCheckTapped"></mg-checkbox>
+    </div>
 
-	</template>
-	<script>
-		Polymer({
-			is: 'new-poll',
+    <div class="row-flex">
+      <span class="span-flex">메인 이미지</span>
+      <img id="main-icon" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openMainFileInput" />
+      <input id="main-image-input" type="file" on-change="_mainImageSelected" accept="image/*" hidden>  
+    </div>
 
-			listeners: {
-				'regist-poll-ajax.response': 'pollAjaxResponsed'
-			},
+    <div class="row-flex border-bottom">
+      <img id="main-preview" class="main-preview" />
+    </div>    
 
-			appendNewPollSheet: function() {
-				var sheetContainer = this.$['sheet-container'];
-				var sheetList = sheetContainer.children;
+    <div class="border-bottom">
+      <!-- TODO: MG TEXTAREA -->
+    	<textarea id="description" class="content-section" placeholder="설문 내용을 입력해 주세요."></textarea>
+    </div>
 
-				for(var i = 0; i < sheetList.length; i++) {
-					sheetList[i].closeCollapse();
-				};
+    <div>
+    	<div class="column-flex border-bottom">
+        <img class="preview" id="preview-1" />
+        <div id="option-wrapper" class="row-flex full-width">
+    		  <span>1.</span>
+    		  <mg-input class="flex-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+          <img id="upload-icon-1" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openFileInput" />
+          <input id="upload-input-1" type="file" on-change="_imageSelected" accept="image/*" hidden>
+        </div>
+    	</div>
 
-				var newPollSheet = document.createElement('new-poll-sheet');
-				sheetContainer.appendChild(newPollSheet);
-			},
+    	<div class="column-flex border-bottom">
+        <img class="preview" id="preview-2" />
+        <div id="option-wrapper" class="row-flex full-width">
+    		  <span>2.</span>
+      		<mg-input class="flex-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+          <img id="upload-icon-2" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openFileInput" />
+          <input id="upload-input-2" type="file" on-change="_imageSelected" accept="image/*" hidden>
+        </div>
+    	</div>
 
-			registPoll: function() {
-				var sheetContainer = this.$['sheet-container'];
-				var questionList = [];
+	    <template is="dom-repeat" items="{{options}}">  
+	    	<div class="column-flex border-bottom">
+          <img class="preview" id="[[_setPreviewId(index)]]" />
+          <div id="option-wrapper" class="row-flex full-width">
+  	    		<span>[[_displayIndex(index)]].</span>
+  	    		<mg-input class="flex-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+            <img id="[[_setImgId(index)]]" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openFileInput" />
+            <input id="[[_setInputId(index)]]" type="file" on-change="_imageSelected" accept="image/*" hidden>
+  	    	</div>
+        </div>
+	    </template>
+    </div>
 
-				var sheetList = sheetContainer.children;
+    <div class="border-bottom">
+     <img class="row-flex plus-img" src="../../assets/images/plus.png" on-tap="_addQuestionTapped" />
+    </div>
 
-				for(var i = 0; i < sheetList.length; i++) {
-					questionList.push(sheetList[i].returnValues());
-				};
+    <div class="row-flex border-bottom">
+     <span class="label theme-color"># Tag</span>
+     <mg-input class="flex-width grey-color input-right" hide-label value="{{tags}}"></mg-input>
+    </div>    
+    
+    <div class="row-flex">
+     <mg-button button-text="등록" on-tap="_registPoll"></mg-button>
+    </div>    
+  </template>
+  <script>
+    Polymer({
+      is: 'new-poll',
 
-				var registPollAjax = this.$['regist-poll-ajax'];
-				registPollAjax.body = {
-					name: this.name,
-					tags: this.tags,
-					description: this.description,
-					fromDate: this.fromDate,
-					toDate: this.toDate,
-					questionList: questionList
-				};
-				registPollAjax.generateRequest();
-			},
+      properties: {
 
-			pollAjaxResponsed: function(event) {
-				if(event.currentTarget.lastResponse) {
-					page('/my_polls');
-				}
-			}
-		})
-	</script>
+        minLimit: {
+          type: Number,
+          value: 2
+        },
+
+        maxLimit: {
+          type: Number,
+          value: 2
+        },
+
+        multyCheckLimit: {
+          type: Number,
+          value: 1
+        },
+
+        isHideMultyCheck: {
+          type: Boolean,
+          value: true
+        },
+
+        options: {
+          type: Array,
+          value: []
+        },
+
+        isNameInvalid: {
+          type: Boolean,
+          observer: '_isNameInvalidChanged'
+        },
+
+        isExpireDateInvalid: {
+          type: Boolean,
+          observer: '_isExpireDateInvalidChanged'
+        },
+
+        isExpireTimeInvalid: {
+          type: Boolean,
+          observer: '_isExpireTimeInvalidChanged'
+        },
+
+        isDescriptionInvalid: {
+          type: Boolean,
+          observer: '_isDescriptionInvalidChanged'
+        },
+
+        isOptionsInvalid: {
+          type: Boolean,
+          observer: '_isOptionsInvalidChanged'
+        },
+
+        isTagsInvalid: {
+          type: Boolean,
+          observer: '_isTagsInvalidChanged'
+        }
+      },
+
+      listeners: {
+        'poll-regist-ajax.response': '_optionAjaxRequest'
+      },
+
+      /**
+       * dom repeat의 번호를 표시하기 위해 index 값을 계산한다.
+       * 기본 두개의 옵션이 나와 있기 때문에 3을 더해 배열의 인덱스를 2부터 시작하도록 
+       * 
+       * @param  Integer index dom-repeat의 item array index
+       */
+      _displayIndex: function(index) {
+        return index + 3;
+      },   
+
+      /**
+       * dom repeat에 생성되는 preview 엘리먼트의 아이디를 계산하여 설정한다.
+       * 
+       * @param  Integer index dom-repeat의 item array index
+       */
+      _setPreviewId: function(index) {
+        return 'preview-' + (index + 3);
+      },
+
+      /**
+       * dom repeat에 생성되는 img 엘리먼트의 아이디를 계산하여 설정한다.
+       * 
+       * @param  Integer index dom-repeat의 item array index
+       */
+      _setImgId: function(index) {
+        return 'upload-icon-' + (index + 3);
+      },
+
+      /**
+       * dom repeat에 생성되는 input 엘리먼트의 아이디를 계산하여 설정한다.
+       * 
+       * @param  Integer index dom-repeat의 item array index
+       */
+      _setInputId: function(index) {
+        return 'upload-input-' + (index + 3);
+      },
+
+      /**
+       * add question 버튼을 누르면 실행되는 함수
+       *
+       * 비어있는 오브젝트를 생성하여 options에 append하고
+       * 복수 선택 가능 수량을 변경한다. 현재 options의 길이에 2 더한 값 (초기 두개의 옵션 때문에)
+       *
+       * @param Object event
+       */
+      _addQuestionTapped: function(event) {
+        var newOption = {};
+        this.push('options', newOption);
+        this.maxLimit = this.options.length + 2;
+      },
+
+      /**
+       * image upload 버튼 클릭시 실행된다.
+       * 메인 이미지를 업로드하는 인풋을 토글함
+       * 
+       * @param  Object event
+       */
+      _openMainFileInput: function(event) {
+        this.$['main-image-input'].click();
+      },
+
+      /**
+       * image upload 버튼 클릭시 실행된다.
+       * 선택지 이미지를 업로드하는 인풋을 토글함
+       * 
+       * @param  Object event
+       */
+      _openFileInput: function(event) {
+        var iconId = event.target.id;
+        var index = iconId.replace('upload-icon-', '');
+        var inputId = 'upload-input-' + index;
+        var input = document.querySelector('#' + inputId);
+        input.click();
+      },
+
+      /**
+       * file input의 값이 변경되었을 때 호출된다.
+       * file의 URL을 뽑아 메인 이미지의 preview를 출력한다.
+       * 
+       * @param  Object event
+       */
+      _mainImageSelected: function(event) {
+        this.$['main-preview'].src = URL.createObjectURL(event.target.files[0]);
+      },
+
+      /**
+       * file input의 값이 변경되었을 때 호출된다.
+       * file의 URL을 뽑아 선택지 이미지의 preview를 출력한다.
+       *
+       * @param  Object event
+       */
+      _imageSelected: function(event) {
+        var inputId = event.target.id;
+        var index = inputId.replace('upload-input-', '');
+        var previewId = 'preview-' + index;
+        this.$[previewId].src = URL.createObjectURL(event.target.files[0]); 
+      },
+
+      /**
+       * 설문 등록 버튼 클릭시 실행된다.
+       * 벨리데이션에 통과하면 Poll만 등록하는 Ajax를 호출한다.
+       * 메인 이미지가 선택되지 않았다면 선택지의 image를 메인 이미지로 등록하고
+       * 선택지에도 어떠한 이미지가 등록되지 않았다면 첨부 파일 없이 등록한다.
+       * 정상적으로 설문이 등록되고 나면 해당 ajax의 response 핸들러에서 선택지 저장 ajax를 수행한다.
+       */
+      _registPoll: function() {
+        if(this.validationCheck()) {
+          var formData = new FormData();
+          var fileInputs = document.querySelectorAll('input[type=file]');
+          var mainThumbnail;
+
+          fileInputs.forEach(function(fileInput) {
+            if(fileInput.files[0] && !mainThumbnail) {
+              mainThumbnail = fileInput.files[0];
+            }
+          });
+
+          if(mainThumbnail) formData.append('thumbnail', mainThumbnail);
+          formData.append('name', this.name);
+          formData.append('description', this.$['description'].value);
+          formData.append('expireDate', this.expireDate);
+          formData.append('expireTime', this.expireTime);
+          formData.append('tags', this.tags);
+          formData.append('multyCheckLimit', this.multyCheckLimit);
+
+          var pollRegistAjax = this.$['poll-regist-ajax'];
+          pollRegistAjax.body = formData;
+          pollRegistAjax.generateRequest();
+        }
+      },
+
+      /**
+       * 설문 등록의 ajax가 정상적으로 응답하면 호출된다.
+       * 선택지와 첨부 파일을 업로드한다.
+       */
+      _optionAjaxRequest: function(event) {
+        var pollId = event.detail.response.id;
+
+        var optWrappers = document.querySelectorAll('#option-wrapper');
+
+        optWrappers.forEach(function(optWrapper) {
+          var nameInput = optWrapper.querySelector('mg-input');
+          var fileInput = optWrapper.querySelector('input[type=file]');
+
+          var name = nameInput.value;
+          var file = fileInput.files[0];
+
+          var formData = new FormData();
+          if(file) formData.append('thumbnail', file);
+          formData.append('name', name);
+          formData.append('pollId', pollId);
+
+          var optionRegistAjax = this.$['option-regist-ajax'];
+          optionRegistAjax.body = formData;
+          optionRegistAjax.generateRequest();
+        }.bind(this));
+      },
+
+      _optionAjaxResponsed: function(event) {
+        console.log(event.detail.response);
+      },
+
+      /**
+       * poll regist ajax 호출 전에 수행하는 validation
+       * 각 필드의 validation check 함수를 호출하고 결과에 따라 isSomthingInvalid를 초기화 한다.
+       * 해당 변수를 통해 validation 수행 결과를 사용자에게 보여준다.
+       * 
+       * @return Boolean validation 결과 
+       */
+      validationCheck: function() {
+        if(this._checkNameInvalid()) return false;
+        if(this._checkExpireDateInvalid()) return false;
+        if(this._checkExpireTimeInvalid()) return false;
+        if(this._checkDescriptionInvalid()) return false;
+        if(this._checkOptionsInvalid()) return false;
+        if(this._checkTagsInvalid()) return false;
+        return true;
+      },
+
+      /**
+       * name validation
+       * name의 null 여부 확인
+       * 
+       * @return Boolean
+       */
+      _checkNameInvalid: function() {
+        if(this.name) {
+          return this.isNameInvalid = false;
+        }
+        return this.isNameInvalid = true;
+      },
+
+      /**
+       * expireDate validation
+       * expireDate null 여부 오늘 이전 날짜 여부 확인
+       * 
+       * @return Boolean
+       */
+      _checkExpireDateInvalid: function() {
+        if(this.expireDate) {
+          var dateArray = this.expireDate.split('-');
+          var year = dateArray[0];
+          var month = dateArray[1];
+          var day = dateArray[2];
+
+          var formatedDate = new Date(year, month, day);
+          var today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          if(formatedDate >= today) {
+            return this.isExpireDateInvalid = false;
+          }          
+        }
+        return this.isExpireDateInvalid = true;
+      },
+
+      /**
+       * expireTime validation
+       * expireTime null 여부 확인
+       * 
+       * @return Boolean
+       */
+      _checkExpireTimeInvalid: function() {
+        if(this.expireTime) {
+          return this.isExpireTimeInvalid = false;
+        }
+        return this.isExpireTimeInvalid = true;
+      },
+
+      /**
+       * description validation
+       * description null 여부 확
+       * 
+       * @return Boolean
+       */
+      _checkDescriptionInvalid: function() {
+        if(this.$['description'].value) {
+          return this.isDescriptionInvalid = false;
+        }
+        return this.isDescriptionInvalid = true;
+      },
+
+      /**
+       * options validation
+       * options null 여부 확인
+       * 
+       * @return Boolean
+       */
+      _checkOptionsInvalid: function() {
+        var optWrappers = document.querySelectorAll('#option-wrapper');
+        var result = false;
+
+        optWrappers.forEach(function(optWrapper) {
+          var nameInput = optWrapper.querySelector('mg-input');
+          if(!nameInput.value) {
+            result = true;
+          }
+        });
+
+        if(result) {
+          return this.isOptionsInvalid = true;
+        };
+        return this.isOptionsInvalid = false;
+      },
+
+      /**
+       * tag validation
+       * tag null 여부 확
+       * 
+       * @return Boolean
+       */
+      _checkTagsInvalid: function() {
+        if(this.tags) {
+          return this.isTagsInvalid = false;
+        }
+        return this.isTagsInvalid = true;
+      },
+
+      /**
+       * multy check checkbox tap 시 실행
+       * checkbox의 값에 따라 limit-input을 숨기거나 보여준다.
+       * 만약 limit-input값이 나타난다면 초기값을 입력한다 (반드시 2 이상이기 때문에 2가 초기값)
+       * 
+       * @param  Object event
+       */
+      _multyCheckTapped: function(event) {
+        var checkbox = event.target;
+        if(checkbox.checked) {
+          this.isHideMultyCheck = false;
+          this.$['limit-input'].value = 2;
+        } else {
+          this.isHideMultyCheck = true;
+        }
+      },
+
+      _isNameInvalidChanged: function(invalid) {
+        if(invalid) {
+          console.log('name invalid');
+        } else {
+          console.log('name valid')
+        }
+      },
+
+      _isExpireDateInvalidChanged: function(invalid) {
+        if(invalid) {
+          console.log('date invalid');
+        } else {
+          console.log('date valid')
+        }
+      },
+
+      _isExpireTimeInvalidChanged: function(invalid) {
+        if(invalid) {
+          console.log('time invalid');
+        } else {
+          console.log('time valid')
+        }
+      },
+
+      _isDescriptionInvalidChanged: function(invalid) {
+        if(invalid) {
+          console.log('description invalid');
+        } else {
+          console.log('description valid')
+        }
+      },
+
+      _isOptionsInvalidChanged: function(invalid) {
+        if(invalid) {
+          console.log('options invalid');
+        } else {
+          console.log('options valid')
+        }
+      },
+
+      _isTagsInvalidChanged: function(invalid) {
+        if(invalid) {
+          console.log('tags invalid');
+        } else {
+          console.log('tags valid')
+        }
+      }           
+    })
+  </script>
 </dom-module>

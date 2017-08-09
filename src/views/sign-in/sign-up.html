@@ -46,11 +46,8 @@
       }
       .input-common {
       	--mg-input-border: none;
-      	--mg-font-size: 2.8vh;
+      	--mg-font-size: 15pt;
       	--mg-input-width: 100%;
-      }
-      .input-rtl {
-      	--mg-input-direction: rtl;
       }
       .input-small {
       	--mg-input-width: 80%;
@@ -58,10 +55,13 @@
       .input-center {
       	--mg-input-text-align: center;
       }
+      .input-right {
+      	--mg-input-text-align: right;
+      }
       .common-checkbox {
       	--mg-checkbox-size: 5vw;
-      	--mg-checkbox-bg: url('./images/check_box_off.png') no-repeat;
-      	--mg-checkbox-bg-checked: url('./images/check_box_on.png') no-repeat;
+      	--mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
+      	--mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
       	padding: 0 5% 0 5%;      	
       }
       span {
@@ -103,14 +103,15 @@
 
 		<div class="container">
 			<div class="close-btn-container">
-				<img class="close-btn" src="./images/close_icon.png" />
+				<img class="close-btn" src="../../assets/images/close_icon.png"  on-tap="_closeBtnTapped" />
 			</div>
-			<img class="logo-img" src="./images/sign_in_logo.png" />
-			<img class="profile-img" src="./images/profile_empty.png" />
+			<img class="logo-img" src="../../assets/images/sign_in_logo.png" />
+			<img class="profile-img" src="../../assets/images/profile_empty.png" on-tap="changeProfilePicture" />
+			<input id="upload-input" type="file" on-change="_fileSelected" accept="image/*" hidden>
 
 			<div class="div-border-bottom name-field">
 				<span>별명</span>
-				<mg-input class="input-common" hide-label value="[[name]]"></mg-input>
+				<mg-input class="input-common input-right" hide-label value="{{name}}" autofocus required valid="[[isNameValid]]"></mg-input>
 				<mg-checkbox class="common-checkbox" id="name-valid"></mg-checkbox>
 			</div>
 
@@ -124,48 +125,40 @@
 
 			<div class="div-border-bottom div-margin-bottom">
 				<span>생일</span>
-				<mg-input class="input-common" hide-label type="date" value="[[birthDate]]"></mg-input>
+				<mg-input class="input-common input-right" hide-label type="date" value="{{birthDate}}" required valid="[[isBirthDateValid]]"></mg-input>
 			</div>
 
 			<div class="div-border-bottom">
 				<span>이메일</span>
-				<mg-input class="input-common input-rtl" hide-label type="email" value="[[email]]"></mg-input>
+				<mg-input class="input-common input-right" hide-label type="email" value="{{email}}" required valid="[[isEmailValid]]"></mg-input>
 			</div>
 
 			<div class="div-border-bottom">
-				<span>비밀번호</span>
-				<mg-input class="input-common input-rtl" hide-label type="password" value="[[password]]"></mg-input>
+				<span class="password-span">비밀번호</span>
+				<mg-input class="input-common input-right" hide-label type="password" value="{{password}}"></mg-input>
 			</div>
 
 			<div class="div-border-bottom div-margin-bottom">
-				<span>비밀번호 확인</span>
-				<mg-input class="input-common input-rtl" hide-label type="password" value="[[confirmPassword]]"></mg-input>
+				<span class="password-span">비밀번호 확인</span>
+				<mg-input class="input-common input-right" hide-label type="password" value="{{confirmPassword}}"></mg-input>
 			</div>
 
 			<div class="div-border-bottom phone-field">
 				<span class="national-code">+82</span> <!-- TODO: 국가번호 코드화 -->
-				<mg-input class="input-common input-center" hide-label type="tel" value="[[phoneNum]]" placeholder="휴대전화"></mg-input>
+				<mg-input class="input-common input-center" hide-label type="tel" value="{{phoneNum}}" placeholder="휴대전화"></mg-input>
 				<mg-button button-text="인증번호"></mg-button>
 			</div>
 
 			<div class="div-border-bottom div-margin-bottom">
 				<span>인증번호 입력</span>
-				<mg-input class="input-common input-center" hide-label value="[[authNumber]]"></mg-input>
+				<mg-input class="input-common input-center" hide-label value="{{authNumber}}"></mg-input>
 				<mg-button button-text="확 인"></mg-button>
 			</div>
 
 			<div class="submit-btn-field">
-				<mg-button button-text="참여하기"></mg-button>
+				<mg-button button-text="참여하기" on-tap="_signUp"></mg-button>
 			</div>
 		</div>
-				
-
-<!-- 			<mg-input id="id-input" label="ID" value="{{account}}"></mg-input>
-			<mg-input id="name-input" label="Name" value="{{name}}"></mg-input>
-			<mg-input id="pwd-input" label="Password" value="{{password}}" type="password"></mg-input>
-			<mg-input id="confirm-pwd-input" label="Confirm Password" value="{{confirmPassword}}" type="password"></mg-input>
-			<mg-input id="email-input" label="E-Mail" value="{{email}}"></mg-input> -->
-
 	</template>
 	<script>
 		Polymer({
@@ -199,72 +192,110 @@
 					type: String
 				},
 
+				isPwdValid: {
+					type: Boolean,
+					value: false
+				},
+
 				email: {
 					type: String
 				}
 			},
 
 			observers: [
-				'autoValidator(account, name, password, confirmPassword, email)'
+				'isPasswordValid(password, confirmPassword)'
 			],
 
 			listeners: {
 				'sign-up-ajax.response': 'signUpResponsed'
 			},
 
-			clearScreen: function() {
-				this.account = '';
-				this.name = '';
-				this.password = '';
-				this.emai = '';
+			_closeBtnTapped: function() {
+				page('/sign_in');
 			},
 
-			cancelSignUp: function() {
-				this.clearScreen();
-				this.fire('dialog-close');
+			changeProfilePicture: function() {
+				// Cordova 환경에서 실행
+				if(navigator.camera) {
+					var options = {
+		        quality: 100,
+		        destinationType: Camera.DestinationType.FILE_URI,
+		        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+		        allowEdit: true,
+		        encodingType: Camera.EncodingType.PNG,
+		        saveToPhotoAlbum: false
+					};
+
+					navigator.camera.getPicture(function(fileURL) {
+						var options = new FileUploadOptions();
+						options.fileKey = 'profile';
+						options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+						options.mimeType = 'image/png';
+
+						var ft = new FileTransfer();
+						ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/users/profile'), function() {
+							console.log('success');
+						}, function(error) {
+							console.error(error);
+						}, options);
+
+					}, function(error) {
+						throw error;
+					}, options);					
+				} else { // Bowser 환경에서 실행
+					this.$['upload-input'].click();
+				}
 			},
 
-			signUp: function() {
-				var signUpAjax = this.$['sign-up-ajax'];
-				signUpAjax.body = {
-					account: this.account,
-					name: this.name,
-					password: this.password,
-					email: this.email
-				};
+			_fileSelected: function(event) {
+				var file =  event.target.files[0];
+				console.log(file);
+			},		
 
-				signUpAjax.generateRequest();
-				this.fire('spinner-toggle', true);
+			_signUp: function() {
+				if(this.valdationCheck()) {
+					var signUpAjax = this.$['sign-up-ajax'];
+					signUpAjax.body = {
+						name: this.name,
+						birthDate: this.birthDate,
+						email: this.email,
+						password: this.password
+						// confirmPassword: this.confirmPassword,
+						// phoneNum: this.phoneNum,
+						// authNumber: this.authNumber					
+					};
+
+					signUpAjax.generateRequest();
+				}
+			},
+
+			valdationCheck: function() {
+				return true;
+				// return (this.name && this.gender && this.birthDate && )
+			},
+
+			isPasswordValid: function(password, confirmPassword) {
+				var pwdSpans = document.querySelectorAll('.password-span');
+
+				if(password === confirmPassword) {
+					pwdSpans.forEach(function(pwdSpan) { pwdSpan.style.color = 'black';	});
+
+					this.isPwdValid = true;
+				} else {
+					pwdSpans.forEach(function(pwdSpan) { pwdSpan.style.color = 'red';	});
+
+					this.isPwdValid = false;
+				}
 			},
 
 			signUpResponsed: function(response) {
 				this.fire('spinner-toggle', false);
 				if(response) {
 					app.route = 'sign_in';
-					app.title = 'Sign In';
-
-					this.fire('dialog-close', {
-						closeCallback: function() { this.fire('toast-toggle', 'Success to Sign Up');}.bind(this)
-					});
+					this.fire('toast-toggle', 'Success to Sign Up');
 				} else {
 					this.fire('toast-toggle', 'Faield to Sign Up');
 				}
-			},
-
-			autoValidator: function(account, name, password, confirmPassword, email) {
-				if(account && name && password && confirmPassword && email && password === confirmPassword) {
-					this.activeButton();
-				} else {
-					this.deactiveButton();
-				}
-			},
-
-			activeButton: function() {
-				this.$['sign-up-btn'].disabled = false;
-			},
-
-			deactiveButton: function() {
-				this.$['sign-up-btn'].disabled = true;
 			}
 		})
 	</script>

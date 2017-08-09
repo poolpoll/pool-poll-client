@@ -16,6 +16,12 @@
 			paper-card {
 				@apply(--layout-flex);
 			}
+			paper-fab {
+				@apply(--layout-vertical-reverse);
+				position: fixed;
+				bottom: 3%;
+				right: 5%;
+			}			
 		</style>
 		<custom-ajax
 			id="my-poll-ajax"
@@ -34,6 +40,8 @@
  			resource-url="polls/tags"
  			last-response="{{pollsByTags}}">
 		</custom-ajax>
+
+		<paper-fab mini icon="icons:add" on-tap="_createNewPoll"></paper-fab>
 
 		<div id="content" class="content">
 			<div class="card-container"></div>
@@ -81,7 +89,9 @@
 				data.forEach(function(item) {
 					var cardElement = document.createElement('mg-image-card');
 					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
-					item.profileSrc = baseUrl + '/users/profile/' + item.user.attachmentId;
+					if(item.user.attachmentId) {
+						item.profileSrc = baseUrl + '/users/profile/' + item.user.attachmentId;	
+					}
 					cardElement.setData(item);
 					var containers = this.querySelectorAll('.card-container');
 					var lastContainer = containers[containers.length - 1];
@@ -97,6 +107,10 @@
 
 					lastContainer.appendChild(cardElement);
 				}.bind(this));
+			},
+
+			_createNewPoll: function() {
+				page('/new_poll');
 			}
 		})
 	</script>

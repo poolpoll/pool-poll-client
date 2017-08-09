@@ -66,11 +66,11 @@
 
     <div class="top"></div>
     
-    <img class="logo-img" src="./images/sign_in_logo.png">
+    <img class="logo-img" src="../../assets/images/sign_in_logo.png">
     
       <div class="container">
         <div class="inner-container">
-          <mg-input hide-label hide-clear-btn placeholder="이메일" value="{{account}}"></mg-input>
+          <mg-input hide-label hide-clear-btn placeholder="이메일" value="{{email}}"></mg-input>
         </div>
         <div class="inner-container">
           <mg-input hide-label hide-clear-btn placeholder="비밀번호" type="password" value="{{password}}" on-keypress="_keyPressed"></mg-input>
@@ -102,7 +102,7 @@
           value: 'Input Password'
         },
 
-        account: {
+        email: {
           type: String
         },
 
@@ -130,10 +130,10 @@
       },
 
       signIn: function() {
-        if(this.account && this.password) {
+        if(this.email && this.password) {
           var signInAjax = this.$['sign-in-ajax'];
           signInAjax.body = {
-            account: this.account,
+            email: this.email,
             password: this.password
           };
           this.fire('spinner-toggle', true);

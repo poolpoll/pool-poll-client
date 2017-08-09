@@ -51,7 +51,7 @@
 		</custom-ajax>
 
 		<div class="container">
-			<iron-icon id="swipe-back-icon" src="./images/setting_icon.png" on-tap="settingBtnTapped"></iron-icon>
+			<iron-icon id="swipe-back-icon" src="../../assets/images/setting_icon.png" on-tap="settingBtnTapped"></iron-icon>
 		</div>
 
 		<div class="profile-container">
@@ -140,13 +140,15 @@
 
 			_computeImageSrc: function(userInfo) {
 				// base url 전역 변수로 수정해야 함
-				if(userInfo && userInfo.attachmentId)	return window.localStorage.baseUrl + '/users/profile/' + userInfo.attachmentId;
+				if(userInfo && userInfo.attachmentId) {
+					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+					return baseUrl + '/users/profile/' + userInfo.attachmentId;
+				}
 			},
 
 			_uploadResponsed: function(response) {
 				this.userInfo = response.detail.response;
 				this.fire('set-local-storage', { key: 'userInfo', value: this.userInfo });
-
 			}
 		})
 	</script>

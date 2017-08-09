@@ -14,7 +14,7 @@
 				z-index: 10;
 			}
 			#swipe-back-icon {
-				height: 4vh;			
+				height: 4vh;
 			}
 			#header-icon {
 				height: 5.5vh;
@@ -29,15 +29,15 @@
 			}
 		</style>
 		<app-toolbar id="header-toolbar" class="toolbar" hidden="[[hideHeaderToolbar]]">
-			<img id="swipe-back-icon" src="./images/swipe_back_icon.png">
-			<img id="header-icon" src="./images/header_icon.png">
+			<img id="swipe-back-icon" src="../../assets/images/back.png">
+			<img id="header-icon" src="../../assets/images/header_icon.png">
 			<div class="menu-icon-container">
-				<img id="menu-icon" src="./images/menu_icon.png" on-tap="_drawerToggled">
+				<img id="menu-icon" src="../../assets/images/menu_icon.png" on-tap="_drawerToggled">
 			</div>
 		</app-toolbar>
 
 		<mg-tab-view id="tab-view" headers="[[headers]]" selected="my-poll" hidden="[[hideHeaderTab]]"></mg-tab-view>
-		<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="./images/search_icon.png" on-tap="searchIconTapped">
+		<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="../../assets/images/search_icon.png" on-tap="searchIconTapped">
 	</template>
 	<script>
 		Polymer({
