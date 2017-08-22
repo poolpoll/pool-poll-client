@@ -55,7 +55,7 @@
 		</div>
 
 		<div class="profile-container">
-			<img src="[[imageSrc]]" on-tap="changeProfilePicture">
+			<img id="profile-img" src="[[imageSrc]]" on-tap="changeProfilePicture">
 			<div class="name">
 				<span>[[userInfo.name]]</span>
 			</div>
@@ -108,6 +108,8 @@
 					};
 
 					navigator.camera.getPicture(function(fileURL) {
+						document.querySelector('#profile-img').src = fileURL;
+
 						var options = new FileUploadOptions();
 						options.fileKey = 'profile';
 						options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
@@ -117,8 +119,7 @@
 						var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
 						ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/users/profile'), function(event) {
 							window.localStorage.userInfo = event.response;
-							_computeImageSrc(JSON.parse(event.response));
-						}, function(error) {
+						}.bind(this), function(error) {
 							throw error;
 						}, options);
 					}, function(error) {

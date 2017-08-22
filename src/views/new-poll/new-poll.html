@@ -299,12 +299,18 @@
         isTagsInvalid: {
           type: Boolean,
           observer: '_isTagsInvalidChanged'
+        },
+
+        baseUrl: {
+          type: String,
+          value: function() {
+            return window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+          }
         }
       },
 
       listeners: {
-        'poll-regist-ajax.response': '_pollAjaxResponsed',
-        'option-regist-ajax.response': '_optionAjaxResponsed'
+        'poll-regist-ajax.response': '_pollAjaxResponsed'
       },
 
       ready: function() {
@@ -517,49 +523,42 @@
       _registPoll: function() {
         if(this.validationCheck()) {
           this.fire('mg-spinner-active');
+          var params = {
+            name: this.name,
+            description: this.$['description'].value,
+            expireDate: this.expireDate,
+            expireTime: this.expireTime,
+            multyCheckLimit: this.multyCheckLimit,
+            tags: this.tags
+          };
 
           if(navigator.camera) { // Cordova 처리
-            var params = new Object();
-            params = {
-              name: this.name,
-              description: this.$['description'].value,
-              expireDate: this.expireDate,
-              expireTime: this.expireTime,
-              multyCheckLimit: this.multyCheckLimit,
-              tags: this.tags,
-            };
-
             var fileURL = this.$['main-preview'].src ? this.$['main-preview'].src : null;
-
-            if(fileURL) { // 이미지 있을 때
+            if(fileURL) { // Cordova && 이미지 있을 때
               var options = new FileUploadOptions();
-              options = {
-                fileKey: 'mainThumbnail',
-                fileName: fileURL.substr(fileURL.lastIndexOf('/') + 1),
-                mimeType: 'image/png',
-                params: params
-              };
+              options.fileKey = 'mainthumbnail';
+              options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+              options.mimeType = 'image/png';
+              options.params = params;
 
               var ft = new FileTransfer();
-              var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
-
-              ft.upload(fileURL, encodeURI(baseUrl + '/polls'), function(event) {
+              ft.upload(fileURL, encodeURI(this.baseUrl + '/polls'), function(event) {
                 var response = JSON.parse(event.response);
-                var pollId = response.id;
-                this._registOption(pollId);
+                this._registOption(response.id);
               }.bind(this), function(error) {
                 throw error;
               }, options);
-            } else { // 이미지 없을 때
+            } else { // Cordova && 이미지 없을 때
               var pollRegistAjax = this.$['poll-regist-ajax'];
               pollRegistAjax.body = params;
+              pollRegistAjax.contentType = 'application/json';
               pollRegistAjax.generateRequest();
             }
           } else { // 브라우저 처리
             var formData = new FormData();
-            var mainThumbnail = document.querySelector('#main-image-input').files[0];
+            var mainthumbnail = document.querySelector('#main-image-input').files[0];
 
-            if(mainThumbnail) formData.append('mainThumbnail', mainThumbnail);
+            if(mainthumbnail) formData.append('mainthumbnail', mainthumbnail);
             formData.append('name', this.name);
             formData.append('description', this.$['description'].value);
             formData.append('expireDate', this.expireDate);
@@ -569,108 +568,97 @@
 
             var pollRegistAjax = this.$['poll-regist-ajax'];
             pollRegistAjax.body = formData;
-            pollRegistAjax.generateRequest();
+            pollRegistAjax.contentType = undefined;
+            pollRegistAjax.generateRequest();      
           }
         }
       },
 
       /**
-       * 설문 등록이 정상적으로 응답하면 호출된다. (Cordova 처리)
+       * Cordova FileTransfer 정상 처리시 호출된다. (Cordova 처리)
        * @param  Number pollId
        */
       _registOption: function(pollId) {
-        var params = [];
-
         var optWrappers = document.querySelectorAll('#option-wrapper');
-        var optionCount = optWrappers.length;
-        var optionNum = 1;
 
-        optWrappers.forEach(function(optWrapper) {
-          var name = optWrapper.querySelector('mg-input').name;
-          var param = new Object();
-          param = {
-            name: name,
-            pollId: pollId
-          };
-          params.push(param);
+        for(var i = 0; i < optWrappers.length; i++) {
+          var name = optWrappers[i].querySelector('mg-input').value;
+          var params = { name: name, pollId: pollId };
+          var fileURL = optWrappers[i].querySelector('.preview').src ? optWrappers[i].querySelector('.preview').src : null;
 
-          var fileURL = optWrapper.querySelector('.preview').src;
-
-          if(fileURL) {
+          if(fileURL) { // Cordova && 이미지 있을 때
             var options = new FileUploadOptions();
-            options = {
-              fileKey: 'thumbnail',
-              fileName: fileURL.substr(fileURL.lastIndexOf('/') + 1),
-              mimeType: 'image/png',
-              params: params
-            };
-
-            var ft = new FileTransfer();
-            var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
-            ft.upload(fileURL, encodeURI(baseUrl + '/options'), function(event) {
-              if(optionCount == optionNum) {
-                page('/main');
-                document.dispatchEvent(new Event('mg-spinner-deactive'));
-                document.dispatchEvent(new Event('mg-tab-view-selected'));                
-              } else {
-                optionCount++;
-              }
-            }, function(error) {
-              throw error;
-            }, options);
-          };
-
-          // Browser 처리
-          // var pollId = event.detail.response.id;
-
-          // var optWrappers = document.querySelectorAll('#option-wrapper');
-
-          // optWrappers.forEach(function(optWrapper) {
-          //   var nameInput = optWrapper.querySelector('mg-input');
-          //   var fileURL = optWrapper.querySelector('.preview').src;
-          //   var name = nameInput.value;
-
-          //   var fileInput = optWrapper.querySelector('input[type=file]');
-          //   var file = fileInput.files[0];
-
-          //   var formData = new FormData();
-          //   if(file) formData.append('thumbnail', file);
-          //   formData.append('name', name);
-          //   formData.append('pollId', pollId);
-
-          //   var optionRegistAjax = this.$['option-regist-ajax'];
-          //   optionRegistAjax.body = formData;
-          //   optionRegistAjax.generateRequest();
-          // });
-        });
-      },
-
-      _pollAjaxResponsed: function(event) {
-        var pollId = event.detail.response.id;
-
-        var optWrappers = document.querySelectorAll('#option-wrapper');
-
-        optWrappers.forEach(function(optWrapper) {
-          var nameInput = optWrapper.querySelector('mg-input');
-          var fileURL = optWrapper.querySelector('.preview').src;
-          var name = nameInput.value;
-
-          if(fileURL) {
-            options = new FileUploadOptions();
             options.fileKey = 'thumbnail';
             options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-            options.mimeType            
-          }
+            options.mimeType = 'image/png';
+            options.params = params;
 
-          if(navigator.camera) {
-
-          }
-        })
+            var ft = new FileTransfer();
+            ft.upload(fileURL, encodeURI(this.baseUrl + '/options'), null, null, options);
+          } else { // Cordova && 이미지 없을 때
+            var optionRegistAjax = this.$['option-regist-ajax'];
+            optionRegistAjax.body = params;
+            optionRegistAjax.contentType = 'application/json';
+            optionRegistAjax.generateRequest();
+          };
+        };
+        this._transactionFinished();
       },
 
-      _optionAjaxResponsed: function(event) {
+      /**
+       * 브라우저 이미지 있거나 없을때 && Cordova 이미지 없이 Poll 등록 했을 때 호출
+       * @param  Object event response Object
+       */
+      _pollAjaxResponsed: function(event) {
+        var pollId = event.detail.response.id;
+        var optWrappers = document.querySelectorAll('#option-wrapper');
+
+        for(var i = 0; i < optWrappers.length; i++) {
+          var name = optWrappers[i].querySelector('mg-input').value;
+          var params = { name: name, pollId: pollId };
+
+          if(navigator.camera) { // Cordova 처리
+            var fileURL = optWrappers[i].querySelector('.preview').src ? optWrappers[i].querySelector('.preview').src : null;
+
+            if(fileURL) { // Cordova && Preview 이미지 있을 때 처리 
+              var options = new FileUploadOptions();
+              options.fileKey = 'thumbnail';
+              options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+              options.mimeType = 'image/png';
+              options.params = params;
+
+              var ft = new FileTransfer();
+              ft.upload(fileURL, encodeURI(this.baseUrl + '/options'), null, null, options);
+            } else { // Cordove && Preview 이미지 없을 때 처리
+              var optionRegistAjax = this.$['option-regist-ajax'];
+              optionRegistAjax.body = params;
+              optionRegistAjax.generateRequest();
+            }
+
+          } else { // Browser일 때 처리
+            var thumbnail = optWrappers[i].querySelector('input[type=file]').files[0];
+            var formData = new FormData();
+            if(thumbnail) formData.append('thumbnail', thumbnail);
+            formData.append('name', name);
+            formData.append('pollId', pollId);
+
+            var optionRegistAjax = this.$['option-regist-ajax'];
+            optionRegistAjax.body = formData;
+            optionRegistAjax.contentType = undefined;
+            optionRegistAjax.generateRequest();            
+          }
+        };
+        this._transactionFinished();
+      },
+
+      /**
+       * 설문 등록 transaction이 완료 되었을 때 호출
+       * 라우팅 변경과 스피너 제거를 수행한다.
+       */
+      _transactionFinished: function() {
         page('/main');
-        this.fire('mg-spinner-deactive');
+        document.dispatchEvent(new Event('mg-spinner-deactive'));
+        document.dispatchEvent(new Event('mg-tab-view-selected'));        
       },
 
       /**
@@ -742,7 +730,7 @@
 
       /**
        * description validation
-       * description null 여부 확
+       * description null 여부 확인
        * 
        * @return Boolean
        */
