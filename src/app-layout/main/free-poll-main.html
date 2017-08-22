@@ -30,7 +30,7 @@
 					<free-poll-header></free-poll-header>
 				</app-header>
 
-				<iron-pages attr-for-selected="route" selected="{{route}}" on-track="handleTrack">
+				<iron-pages attr-for-selected="route" selected="{{route}}">
 					<!-- view list -->
 					<sign-in class="pages" route="sign_in"></sign-in>
 					<sign-up class="pages" route="sign_up"></sign-up>
@@ -51,6 +51,7 @@
 		<dialog-opener id="dialog-opener"></dialog-opener>
 		<custom-localstorage></custom-localstorage>
 		<message-dialog></message-dialog>
+		<mg-spinner></mg-spinner>
 	</template>
 
 	<script>
@@ -91,7 +92,7 @@
 				'_routeChanged(route)'
 			],
 
-			ready: function() {
+			ready: function() {				
 				document.addEventListener('side-menu-open', function() {
 					this.openSideMenu();
 				}.bind(this));
@@ -100,42 +101,6 @@
 					var message = event.detail;
 					this.toggleToast(message);
 				}.bind(this));
-
-				document.addEventListener('spinner-toggle', function(event) {
-					var isActive = event.detail;
-					this.toggleSpinner(isActive);
-				}.bind(this));
-			},
-
-			/**
-			 * 드레그 이벤트 핸들러
-			 * 이벤트가 발생하면 x, y 축의 값을 계산하여
-			 * swite-to-right, swipe-to-left, swipe-to-down, swipe-to-up
-			 * 와 같은 이벤트를 발생시킨다.
-			 * 
-			 * @param  {Object} event 화면 터치 드레그에 대한 이벤트
-			 */
-			handleTrack: function(event) {
-				var state = event.detail.state;
-				if(state == 'end') {
-					if(event.detail.dx) {
-						var dx = event.detail.dx;
-						if(dx >= 100) {
-							this.fire('swipe-to-right');
-						} else if (dx <= -100) {
-							this.fire('swipe-to-left');
-						}
-					};
-
-					if (event.detail.dy) {
-						var dy = event.detail.dy;
-						if(dy >= 100) {
-							this.fire('swipe-to-down');
-						} else if (dy <= -100) {
-							this.fire('swipe-to-up');
-						}
-					};
-				}
 			},
 
 			/**
@@ -168,13 +133,6 @@
 				toast.text = message;
 				toast.close();
 				toast.toggle();
-			},
-
-			/**
-			 * spinner toggle event listner
-			 */
-			toggleSpinner: function(isActive) {
-				// this.$['spinner'].active = isActive;
 			}
 		})
 	</script>

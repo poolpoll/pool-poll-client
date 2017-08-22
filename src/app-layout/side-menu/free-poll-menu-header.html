@@ -86,7 +86,7 @@
 			},
 
 			ready: function() {
-				this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+				this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 			},
 
 			settingBtnTapped: function() {
@@ -114,12 +114,13 @@
 						options.mimeType = 'image/png';
 
 						var ft = new FileTransfer();
-						ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/users/profile'), function() {
-							console.log('success');
+						var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+						ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/users/profile'), function(event) {
+							window.localStorage.userInfo = event.response;
+							_computeImageSrc(JSON.parse(event.response));
 						}, function(error) {
-							console.error(error);
+							throw error;
 						}, options);
-
 					}, function(error) {
 						throw error;
 					}, options);					
@@ -142,7 +143,7 @@
 				// base url 전역 변수로 수정해야 함
 				if(userInfo && userInfo.attachmentId) {
 					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
-					return baseUrl + '/users/profile/' + userInfo.attachmentId;
+					return baseUrl + '/attachments/preview/' + userInfo.attachmentId;
 				}
 			},
 

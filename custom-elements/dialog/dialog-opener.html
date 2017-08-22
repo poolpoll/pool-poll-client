@@ -77,10 +77,10 @@
 			},
 
 			setDialogConfig: function(config) {
-				this.title = (config.title) ? config.title : '';
-				this.modal = (config.modal) ? config.modal : false;
-				this.entryAnimation = (config.entryAnimation) ? config.entryAnimation : null;
-				this.exitAnimation = (config.exitAnimation) ? config.exitAnimation : null;
+				this.title = config.title;
+				this.modal = config.modal;
+				this.entryAnimation = config.entryAnimation;
+				this.exitAnimation = config.exitAnimation;
 			}
 		})
 	</script>

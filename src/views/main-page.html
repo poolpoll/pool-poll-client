@@ -59,14 +59,19 @@
 		
 			ready: function() {
 				document.addEventListener('mg-tab-view-selected', function(event) {
-					var selectedTap = event.detail;
+					if(event.detail) {
+						this.selectedTap = event.detail;	
+					};
+					
 					this._clearCards();
-					if(selectedTap == 'my-poll') {
+					if(this.selectedTap == 'my-poll') {
 						this.$['my-poll-ajax'].generateRequest();
-					} else if (selectedTap == 'top') {
+					} else if (this.selectedTap == 'top') {
 						this.$['top-100-ajax'].generateRequest();
-					} else if (selectedTap == 'tag') {
+					} else if (this.selectedTap == 'tag') {
 						this.$['poll-by-tags'].generateRequest();
+					} else {
+						this.$['my-poll-ajax'].generateRequest();
 					}
 				}.bind(this));
 			},
@@ -89,9 +94,15 @@
 				data.forEach(function(item) {
 					var cardElement = document.createElement('mg-image-card');
 					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+
+					// TODO: Attachment get api 만들기
 					if(item.user.attachmentId) {
-						item.profileSrc = baseUrl + '/users/profile/' + item.user.attachmentId;	
+						item.profileSrc = baseUrl + '/attachments/preview/' + item.user.attachmentId;	
 					}
+					if(item.attachmentId) {
+						item.thumbnailSrc = baseUrl + '/attachments/preview/' + item.attachmentId;
+					}
+
 					cardElement.setData(item);
 					var containers = this.querySelectorAll('.card-container');
 					var lastContainer = containers[containers.length - 1];

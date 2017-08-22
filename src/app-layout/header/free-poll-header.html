@@ -29,7 +29,7 @@
 			}
 		</style>
 		<app-toolbar id="header-toolbar" class="toolbar" hidden="[[hideHeaderToolbar]]">
-			<img id="swipe-back-icon" src="../../assets/images/back.png">
+			<img id="swipe-back-icon" src="../../assets/images/back.png" on-tap="_routeBack">
 			<img id="header-icon" src="../../assets/images/header_icon.png">
 			<div class="menu-icon-container">
 				<img id="menu-icon" src="../../assets/images/menu_icon.png" on-tap="_drawerToggled">
@@ -100,6 +100,14 @@
 
 			_drawerToggled: function(event) {
 				this.fire('mg-side-menu-toggle', event);
+			},
+
+			_routeBack: function() {
+				switch(app.route) {
+					case 'new-poll': page('/main');
+
+					default: page('/main');
+				}
 			}
 		})
 	</script>

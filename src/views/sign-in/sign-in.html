@@ -136,14 +136,14 @@
             email: this.email,
             password: this.password
           };
-          this.fire('spinner-toggle', true);
+          this.fire('mg-spinner-active');
           signInAjax.generateRequest();
         }
       },
 
       signInResponsed: function(event) {
         var response = event.currentTarget.lastResponse;
-        this.fire('spinner-toggle', false);
+        this.fire('mg-spinner-deactive');
         if(response) {
           this.fire('set-local-storage', { key: 'userInfo', value: response });
           location.reload();

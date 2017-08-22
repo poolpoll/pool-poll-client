@@ -46,7 +46,8 @@
     "mg-side-menu": "possible819/mg-side-menu#^1.0.0",
     "mg-tab-view": "possible819/mg-tab-view#^1.0.0",
     "mg-image-card": "possible819/mg-image-card#^1.0.0",
-    "mg-checkbox": "possible819/mg-checkbox#^1.0.0"
+    "mg-checkbox": "possible819/mg-checkbox#^1.0.0",
+    "mg-spinner": "possible819/mg-spinner#^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
