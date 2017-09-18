@@ -27,6 +27,12 @@
 				display: block;
 				height: 2.5vh
 			}
+			#search-input {
+				--mg-font-size: 2vh;
+				--mg-input-padding: 3vw 0 3vw 0;
+				--mg-input-border-color: #33B6B1;
+				--mg-input-btn-width: 4vw;
+			}
 		</style>
 		<app-toolbar id="header-toolbar" class="toolbar" hidden="[[hideHeaderToolbar]]">
 			<img id="swipe-back-icon" src="../../assets/images/back.png" on-tap="_routeBack">
@@ -37,7 +43,8 @@
 		</app-toolbar>
 
 		<mg-tab-view id="tab-view" headers="[[headers]]" selected="my-poll" hidden="[[hideHeaderTab]]"></mg-tab-view>
-		<img id="search-icon" style="height:6vw; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="../../assets/images/search_icon.png" on-tap="searchIconTapped">
+		<img id="search-icon" style="height:1.5em; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="../../assets/images/search_icon.png" on-tap="searchIconTapped">	
+		<mg-input id="search-input" hide-label placeholder="Search..." autofocus on-tap="_searchButtonTapped" hidden="[[hideSearchInput]]" btn-src="./src/assets/images/search_icon.png" value="{{searchKeywords}}"></mg-input>
 	</template>
 	<script>
 		Polymer({
@@ -77,10 +84,22 @@
 
 				hideTapView: {
 					type: Boolean
+				},
+
+				hideSearchInput: {
+					type: Boolean,
+					value: true
+				},
+
+				searchKeywords: {
+					type: String
 				}
 			},
 
 			ready: function() {
+				document.addEventListener('throttle', function(event) {
+					console.log(event);
+				})
 				document.addEventListener('route-changed-to-main', function(event) {
 					this.hideHeaderTab = false;
 					this.hideHeaderToolbar = false;
@@ -90,18 +109,65 @@
 					this.hideHeaderTab = true;
 				}.bind(this));
 
+				document.addEventListener('mg-modal-search-input-tapped', function(event) {
+					event.detail.closeModal();
+					this.hideSearchInput = true;
+				}.bind(this));
+
 				var searchIcon = this.$['search-icon'];
 				this.$['tab-view'].appendTab(searchIcon);
 			},
 
+			/**
+			 * 검색 버튼 누를때 발생
+			 * hideSearchInput을 false로 변경하여 인풋 박스가 나오도록 함
+			 * 모달 오프너 컴퍼넌트의 이벤트를 호출하여 모달을 생성함
+			 * @param  Object event
+			 */
 			searchIconTapped: function(event) {
-				this.$['upload-input'].tap();
+				this.$['tab-view']._headerTapped(event);
+				var searchInput = this.$['search-input'];
+				searchInput.style.display = 'block';
+				searchInput.style.paddingRight = '3%';
+				searchInput.style.paddingLeft = '3%';
+				searchInput.value = null;
+				this.fire('mg-modal-toggle', {
+					screen: searchInput,
+					name: 'search-input',
+					top: '17vh',
+					padding: '3%',
+					zIndex: 110,
+					background: 'white',
+					opacity: 0.8
+				});
+
+				this.hideSearchInput = false;
 			},
 
+			/**
+			 * 모달의 검색 버튼 클릭시 호출
+			 * ajax 호출을 위한 event fire
+			 * @param  Object event
+			 */
+			_searchButtonTapped: function(event) {
+				if(this.searchKeywords) {
+					this.fire('search-btn-tapped', this.searchKeywords);
+					this.hideSearchInput = true;
+					this.fire('mg-modal-close');
+				}
+			},
+
+			/**
+			 * side menu button toggle
+			 * @param  Object event
+			 */
 			_drawerToggled: function(event) {
 				this.fire('mg-side-menu-toggle', event);
 			},
 
+			/**
+			 * 뒤로가기 버튼 tap 시 호출
+			 */
 			_routeBack: function() {
 				switch(app.route) {
 					case 'new-poll': page('/main');

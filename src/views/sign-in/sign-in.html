@@ -143,11 +143,11 @@
 
       signInResponsed: function(event) {
         var response = event.currentTarget.lastResponse;
-        this.fire('mg-spinner-deactive');
         if(response) {
           this.fire('set-local-storage', { key: 'userInfo', value: response });
           location.reload();
         } else {
+          this.fire('mg-spinner-deactive');
           this.fire('toast-toggle', 'Login Failed');
         }
       },

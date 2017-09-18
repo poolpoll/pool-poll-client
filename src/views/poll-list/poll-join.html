@@ -1,187 +1,328 @@
 <dom-module id="poll-join">
   <template>
     <style>
-      .flex {
-        @apply(--layout-flex);
+      #container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
-      .vertical {
-        @apply(--layout-vertical);
+      .row-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .default-padding {
+        padding: 3vw;
+      }
+      .under-line {
+        background-color: #FFFFFF;
+        border-bottom: 1px #C2C4C7 solid;
+      }
+      .full-width {
+        width: 100%;
+      }
+      .user-name-container {
+        margin-left: 3vw;
+        width: 71vw;
+      }
+      .theme-color-font {
+        color: #3CB4A4;
+      }
+      .gray-font {
+        color: #C2C4C7;
+      }
+      .right-text-align {
+        text-align: right;
+      }
+      .center-text-align {
+        text-align: center;
+      }
+      .profile-img {
+        width: 10vw;
+        height: 10vw;
+        border-radius: 100%;
+      }
+      mg-checkbox {
+        --mg-checkbox-size: 5vw;
+        --mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
+        --mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
+      }
+      .option-img {
+        width: 100%;
+      }
+      #tag-section {
+        background-color: #FFFFFF;
+      }
+      #submit-section {
+        background: linear-gradient( to bottom, #3BB5A3, #00A2D9 )
+      }
+      .submit-btn {
+        display: block;
+        margin: auto;
+        height: 3.6vh;
+      }
+      .spacer {
+        background-color: #FFFFFF;
+        border-top: 1px #C2C4C7 solid;
+        flex: 1;
       }
     </style>
-
     <custom-ajax
-      id="get-questions-ajax"
-      method="get"
-      last-response="{{questionList}}">
+      id="poll-ajax"
+      last-response="{{pollInfo}}">
     </custom-ajax>
 
     <custom-ajax
-      id="add-option-count-ajax"
-      resource-url="options/add_count"
+      id="poll-join-ajax"
       method="POST"
       content-type="application/json">
     </custom-ajax>
 
-    <custom-ajax
-      id="add-poll-count-ajax"
-      resource-url="polls/add_count"
-      method="POST"
-      content-type="application/json">
-    </custom-ajax>
+    <div id="container">
+      <div id="profile-section" class="under-line">
+        <div class="row-flex default-padding">
+          <img id="profile" class="profile-img" src="[[profileSrc]]">
+          <div class="user-name-container">
+            <span id="user-name">[[userName]]</span>
+          </div>
+          <div>
+            <span id="level">Lv. [[level]]</span>
+          </div>
+        </div>
+      </div>
 
-    <custom-ajax
-      id="add-poll-history-ajax"
-      method="POST"
-      resource-url="poll_histories"
-      content-type="application/json">
-    </custom-ajax>
+      <div id="poll-name-section" class="under-line">
+        <div class="default-padding">
+          <span>[[pollName]]</span>
+        </div>
+      </div>
 
-    <iron-pages class="vertical flex" id="container" selected="[[selectedPage]]"></iron-pages>
+      <div id="poll-expire-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div class="full-width">
+            <span class="gray-font">마감 일시</span>
+          </div>
+          <div class="full-width center-text-align">
+            <span>[[expireDate]]</span>
+          </div>
+          <div class="right-text-align">
+            <span>[[expireTime]]</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="poll-description-section" class="under-line">
+        <div class="default-padding">
+          <span>[[description]]</span>
+        </div>
+      </div>
+
+      <template is="dom-if" if="[[isMultyCheck]]">
+        <div id="multi-check-section" class="under-line">
+          <div class="row-flex default-padding">
+            <div class="full-width">
+              <span>복수 선택 가능</span>
+            </div>
+            <template is="dom-repeat" items="[[repeatItems]]">
+              <mg-checkbox class="multy-check-navi" style="padding-left: 1vw;" disabled checked="[[item.selected]]"></mg-checkbox>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-repeat" items="[[options]]">
+        <div id="option-section" class="under-line">
+          <div class="default-padding">
+            <div class="row-flex">
+              <mg-checkbox class="option-chkbox" style="padding-right: 3vw;" on-tap="_optionChecked" checked="{{item.selected}}"></mg-checkbox>
+              <div class="full-width">
+                <span>[[_displayIndex(index)]]. [[item.name]]</span>
+              </div>
+            </div>
+            <template is="dom-if" if="[[item.attachmentId]]">
+              <div style="margin-top: 3vw;">
+                <img class="option-img" src="[[_setImgSrcUrl(item.attachmentId)]]" />
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <div id="tag-section">
+        <div class="row-flex default-padding">
+          <div style="width: 15vw;">
+            <span class="theme-color-font"># Tag</span>
+          </div>
+          <div class="full-width right-text-align">
+            <span class="gray-font">[[tag]]</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div id="submit-section" class="full-width" on-tap="_pollJoinSubmit">
+        <div class="row-flex default-padding">
+          <img class="submit-btn" src="../../assets/images/check_image.png" />
+        </div>
+      </div>
+    </div>
   </template>
   <script>
     Polymer({
       is: 'poll-join',
 
       properties: {
-        selectedPage: {
+        pollId: {
+          type: Number,
+          observer: '_pollIdChanged'
+        },
+
+        pollInfo: {
+          type: Object,
+          observer: '_pollInfoChanged'
+        },
+
+        repeatItems: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        currentChkCnt: {
           type: Number,
           value: 0
-        },
-
-        poll: {
-          type: Object,
-          observer: '_pollChanged'
-        },
-
-        questionList: {
-          type: Array,
-          observer: '_questionListChanged'
         }
       },
 
       listeners: {
-        'add-option-count-ajax.response': 'addOptionCountResponsed',
-        'add-poll-history-ajax.response': 'duplicateCheckResponsed'
+        'poll-join-ajax.response': '_pollJoinAjaxResponsed'
       },
 
       ready: function() {
-        document.addEventListener('poll-join-selected', function(event) {
-          this.poll = event.detail;
-        }.bind(this));
-
-        document.addEventListener('poll-join-next', function(event) {
-          this.pollJoinNext();
-        }.bind(this));
-
-        document.addEventListener('poll-join-previous', function(event) {
-          this.pollJoinPrevious();
+        document.addEventListener('poll-join-routed', function(event) {
+          this.pollId = event.detail.pollId;
         }.bind(this));
       },
 
-      _pollChanged: function(poll) {
-        this.poll = poll;
-        var getQuestionsAjax = this.$['get-questions-ajax'];
-        getQuestionsAjax.resourceUrl = 'questions/' + this.poll.id;
-        getQuestionsAjax.generateRequest();
+      _pollIdChanged: function(pollId) {
+        var pollAjax = this.$['poll-ajax'];
+        pollAjax.resourceUrl = 'polls/' + pollId;
+        pollAjax.generateRequest();
       },
 
-      _questionListChanged: function(questionList) {
-        this.clearContainer();
-                
-        questionList.forEach(function(questionInfo) {
-          var pollJoinDetail = document.createElement('poll-join-detail');
-          pollJoinDetail.questionInfo = questionInfo;
-          this.$['container'].appendChild(pollJoinDetail);
-        }.bind(this));
+      _pollInfoChanged: function(pollInfo) {
+        var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+        this.profileSrc = baseUrl + '/attachments/preview/' + pollInfo.poll.user.attachmentId;
+        this.userName = pollInfo.poll.user.name;
+        this.level = pollInfo.poll.user.level;
+        this.pollName = pollInfo.poll.name;
+        this.expireDate = new Date(pollInfo.poll.expireDate).toDateString();
+        this.expireTime = pollInfo.poll.expireTime;
+        this.description = pollInfo.poll.description
+        this.multyCheckLimit = pollInfo.poll.multyCheckLimit;
+        this.tag = pollInfo.poll.tags;
+        if(pollInfo.poll.multyCheckLimit > 1) {
+          this.isMultyCheck = true;
+          for(var i = 1; i <= pollInfo.poll.multyCheckLimit; i++) {
+            this.repeatItems.push({});
+          };
+        } else {
+          this.isMultyCheck = false;
+        }
+        this.options = pollInfo.options;
       },
 
-      pollJoinNext: function() {
-        if(this.selectedPage < this.questionList.length - 1) {
-          this.selectedPage++;
-        } else if (this.selectedPage == this.questionList.length - 1) {
-          if(this.checkValidations()) this.saveAnswers();
+      _displayIndex: function(index) {
+        return index + 1;
+      },
+
+      _setImgSrcUrl: function(attachmentId) {
+        var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+        return baseUrl + '/attachments/preview/' + attachmentId;
+      },
+
+      _optionChecked: function(event) {
+        if(event.target.checked && !event.target.disabled) {
+          this.currentChkCnt++;
+          this.addCheckedItem();
+          this._validateChkCnt();
+        } else if (!event.target.checked && !event.target.disabled) {
+          this.currentChkCnt--;
+          this.subCheckedItem();
+          this._validateChkCnt();
         }
       },
 
-      pollJoinPrevious: function() {
-        if(this.selectedPage > 0) this.selectedPage--;
+      addCheckedItem: function() {
+        var multyCheckNavy = document.querySelectorAll('.multy-check-navi');
+
+        for(var i = 0; i <= multyCheckNavy.length - 1; i++) {
+          if(!multyCheckNavy[i].checked) {
+            multyCheckNavy[i].checked = true;
+            break;
+          };
+        };
       },
 
-      checkValidations: function() {
-        var pollJoinDetails = this.$['container'].children;
+      subCheckedItem: function() {
+        var multyCheckNavy = document.querySelectorAll('.multy-check-navi');
 
-        for(var i = 0; i <= this.questionList.length - 1; i++) {
-          if(!pollJoinDetails[i].checkValidation()) {
-            this.selectedPage = i;
-            return false;
+        for(var i = multyCheckNavy.length -1; i >= 0; i--) {
+          if(multyCheckNavy[i].checked) {
+            multyCheckNavy[i].checked = false;
+            break;
+          };
+        };
+      },
+
+      _validateChkCnt: function() {
+        var optChkboxes = document.querySelectorAll('.option-chkbox');
+        optChkboxes.forEach(function(optChkbox) {
+          if(!optChkbox.checked) {
+            optChkbox.disabled = this.currentChkCnt >= this.multyCheckLimit;
           }
+        }.bind(this));
+      },
+
+      _pollJoinSubmit: function() {
+        if(this._validateBeforeSubmit()) {
+          this.fire('mg-spinner-active');
+          var selectedOptions = this.options.filter(function(option) {
+            return option.selected == true;
+          });
+
+          var optionIds = [];
+          selectedOptions.forEach(function(option) {
+            optionIds.push(option.id);
+          });
+
+          var pollJoinAjax = this.$['poll-join-ajax'];
+          pollJoinAjax.resourceUrl = 'polls/join';
+          pollJoinAjax.body = {
+            pollId: this.pollId,
+            optionIds: optionIds
+          };
+
+          pollJoinAjax.generateRequest();
         }
+      },
+
+      _validateBeforeSubmit: function() {
+        if(this.currentChkCnt <= 0) {
+          alert('한개 이상의 설문지에 체크해 주세요.');
+          return false;
+        }
+
         return true;
       },
 
-      saveAnswers: function() {
-        var addHistoryAjax = this.$['add-poll-history-ajax'];
-        addHistoryAjax.body = { pollId: this.poll.id };
-        addHistoryAjax.generateRequest();
-      },
-
-      duplicateCheckResponsed: function(event) {
-        var response = event.detail.response;
-        if(response) {
-          var pollJoinDetails = this.$['container'].children;
-
-          var selectedOptions = [];
-          for(var i = 0; i <= this.questionList.length - 1; i++) {
-            pollJoinDetails[i].getAnswer().forEach(function(answer) {
-              selectedOptions.push(answer);
-            })
-          };
-
-          var addOptionCntAjax = this.$['add-option-count-ajax'];
-          addOptionCntAjax.body = {
-            pollId: this.poll.id,
-            options: selectedOptions
-          };
-
-          addOptionCntAjax.generateRequest();          
-        } else {
-          this.fire('show-message-dialog', {
-            title: '설문을 등록할 수 없습니다.',
-            message: '이미 참여한 설문 입니다.'
-          });
-
-          this.clearContainer();
-          page('/polls');
-        }
-      },
-
-      addOptionCountResponsed: function(event) {
-        var response = event.currentTarget.lastResponse;
-        if(response) {
-          this.fire('show-message-dialog', {
-            title: 'Thank you for Join the poll',
-            message: 'Your answers successfully applied.',
-            confirmCallback: function() {
-              this.fire('condition-changed')
-            }.bind(this),
-            cancelCallback: function() {
-              this.fire('condition-changed')
-            }.bind(this)
-          })
-        } else {
-          this.fire('show-message-dialog', {
-            title: 'Sorry for you',
-            message: 'Your answers not applied successfully.'
-          })
-        }
-
-        page('/polls');
-      },
-
-      clearContainer: function() {
-        var container = this.$['container'];
-        while(container.hasChildNodes()) { container.removeChild(container.childNodes[0]); };
-      }      
+      _pollJoinAjaxResponsed: function(event) {
+        this.fire('mg-spinner-deactive');
+        page('/main');
+        this.fire('route-changed-to-main');
+      }
     })
   </script>
 </dom-module>

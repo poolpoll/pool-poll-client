@@ -103,11 +103,14 @@
       	--mg-button-font-size: 2.8vh;
       	--mg-button-color: #32B6B0;
       }
-      .submit-btn-field {
-      	width: 100%;
-      	border: 1px 0 1px 0 solid #CBCCCB;
-      	flex-direction: row;
+      #submit-section {
+        background: linear-gradient( to bottom, #3BB5A3, #00A2D9 )
       }
+      .submit-btn {
+        display: block;
+        margin: auto;
+        height: 3.6vh;
+      }      
 		</style>
 		<custom-ajax
 			id="name-duplication-check-ajax"
@@ -179,9 +182,9 @@
 				<mg-button button-text="확 인"></mg-button>
 			</div-->
 
-			<div class="submit-btn-field">
-				<mg-button button-text="참여하기" on-tap="_signUp"></mg-button>
-			</div>
+	    <div id="submit-section" class="row-flex default-padding" on-tap="_signUp">
+	      <img class="submit-btn" src="../../assets/images/check_image.png" />
+	    </div>
 		</div>
 	</template>
 	<script>

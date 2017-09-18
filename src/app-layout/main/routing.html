@@ -34,9 +34,14 @@
 		app.route = 'polls';
 	});
 
-	page('/poll_join/:pollId', function(ctx) {
-		app.pollId = ctx.params.pollId;
+	page('/polls/join/:pollId', function(ctx) {
 		app.route = 'poll_join';
+
+		document.dispatchEvent(new CustomEvent('poll-join-routed', {
+			detail: {
+				pollId: ctx.params.pollId
+			}
+		}));
 	});
 
 	page('/profile', function() {

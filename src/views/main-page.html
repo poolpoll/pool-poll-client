@@ -9,19 +9,22 @@
 			.flex {
 				@aaply(--layout-flex);
 			}
-			.card-container {
-				@apply(--layout-horizontal);
-				margin: 1vw;
+			#content {
+				display: flex;
+				flex-direction: row;
 			}
-			paper-card {
-				@apply(--layout-flex);
+			.left-container {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				margin: 0 1vw 2vw 2vw;
 			}
-			paper-fab {
-				@apply(--layout-vertical-reverse);
-				position: fixed;
-				bottom: 3%;
-				right: 5%;
-			}			
+			.right-container {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				margin: 0 2vw 2vw 1vw;
+			}
 		</style>
 		<custom-ajax
 			id="my-poll-ajax"
@@ -41,88 +44,215 @@
  			last-response="{{pollsByTags}}">
 		</custom-ajax>
 
-		<paper-fab mini icon="icons:add" on-tap="_createNewPoll"></paper-fab>
+		<custom-ajax
+			id="search-poll-ajax"
+			resource-url="polls/search"
+			last-response="{{searchedPoll}">
+		</custom-ajax>
+
+		<custom-ajax
+			id="check-poll-histories-ajax">
+		</custom-ajax>
 
 		<div id="content" class="content">
-			<div class="card-container"></div>
+			<div class="left-container"></div>
+			<div class="right-container"></div>
 		</div>
 	</template>
 	<script>
 		Polymer({
 			is: 'main-page',
 
-			observers: [
-				'_dataChanged(myPolls)',
-				'_dataChanged(top100)',
-				'_dataChanged(pollsByTags)'
-			],
-		
+			listeners: {
+				'my-poll-ajax.response': '_dataChanged',
+				'top-100-ajax.response': '_dataChanged',
+				'poll-by-tags.response': '_dataChanged',
+				'search-poll-ajax.response': '_dataChanged',
+				'check-poll-histories-ajax.response': '_checkAjaxResponsed'
+			},
+
 			ready: function() {
+				this.parentNode.addEventListener('scroll', function(event) {
+					this._scrollChanged(event);
+				}.bind(this));
+
 				document.addEventListener('mg-tab-view-selected', function(event) {
-					if(event.detail) {
-						this.selectedTap = event.detail;	
+					if(event.detail) this.selectedTap = event.detail;
+
+					this.page = 1;
+					var param = { page: this.page };
+
+					switch (this.selectedTap) {
+						case 'my-poll':
+							this._myPollAjax(param);
+							break;
+
+						case 'top':
+							this._topPollAjax();
+							break;
+
+						case 'tag':
+							this._tagPollAjax(param);
+							break;
+
+						case 'search-icon':
+							break;
+
+						default:
+							this._myPollAjax(param);
+							break;
 					};
-					
-					this._clearCards();
-					if(this.selectedTap == 'my-poll') {
-						this.$['my-poll-ajax'].generateRequest();
-					} else if (this.selectedTap == 'top') {
-						this.$['top-100-ajax'].generateRequest();
-					} else if (this.selectedTap == 'tag') {
-						this.$['poll-by-tags'].generateRequest();
-					} else {
-						this.$['my-poll-ajax'].generateRequest();
-					}
+				}.bind(this));
+
+				document.addEventListener('search-btn-tapped', function(event) {
+					this.keyWords = event.detail;
+					this.page = 1;
+					var param = { name: this.keyWords, page: this.page };
+					this._searchPollAjax(param);
 				}.bind(this));
 			},
 
+			/**
+			 * my poll request ajax
+			 * @param  Object params pagination을 위한 page object
+			 */
+			_myPollAjax: function(params) {
+				var myPollAjax = this.$['my-poll-ajax'];
+				myPollAjax.params = params;
+				myPollAjax.generateRequest();
+			},
+
+			/**
+			 * top 100 request ajax
+			 */
+			_topPollAjax: function() {
+				var topPollAjax = this.$['top-100-ajax'];
+				topPollAjax.generateRequest();
+			},
+
+			/**
+			 * tag request ajax
+			 * @param  Object params pagination을 위한 page object
+			 */
+			_tagPollAjax: function(params) {
+				var tagPollAjax = this.$['poll-by-tags'];
+				tagPollAjax.params = params;
+				tagPollAjax.generateRequest();
+			},
+
+			/**
+			 * search request ajax
+			 * @param  Object params pagination을 위한 page object
+			 */
+			_searchPollAjax: function(params) {
+				var searchPollAjax = this.$['search-poll-ajax'];
+				searchPollAjax.params = params;
+				searchPollAjax.generateRequest();
+			},
+
+			/**
+			 * 화면 스크롤 변경시 이벤트 리스너
+			 * 최하단으로 스크롤 이동시 ajax 호출 (infinite scroll)
+			 */
+			_scrollChanged: function(event) {
+				var scrollHeight = event.target.scrollHeight;
+				var clientHeight = event.target.clientHeight;
+				var scrollTop = event.target.scrollTop;
+
+				if(clientHeight + scrollTop == scrollHeight) {
+					this.page++;
+
+					switch (this.selectedTap) {
+						case 'my-poll':
+							this._myPollAjax({ page: this.page });
+							break;
+						case 'tag':
+							this._tagPollAjax({ page: this.page });
+							break;
+						case 'search-icon':
+							this._searchPollAjax({ page: this.page, name: this.keyWords });
+							break;
+					}
+				}
+			},
+
+			/**
+			 * poll list 카드를 리셋
+			 */
 			_clearCards: function(event) {
 				var content = this.querySelector('#content');
 				while(content.childElementCount) {
 					content.removeChild(content.firstChild);
-				}
+				};
 
-				var cardContainer = document.createElement('div');
-				cardContainer.classList.add('card-container');
-				cardContainer.classList.add('main-page');
+				var leftContainer = document.createElement('div');
+				var rightContainer = document.createElement('div');
+				leftContainer.classList.add('left-container');
+				leftContainer.classList.add('style-scope');
+				leftContainer.classList.add('main-page');
+				rightContainer.classList.add('right-container');
+				rightContainer.classList.add('style-scope');
+				rightContainer.classList.add('main-page');
 
-				content.appendChild(cardContainer);
+				content.appendChild(leftContainer);
+				content.appendChild(rightContainer);
 			},
 
-			_dataChanged: function(data) {
-				if(!data) return;
-				data.forEach(function(item) {
+			/**
+			 * ajax request를 통해 리턴 받은 data를 화면에 출력
+			 * 각 poll card에 이벤트 리스너를 등록함
+			 */
+			_dataChanged: function(event) {
+				var data = event.detail.response;
+				if(this.page == 1 && !data || data.length == 0) {
+					console.log('TODO: No Data Helper Append')
+				}
+
+				if(this.page == 1) this._clearCards(); // 조회한 페이지가 1이면 기존 카드를 전부 제거
+				if(this.page > 1 && data && data.length == 0) this.page--; // 조회한 페이지가 1을 초과하고 더이상 조회할 데이터가 없으면 페이지 값을 유지
+				if(!data || data.length == 0) return; // 호회 결과가 없으면 return
+				
+				for(var i = 0; i < data.length; i++) {
 					var cardElement = document.createElement('mg-image-card');
 					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
 
-					// TODO: Attachment get api 만들기
-					if(item.user.attachmentId) {
-						item.profileSrc = baseUrl + '/attachments/preview/' + item.user.attachmentId;	
+					if(data[i].user.attachmentId) {
+						data[i].profileSrc = baseUrl + '/attachments/preview/' + data[i].user.attachmentId;	
 					}
-					if(item.attachmentId) {
-						item.thumbnailSrc = baseUrl + '/attachments/preview/' + item.attachmentId;
-					}
-
-					cardElement.setData(item);
-					var containers = this.querySelectorAll('.card-container');
-					var lastContainer = containers[containers.length - 1];
-
-					if(lastContainer.childElementCount == 2) {
-						lastContainer = document.createElement('div');
-						lastContainer.classList.add('card-container');
-						lastContainer.classList.add('main-page');
-
-						var content = this.querySelector('.content');
-						content.appendChild(lastContainer);
+					if(data[i].attachmentId) {
+						data[i].thumbnailSrc = baseUrl + '/attachments/preview/' + data[i].attachmentId;
 					}
 
-					lastContainer.appendChild(cardElement);
-				}.bind(this));
+					cardElement.setData(data[i]);
+					cardElement.addEventListener('tap', function(event) {
+						var selectedPoll = event.currentTarget;
+						if(selectedPoll.userId == JSON.parse(window.localStorage.userInfo).id) {
+							page('/polls/chart/' + data[i].id);
+						} else {
+							var checkPollHistoriesAjax = this.$['check-poll-histories-ajax'];
+							checkPollHistoriesAjax.resourceUrl = 'poll_histories/' + selectedPoll.id;
+							checkPollHistoriesAjax.generateRequest();
+						}
+					}.bind(this));
+
+					if(i%2 == 0) { // 짝수 처리
+						this.querySelector('.left-container').appendChild(cardElement);
+					} else { // 홀수 처리
+						this.querySelector('.right-container').appendChild(cardElement);
+					}
+				}
 			},
 
-			_createNewPoll: function() {
-				page('/new_poll');
-			}
+			_checkAjaxResponsed: function(event) {
+				var pollId = event.detail.response.pollId;
+				var pollHistories = event.detail.response.data;
+
+				if(pollHistories) {
+					page('/polls/chart/' + pollId);
+				} else {
+					page('/polls/join/' + pollId);
+				}
+			}			
 		})
 	</script>
 </dom-module>
