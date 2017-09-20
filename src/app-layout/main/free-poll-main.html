@@ -35,7 +35,7 @@
 					<free-poll-header></free-poll-header>
 				</app-header>
 
-				<iron-pages attr-for-selected="route" selected="{{route}}">
+				<iron-pages id="pages" attr-for-selected="route" selected="{{route}}">
 					<!-- view list -->
 					<sign-in class="pages" route="sign_in"></sign-in>
 					<sign-up class="pages" route="sign_up"></sign-up>
@@ -93,11 +93,28 @@
 				}
 			},
 
-			observers: [
-				'_routeChanged(route)'
-			],
+			ready: function() {
+				document.addEventListener('before-routing-changed', function(event) {
+					// TODO: Before routing controll at here
+				}.bind(this));
 
-			ready: function() {				
+				document.addEventListener('after-routing-changed', function(event) {
+					var currentRouting = event.detail.currentRoute;
+
+					if(currentRouting == 'new_poll') {
+						// Remove new poll element start
+						var pages = this.$['pages'];
+						var oldElement = pages.querySelector('new-poll');
+						pages.removeChild(oldElement);
+						// Remove new pol element end
+
+						var newPollElement = document.createElement('new-poll');
+						newPollElement.setAttribute('route', 'new_poll');
+						newPollElement.setAttribute('class', 'pages');
+						pages.appendChild(newPollElement);
+					};
+				}.bind(this));
+
 				document.addEventListener('side-menu-open', function() {
 					this.openSideMenu();
 				}.bind(this));

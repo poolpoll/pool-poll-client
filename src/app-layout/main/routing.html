@@ -2,40 +2,121 @@
 
 <script>
 	page('/', function() {
-		page('/main');
+		var targetRoute = 'main'
+		page(targetRoute);
 	});
 
 	page('/main', function() {
-		app.route = 'main';
+		var targetRoute = 'main';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	});
 
 	page('/sign_in', function() {
-		app.route = 'sign_in';
+		var targetRoute = 'sign_in';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	});
 
 	page('/sign_up', function() {
-		app.route = 'sign_up';
+		var targetRoute = 'sign_up';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	})
 
 	page('/new_poll', function() {
-		app.route = 'new_poll';
+		var targetRoute = 'new_poll';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	});
 
 	page('/my_polls', function() {
-		app.route = 'my_polls';
+		var targetRoute = 'my_polls';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	});
 
 	page('/poll_charts/:pollId', function(ctx) {
 		app.pollId = ctx.params.pollId;
-		app.route = 'poll_charts';
-	});
-
-	page('/polls', function() {
-		app.route = 'polls';
+		var targetRoute = 'poll_charts';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	});
 
 	page('/polls/join/:pollId', function(ctx) {
-		app.route = 'poll_join';
+		var targetRoute = 'poll_join';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 
 		document.dispatchEvent(new CustomEvent('poll-join-routed', {
 			detail: {
@@ -45,7 +126,19 @@
 	});
 
 	page('/profile', function() {
-		app.route = 'profile';
+		var targetRoute = 'profile';
+		document.dispatchEvent(new CustomEvent('before-routing-changed', {
+			detail: {
+				currentRoute: app.route,
+				targetRoute: targetRoute
+			}
+		}));
+		app.route = targetRoute;
+		document.dispatchEvent(new CustomEvent('after-routing-changed', {
+			detail: {
+				currentRoute: targetRoute
+			}
+		}));
 	});
 
 	page({
