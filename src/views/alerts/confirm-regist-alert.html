@@ -1,0 +1,60 @@
+<dom-module id="confirm-regist-alert">
+	<template>
+		<style>
+			.container {
+				display: flex;
+				flex-direction: column;
+			}
+			.horizontal {
+				display: flex;
+				flex-direction: row;
+			}
+			.text {
+				padding: 1vh;
+			}
+			.coin {
+				padding: 1vh;
+				width: fit-content;
+				margin: auto;
+			}
+			img {
+				vertical-align: middle;
+				padding: 1vh 0.5vh 1vh 1vh;
+				height: 2.5vh;
+			}
+			span {
+				vertical-align: middle;
+				padding: 1vh 1vh 1vh 0.5vh;
+				color: #E85270;
+				padding:;
+			}
+		</style>
+		<div class="container">
+			<div class="text">
+				[[text]]
+			</div>
+
+			<div class="coin">
+				<img src="./images/coin.png" /> <span>[[coin]]</span>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'confirm-regist-alert',
+
+			properties: {
+
+				text: {
+					type: String,
+					value: 'POLL을 게시 합니다.'
+				},
+
+				coin: {
+					type: Number,
+					value: 3
+				}
+			}
+		})
+	</script>
+</dom-module>

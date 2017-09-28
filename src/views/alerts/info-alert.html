@@ -1,0 +1,29 @@
+<dom-module id="info-alert">
+	<template>
+		<div id="container">
+			<div class="title">
+				<span>[[title]]</span>
+			</div>
+			<div class="content">
+				<span>[[content]]
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'info-alert',
+
+			properties: {
+				title: {
+					type: String,
+					value: "Inform!"
+				},
+
+				content: {
+					type: String,
+					value: "Content text will be here."
+				}
+			}
+		})
+	</script>
+</dom-module>

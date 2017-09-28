@@ -1,35 +1,29 @@
 <dom-module id="new-poll">
   <template>
     <style>
-      #container {
-        background-color: #FFFFFF;
+      .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
       .row-flex {
         display: flex;
         flex-direction: row;
+        align-items: center;
       }
       .column-flex {
         display: flex;
         flex-direction: column;
+      }
+      .grey-color {
+        color: #939499;
+      }
+      .theme-color {
+        color: #39B1A8;
       }      
-      mg-input {
-        --mg-input-border: none;
-        --mg-font-size: 14pt;
-      }
-      .small-input {
-        --mg-font-size: 12pt;
-      }
-      .flex-width {
-        --mg-input-width: 100%;
-      }
-      div {
-        align-items: center;
-      }
-      .input-right {
-        --mg-input-text-align: right;
-      }
-      .limit-input {
-        --mg-input-width: 20vw;
+      .under-line {
+        background-color: #FFFFFF;
+        border-bottom: 1px #C2C4C7 solid;
       }
       .default-padding {
         padding: 3%;
@@ -37,17 +31,14 @@
       .full-width {
         width: 100%;
       }
-      .label {
-        width: 34vw;
+      .input-full-width {
+        --mg-input-width: 100%;
       }
-      .grey-color {
-        color: #939499;
+      .small-input {
+        --mg-font-size: 12pt;
       }
-      .theme-color {
-        color: #39B1A8;
-      }
-      .border-bottom {
-        border-bottom: 1px #C2C4C7 solid;
+      .input-right {
+        --mg-input-text-align: right;
       }
       .picture-img {
         height: 3vh;
@@ -55,15 +46,6 @@
       .plus-img {
         margin: auto;
         height: 3vh;
-      }
-      .content-section {
-        min-height: 15vh;
-        border: none;
-        display: block;
-        margin: auto;
-        width: 94%;
-        font-size: 12pt;
-        resize: none;
       }
       .main-preview {
         display: none;
@@ -80,24 +62,17 @@
         margin: auto;
         padding: 5%;
       }
-      mg-button {
-        --mg-button-border-radius: 0px;
-        --mg-button-width: 24vw;
-        --mg-button-height: 4vh;
-        --mg-button-font-size: 2.8vh;
-        --mg-button-color: #32B6B0;
-      }      
-      mg-checkbox {
-        --mg-checkbox-size: 5vw;
-        --mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
-        --mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
-      }
-      .invalid {
-        border-radius: 5px;
-        border: 1px #FF0000 solid;
+      textarea {
+        color: #939499;
+        min-height: 15vh;
+        border: none;
+        display: block;
+        margin: auto;
+        width: 94%;
+        font-size: 12pt;
+        resize: none;
       }
       .del-btn {
-        display: none;
         position: absolute;
         right: -20vw;
         background-color: red;
@@ -106,9 +81,17 @@
         text-align: center;
       }
       .del-text {
-        display: table-cell;
-        vertical-align: middle;
+        margin: auto;
         color: #FFFFFF;
+      }
+      .submit-btn {
+        display: block;
+        margin: auto;
+        height: 3.6vh;
+      }
+      .spacer {
+        flex: auto;
+        background-color: #FFFFFF;
       }
       #option-wrapper {
         position: relative;
@@ -117,14 +100,22 @@
       #submit-section {
         background: linear-gradient( to bottom, #3BB5A3, #00A2D9 )
       }
-      .submit-btn {
-        display: block;
-        margin: auto;
-        height: 3.6vh;
+      mg-input {
+        --mg-input-border: none;
+        --mg-font-size: 14pt;
       }
-      .spacer {
-        flex: 1;        
-      }      
+      mg-button {
+        --mg-button-border-radius: 0px;
+        --mg-button-width: 24vw;
+        --mg-button-height: 4vh;
+        --mg-button-font-size: 2.8vh;
+        --mg-button-color: #32B6B0;
+      }
+      mg-checkbox {
+        --mg-checkbox-size: 5vw;
+        --mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
+        --mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
+      }
       @keyframes slide {
         from {
           left: 0vw;
@@ -163,106 +154,125 @@
       resource-url="polls/thumbnails">
     </custom-ajax>
 
-    <div id="container">
-      <div class="row-flex default-padding border-bottom">
-        <span class="label grey-color">제목</span>
-        <mg-input id="name-input" class="flex-width" hide-label value="{{name}}"></mg-input>
+    <div class="container">
+      <div id="name-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div style="width: 10vw;">
+            <span class="grey-color">제목</span>
+          </div>
+          <mg-input id="name-input" class="flex-width" hide-label value="{{name}}"></mg-input>
+        </div>
       </div>
 
-      <div class="row-flex default-padding border-bottom">
-        <div style="width: 33%">
-          <span class="label grey-color">마감 일시</span>
-        </div>
-        <div style="display: block; margin: auto;">
+      <div id="expire-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div>
+            <span class="grey-color">마감 일시</span>
+          </div>
           <mg-input id="date-input" class="small-input" hide-label type="date" value="{{expireDate}}"></mg-input>
-        </div>
-        <div style="display: block; margin: auto;">
-          <mg-input id="time-input" class="small-input" hide-label type="time" value="{{expireTime}}"></mg-input>
+          <mg-input id="time-input" class="small-input" hide-label type="time" value="{{expireTime}}"></mg-input>          
         </div>
       </div>
 
-      <div class="row-flex default-padding border-bottom">
-        <span class="full-width">복수 선택 가능</span>
-        <mg-input id="limit-input" class="input-right input-right" hide-label type="number" min="[[minLimit]]" max="[[maxLimit]]" placeholder="2"  value="{{multyCheckLimit}}" hidden="[[isHideMultyCheck]]"></mg-input>
-        <span style="padding-right: 5%;" hidden="[[isHideMultyCheck]]">개</span>
-        <mg-checkbox on-tap="_multyCheckTapped"></mg-checkbox>
+      <div id="multy-check-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div class="full-width">
+            <span class="grey-color">복수 선택 가능</span>
+          </div>
+          <mg-input id="limit-input" class="input-right" hide-label type="number" min="[[minLimit]]" max="[[maxLimit]]" placeholder="2"  value="{{multyCheckLimit}}" hidden="[[isHideMultyCheck]]"></mg-input>
+          <span style="padding-right: 5%;" hidden="[[isHideMultyCheck]]">개</span>
+          <mg-checkbox on-tap="_multyCheckTapped"></mg-checkbox>
+        </div>
       </div>
 
-      <div class="column-flex default-padding border-bottom">
-        <div class="row-flex full-width">
-          <span class="full-width">메인 이미지</span>
+      <div id="main-image-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div class="full-width">
+            <span class="grey-color">메인 이미지</span>
+          </div>
           <img id="main-delete-icon" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_mainImageDeleteBtnTapped"/>
           <img id="main-icon" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openMainImageSelector" />
           <input id="main-image-input" type="file" on-change="_mainImageSelected" accept="image/*" hidden>
         </div>
-        <img id="main-preview" class="main-preview" />
+        <img id="main-preview" class="main-preview" />        
       </div>
 
-      <div class="border-bottom">
-        <textarea id="description" class="content-section default-padding" placeholder="설문 내용을 입력해 주세요."></textarea>
+      <div id="description-section" class="under-line">
+        <div class="row-flex default-padding">
+          <textarea id="description" class="full-width" placeholder="설문 내용을 입력해 주세요."></textarea>
+        </div>
       </div>
 
-      <div id="option-container">
-        <div class="column-flex default-padding border-bottom">
-          <div id="option-wrapper" class="column-flex full-width">
-            <div class="row-flex full-width">
-              <span>1.</span>
-              <mg-input class="flex-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
-              <img id="delete-icon-1" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
-              <img id="upload-icon-1" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
-              <input id="upload-input-1" type="file" on-change="_imageSelected" accept="image/*" hidden>
-            </div>
-            <img class="preview" id="preview-1" />
+      <div id="options-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div>
+            <span>1.</span>
           </div>
+          <mg-input class="input-full-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+          <img id="delete-icon-1" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
+          <img id="upload-icon-1" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
+          <input id="upload-input-1" type="file" on-change="_imageSelected" accept="image/*" hidden>
         </div>
+        <img class="preview" id="preview-1" />
+      </div>
 
-        <div class="column-flex default-padding border-bottom">
-          <div id="option-wrapper" class="column-flex full-width"> 
-            <div class="row-flex full-width">
-              <span>2.</span>
-              <mg-input class="flex-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
-              <img id="delete-icon-2" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
-              <img id="upload-icon-2" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
-              <input id="upload-input-2" type="file" on-change="_imageSelected" accept="image/*" hidden>
-            </div>
-            <img class="preview" id="preview-2" />
+      <div id="options-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div>
+            <span>2.</span>
           </div>
+          <mg-input class="input-full-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+          <img id="delete-icon-2" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
+          <img id="upload-icon-2" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
+          <input id="upload-input-2" type="file" on-change="_imageSelected" accept="image/*" hidden>
         </div>
+        <img class="preview" id="preview-2" />
+      </div>
 
-        <template is="dom-repeat" items="{{options}}">  
-          <div class="column-flex border-bottom">
-            <div id="option-wrapper" class="column-flex full-width" on-track="_handleTrack">
-              <div class="row-flex full-width">
-                <div class="row-flex default-padding" style="position: relative; width: 100%">
-                  <span>[[_displayIndex(index)]].</span>
-                  <mg-input class="flex-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
-                  <img id="[[_setDeleteIconId(index)]]" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
-                  <img id="[[_setImgId(index)]]" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
-                  <input id="[[_setInputId(index)]]" type="file" on-change="_imageSelected" accept="image/*" hidden>  
-                </div>
-                <div class="del-btn" index="[[index]]" on-tap="_deleteOptionTapped">
-                  <span class="full-width del-text">삭 제</span>
-                </div>
+      <template is="dom-repeat" items="{{options}}">
+        <div id="options-section" class="under-line">
+          <div id="option-wrapper" class="row-flex default-padding" on-track="_handleTrack">
+            <div class="row-flex full-width">
+              <div>
+                <span>[[_displayIndex(index)]].</span>
               </div>
-            <img class="preview" id="[[_setPreviewId(index)]]" />            
+              <mg-input class="input-full-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+              <img id="[[_setDeleteIconId(index)]]" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
+              <img id="[[_setImgId(index)]]" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
+              <input id="[[_setInputId(index)]]" type="file" on-change="_imageSelected" accept="image/*" hidden>      
             </div>
+            <div class="del-btn" index="[[index]]" on-tap="_deleteOptionTapped">
+              <span class="full-width del-text">삭 제</span>
+            </div>            
           </div>
-          
-        </template>
+          <img class="preview" id="[[_setPreviewId(index)]]" />
+        </div>
+      </template>
+
+      <div id="add-btn-section" class="under-line">
+        <div class="row-flex default-padding">
+          <img class="plus-img" src="../../assets/images/plus.png" on-tap="_addOptionTapped" />
+        </div>
       </div>
 
-      <div class="border-bottom">
-       <img class="row-flex default-padding plus-img" src="../../assets/images/plus.png" on-tap="_addOptionTapped" />
+      <div id="tag-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div style="width: 15vw;">
+            <span class="theme-color"># Tag</span>
+          </div>
+          <mg-input id="tags-input" class="flex-width grey-color input-right" hide-label value="{{tags}}"></mg-input>          
+        </div>
       </div>
 
-      <div class="row-flex default-padding border-bottom">
-       <span class="label theme-color"># Tag</span>
-       <mg-input id="tags-input" class="flex-width grey-color input-right" hide-label value="{{tags}}"></mg-input>
+      <div class="spacer"></div>
+
+      <div id="regist-btn-section">
+        <div id="submit-section" class="row-flex default-padding" on-tap="_registPoll">
+          <img class="submit-btn" src="../../assets/images/check_image.png" />
+        </div>
       </div>
 
-      <div id="submit-section" class="row-flex default-padding" on-tap="_registPoll">
-        <img class="submit-btn" src="../../assets/images/check_image.png" />
-      </div>
+      <div>
     </div>
   </template>
   <script>
@@ -294,36 +304,6 @@
         options: {
           type: Array,
           value: []
-        },
-
-        isNameInvalid: {
-          type: Boolean,
-          observer: '_isNameInvalidChanged'
-        },
-
-        isExpireDateInvalid: {
-          type: Boolean,
-          observer: '_isExpireDateInvalidChanged'
-        },
-
-        isExpireTimeInvalid: {
-          type: Boolean,
-          observer: '_isExpireTimeInvalidChanged'
-        },
-
-        isDescriptionInvalid: {
-          type: Boolean,
-          observer: '_isDescriptionInvalidChanged'
-        },
-
-        isOptionsInvalid: {
-          type: Boolean,
-          observer: '_isOptionsInvalidChanged'
-        },
-
-        isTagsInvalid: {
-          type: Boolean,
-          observer: '_isTagsInvalidChanged'
         },
 
         baseUrl: {
@@ -456,9 +436,16 @@
           this.push('options', newOption);
           this.maxLimit = this.options.length + 2;          
         } else {
-          alert('최대 선택지 수량을 초과할 수 없습니다.');
-        }
-
+          var warnAlertElement = document.createElement('warn-alert');
+          warnAlertElement.setAttribute('msg', '선택지 최대 수량을 초과 할 수 없습니다.');
+          mgAlert({
+            content: warnAlertElement,
+            useCancelButton: true,
+            useConfirmButton: false,
+            confirmCallback: null,
+            cancelCallback: null
+          });
+        };
       },
 
       _deleteOptionTapped: function(event) {
@@ -612,56 +599,71 @@
        * 정상적으로 설문이 등록되고 나면 해당 ajax의 response 핸들러에서 선택지 저장 ajax를 수행한다.
        */
       _registPoll: function() {
-        if(this.validationCheck()) {
-          this.fire('mg-spinner-active');
-          var params = {
-            name: this.name,
-            description: this.$['description'].value,
-            expireDate: this.expireDate,
-            expireTime: this.expireTime,
-            multyCheckLimit: this.multyCheckLimit,
-            tags: this.tags
-          };
+        var isValid = this.validationCheck();
 
-          if(navigator.camera) { // Cordova 처리
-            var fileURL = this.$['main-preview'].src ? this.$['main-preview'].src : null;
-            if(fileURL) { // Cordova && 이미지 있을 때
-              var options = new FileUploadOptions();
-              options.fileKey = 'mainthumbnail';
-              options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-              options.mimeType = 'image/png';
-              options.params = params;
+        if(isValid === true) {
+          var self = this;
+          var confirmRegistAlert = document.createElement('confirm-regist-alert');
+          mgAlert({
+            content: confirmRegistAlert,
+            useCancelButton: true,
+            useConfirmButton: true,
+            confirmCallback: function() {
+              self.fire('mg-spinner-active');
+              var params = {
+                name: self.name,
+                description: self.$['description'].value,
+                expireDate: self.expireDate,
+                expireTime: self.expireTime,
+                multyCheckLimit: self.multyCheckLimit,
+                tags: self.tags
+              };
 
-              var ft = new FileTransfer();
-              ft.upload(fileURL, encodeURI(this.baseUrl + '/polls'), function(event) {
-                var response = JSON.parse(event.response);
-                this._registOption(response.id);
-              }.bind(this), function(error) {
-                throw error;
-              }, options);
-            } else { // Cordova && 이미지 없을 때
-              var pollRegistAjax = this.$['poll-regist-ajax'];
-              pollRegistAjax.body = params;
-              pollRegistAjax.contentType = 'application/json';
-              pollRegistAjax.generateRequest();
-            }
-          } else { // 브라우저 처리
-            var formData = new FormData();
-            var mainthumbnail = document.querySelector('#main-image-input').files[0];
+              if(navigator.camera) { // Cordova 처리
+                var fileURL = self.$['main-preview'].src ? self.$['main-preview'].src : null;
+                if(fileURL) { // Cordova && 이미지 있을 때
+                  var options = new FileUploadOptions();
+                  options.fileKey = 'mainthumbnail';
+                  options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+                  options.mimeType = 'image/png';
+                  options.params = params;
 
-            if(mainthumbnail) formData.append('mainthumbnail', mainthumbnail);
-            formData.append('name', this.name);
-            formData.append('description', this.$['description'].value);
-            formData.append('expireDate', this.expireDate);
-            formData.append('expireTime', this.expireTime);
-            formData.append('tags', this.tags);
-            formData.append('multyCheckLimit', this.multyCheckLimit);
+                  var ft = new FileTransfer();
+                  ft.upload(fileURL, encodeURI(self.baseUrl + '/polls'), function(event) {
+                    var response = JSON.parse(event.response);
+                    self._registOption(response.id);
+                  }.bind(self), function(error) {
+                    throw error;
+                  }, options);
+                } else { // Cordova && 이미지 없을 때
+                  var pollRegistAjax = self.$['poll-regist-ajax'];
+                  pollRegistAjax.body = params;
+                  pollRegistAjax.contentType = 'application/json';
+                  pollRegistAjax.generateRequest();
+                }
+              } else { // 브라우저 처리
+                var formData = new FormData();
+                var mainthumbnail = document.querySelector('#main-image-input').files[0];
 
-            var pollRegistAjax = this.$['poll-regist-ajax'];
-            pollRegistAjax.body = formData;
-            pollRegistAjax.contentType = undefined;
-            pollRegistAjax.generateRequest();      
-          }
+                if(mainthumbnail) formData.append('mainthumbnail', mainthumbnail);
+                formData.append('name', self.name);
+                formData.append('description', self.$['description'].value);
+                formData.append('expireDate', self.expireDate);
+                formData.append('expireTime', self.expireTime);
+                formData.append('tags', self.tags);
+                formData.append('multyCheckLimit', self.multyCheckLimit);
+
+                var pollRegistAjax = self.$['poll-regist-ajax'];
+                pollRegistAjax.body = formData;
+                pollRegistAjax.contentType = undefined;
+                pollRegistAjax.generateRequest();      
+              }
+            },
+            cancelCallback: null
+          });
+
+        } else {
+          this._showInvalidDialog(isValid);
         }
       },
 
@@ -775,12 +777,12 @@
        * @return Boolean validation 결과 
        */
       validationCheck: function() {
-        if(this._checkNameInvalid()) return false;
-        if(this._checkExpireDateInvalid()) return false;
-        if(this._checkExpireTimeInvalid()) return false;
-        if(this._checkDescriptionInvalid()) return false;
-        if(this._checkOptionsInvalid()) return false;
-        if(this._checkTagsInvalid()) return false;
+        if(this._checkNameInvalid()) return 'name';
+        if(this._checkExpireDateInvalid()) return 'date-input';
+        if(this._checkExpireTimeInvalid()) return 'time-input';
+        if(this._checkDescriptionInvalid()) return 'description';
+        if(this._checkOptionsInvalid()) return 'option-wrapper';
+        if(this._checkTagsInvalid()) return 'tags-input';
         return true;
       },
 
@@ -792,9 +794,9 @@
        */
       _checkNameInvalid: function() {
         if(this.name) {
-          return this.isNameInvalid = false;
+          return false;
         }
-        return this.isNameInvalid = true;
+        return true;
       },
 
       /**
@@ -815,10 +817,10 @@
           today.setHours(0, 0, 0, 0);
 
           if(formatedDate >= today) {
-            return this.isExpireDateInvalid = false;
+            return false;
           }          
         }
-        return this.isExpireDateInvalid = true;
+        return true;
       },
 
       /**
@@ -829,9 +831,9 @@
        */
       _checkExpireTimeInvalid: function() {
         if(this.expireTime) {
-          return this.isExpireTimeInvalid = false;
+          return false;
         }
-        return this.isExpireTimeInvalid = true;
+        return true;
       },
 
       /**
@@ -842,9 +844,9 @@
        */
       _checkDescriptionInvalid: function() {
         if(this.$['description'].value) {
-          return this.isDescriptionInvalid = false;
+          return false;
         }
-        return this.isDescriptionInvalid = true;
+        return true;
       },
 
       /**
@@ -865,9 +867,9 @@
         });
 
         if(result) {
-          return this.isOptionsInvalid = true;
+          return true;
         };
-        return this.isOptionsInvalid = false;
+        return false;
       },
 
       /**
@@ -878,9 +880,9 @@
        */
       _checkTagsInvalid: function() {
         if(this.tags) {
-          return this.isTagsInvalid = false;
+          return false;
         }
-        return this.isTagsInvalid = true;
+        return true;
       },
 
       /**
@@ -900,33 +902,22 @@
         }
       },
 
-      _isNameInvalidChanged: function(invalid) {
-        if(invalid) this._showInvalidDialog(this.$['name-input']);
-      },
-
-      _isExpireDateInvalidChanged: function(invalid) {
-        if(invalid) this._showInvalidDialog(this.$['date-input']);
-      },
-
-      _isExpireTimeInvalidChanged: function(invalid) {
-        if(invalid) this._showInvalidDialog(this.$['time-input']);
-      },
-
-      _isDescriptionInvalidChanged: function(invalid) {
-        if(invalid) this._showInvalidDialog(this.$['description']);
-      },
-
-      _isOptionsInvalidChanged: function(invalid) {
-        if(invalid) this._showInvalidDialog(this.$['option-container']);
-      },
-
-      _isTagsInvalidChanged: function(invalid) {
-        if(invalid) this._showInvalidDialog(this.$['tags-input']);
-      },
-
-      _showInvalidDialog: function(element) {
-        alert('올바른 정보를 입력해 주세요.');
-        element.focus();
+      /**
+       * validation 실패시 alert을 출력하는 공통 코드
+       * @param  String invalidElement validation false 원인 엘리먼트의 id
+       */
+      _showInvalidDialog: function(invalidElement) {
+        var warnAlertElement = document.createElement('warn-alert');
+        warnAlertElement.setAttribute('msg', '입력한 값이 올바르지 않습니다.');
+        mgAlert({
+          content: warnAlertElement,
+          useCancelButton: true,
+          useConfirmButton: false,
+          confirmCallback: null,
+          cancelCallback: function() {
+            console.log(invalidElement + ' is not Valid');
+          }
+        });
       }
     })
   </script>
