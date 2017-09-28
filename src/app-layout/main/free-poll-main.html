@@ -109,7 +109,7 @@
 						var pages = this.$['pages'];
 						var oldElement = pages.querySelector('new-poll');
 						pages.removeChild(oldElement);
-						// Remove new pol element end
+						// Remove new poll element end
 
 						var newPollElement = document.createElement('new-poll');
 						newPollElement.setAttribute('route', 'new_poll');
@@ -118,20 +118,10 @@
 					};
 				}.bind(this));
 
-				document.addEventListener('side-menu-open', function() {
-					this.openSideMenu();
-				}.bind(this));
-
 				document.addEventListener('toast-toggle', function(event) {
 					var message = event.detail;
 					this.toggleToast(message);
 				}.bind(this));
-			},
-
-			/**
-			 * side menu drawer open
-			 */
-			openSideMenu: function() {
 			},
 
 			/**
