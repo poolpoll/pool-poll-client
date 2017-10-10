@@ -14,35 +14,29 @@
       is: 'poll-chart-bar',
 
       properties: {
-        questionDetail: {
+        options: {
           type: Array,
-          observer: '_questionDetailChanged'
+          observer: '_optionsChanged'
         }
       },
 
-      _questionDetailChanged: function(questionDetail) {
-        questionDetail.forEach(function(question) {
-          this.setBarChart(question);
-        }.bind(this));
-      },
-
-      setBarChart: function(question) {
-        var label = question.name;
+      _optionsChanged: function(options) {
         var labels = [];
         var backgroundColor = [];
         var borderColor = [];
         var data = [];
 
-        question.options.forEach(function(option) {
+        options.forEach(function(option) {
+          var label = option.name;
           var randomColor = '#' + Math.round(Math.random() * 0xFFFFFF).toString(16);
+
           labels.push(option.name);
           data.push(option.count);
           backgroundColor.push(randomColor);
-          borderColor.push(randomColor);          
+          borderColor.push(randomColor);
         });
 
         var canvas = document.createElement('canvas');
-        canvas.setAttribute('id', 'chart-bar-' + question.id);
         this.$['chart-section'].appendChild(canvas);
 
         var barChart = new Chart(canvas, {
@@ -50,12 +44,11 @@
           data: {
             labels: labels,
             datasets: [{
-              label: label,
               data: data,
-              borderWidth: 1,
+              borderWidth: 0,
               borderColor: borderColor,
               backgroundColor: backgroundColor              
-            }]
+            }]            
           },
           options: {
             scales: {
@@ -66,7 +59,7 @@
                 }
               }]
             }
-          }
+          }          
         });
       }
     })

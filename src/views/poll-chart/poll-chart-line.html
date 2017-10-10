@@ -7,6 +7,7 @@
         @apply(--layout-flex);
       }
     </style>
+    <span>라인 차트</span>
     <div id="chart-section"></div>
   </template>
   <script>
@@ -14,35 +15,33 @@
       is: 'poll-chart-line',
 
       properties: {
-        questionDetail: {
+        options: {
           type: Array,
-          observer: '_questionDetailChanged'
+          observer: '_optionsChanged'
         }
       },
 
-      _questionDetailChanged: function(questionDetail) {
-        questionDetail.forEach(function(question) {
-          this.setLineChart(question);
+      _optionsChanged: function(options) {
+        options.forEach(function(option) {
+          this.setBarChart(option);
         }.bind(this));
       },
 
-      setLineChart: function(question) {
-        var label = question.name;
+      setBarChart: function(option) {
+        var label = option.name;
         var labels = [];
         var backgroundColor = [];
         var borderColor = [];
         var data = [];
+        var randomColor = '#' + Math.round(Math.random() * 0xFFFFFF).toString(16);
 
-        question.options.forEach(function(option) {
-          var randomColor = '#' + Math.round(Math.random() * 0xFFFFFF).toString(16);
-          labels.push(option.name);
-          data.push(option.count);
-          backgroundColor.push(randomColor);
-          borderColor.push(randomColor);
-        });
+        labels.push(option.name);
+        data.push(option.count);
+        backgroundColor.push(randomColor);
+        borderColor.push(randomColor);
 
         var canvas = document.createElement('canvas');
-        canvas.setAttribute('id', 'chart-line-' + question.id);
+        canvas.setAttribute('id', 'chart-line-' + option.id);
         this.$['chart-section'].appendChild(canvas);
 
         var barChart = new Chart(canvas, {

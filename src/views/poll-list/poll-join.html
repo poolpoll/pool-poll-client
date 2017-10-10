@@ -102,12 +102,8 @@
           <div class="full-width">
             <span class="gray-font">마감 일시</span>
           </div>
-          <div class="full-width center-text-align">
-            <span>[[expireDate]]</span>
-          </div>
-          <div class="right-text-align">
-            <span>[[expireTime]]</span>
-          </div>
+          <mg-input-date class="full-width" value="[[expireDate]]"></mg-input-date>
+          <mg-input-time class="full-width" value="[[expireTime]]"></mg-input-time>
         </div>
       </div>
 
@@ -206,19 +202,27 @@
         }.bind(this));
       },
 
+      clearData: function() {
+        this.pollInfo = null;
+        this.options = null;
+        this.currentChkCnt = 0;
+      },
+
       _pollIdChanged: function(pollId) {
+        this.clearData();
         var pollAjax = this.$['poll-ajax'];
         pollAjax.resourceUrl = 'polls/' + pollId;
         pollAjax.generateRequest();
       },
 
       _pollInfoChanged: function(pollInfo) {
-        var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+        if(!pollInfo) return;
+        var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
         this.profileSrc = baseUrl + '/attachments/preview/' + pollInfo.poll.user.attachmentId;
         this.userName = pollInfo.poll.user.name;
         this.level = pollInfo.poll.user.level;
         this.pollName = pollInfo.poll.name;
-        this.expireDate = new Date(pollInfo.poll.expireDate).toDateString();
+        this.expireDate = pollInfo.poll.expireDate;
         this.expireTime = pollInfo.poll.expireTime;
         this.description = pollInfo.poll.description
         this.multyCheckLimit = pollInfo.poll.multyCheckLimit;
@@ -239,7 +243,7 @@
       },
 
       _setImgSrcUrl: function(attachmentId) {
-        var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+        var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
         return baseUrl + '/attachments/preview/' + attachmentId;
       },
 
@@ -252,6 +256,8 @@
           this.currentChkCnt--;
           this.subCheckedItem();
           this._validateChkCnt();
+        } else {
+          this.showWarnAlert(this.currentChkCnt + '개 이상 선택할 수 없습니다.')
         }
       },
 
@@ -311,11 +317,22 @@
 
       _validateBeforeSubmit: function() {
         if(this.currentChkCnt <= 0) {
-          alert('한개 이상의 설문지에 체크해 주세요.');
-          return false;
+          this.showWarnAlert('한개 이상의 설문지에 체크해 주세요.');
+        } else {
+          return true;
         }
+      },
 
-        return true;
+      showWarnAlert: function(msg) {
+        var warnAlert = document.createElement('warn-alert');
+        warnAlert.msg = msg;
+        mgAlert({
+          content: warnAlert,
+          useCancelButton: true,
+          cancelCallback: function() {
+            return false;
+          }
+        })
       },
 
       _pollJoinAjaxResponsed: function(event) {

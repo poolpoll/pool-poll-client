@@ -7,6 +7,7 @@
         @apply(--layout-flex);
       }
     </style>
+    <span>파이 차트</span>
     <div id="chart-section"></div>
   </template>
   <script>
@@ -14,35 +15,33 @@
       is: 'poll-chart-pie',
 
       properties: {
-        questionDetail: {
+        options: {
           type: Array,
-          observer: '_questionDetailChanged'
+          observer: '_optionsChanged'
         }
       },
 
-      _questionDetailChanged: function(questionDetail) {
-        questionDetail.forEach(function(question) {
-          this.setPieChart(question);
+      _optionsChanged: function(options) {
+        options.forEach(function(option) {
+          this.setBarChart(option);
         }.bind(this));
       },
 
-      setPieChart: function(question) {
-        var label = question.name;
+      setBarChart: function(option) {
+        var label = option.name;
         var labels = [];
         var backgroundColor = [];
         var borderColor = [];
         var data = [];
+        var randomColor = '#' + Math.round(Math.random() * 0xFFFFFF).toString(16);
 
-        question.options.forEach(function(option) {
-          var randomColor = '#' + Math.round(Math.random() * 0xFFFFFF).toString(16);
-          labels.push(option.name);
-          data.push(option.count);
-          backgroundColor.push(randomColor);
-          borderColor.push(randomColor);
-        });
+        labels.push(option.name);
+        data.push(option.count);
+        backgroundColor.push(randomColor);
+        borderColor.push(randomColor);
 
         var canvas = document.createElement('canvas');
-        canvas.setAttribute('id', 'chart-pie-' + question.id);
+        canvas.setAttribute('id', 'chart-pie-' + option.id);
         this.$['chart-section'].appendChild(canvas);
 
         var barChart = new Chart(canvas, {
@@ -54,8 +53,18 @@
               data: data,
               borderWidth: 1,
               borderColor: borderColor,
-              backgroundColor: backgroundColor
+              backgroundColor: backgroundColor              
             }]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  stepSize: 1
+                }
+              }]
+            }
           }
         });
       }

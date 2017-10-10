@@ -1,12 +1,10 @@
 <dom-module id="sign-up">
 	<template>
 		<style>
-			:host {
-				display: block;
-			}
 			.container {
 				background: linear-gradient( to bottom, #3CB5A3, #23ACDB );
 				display: flex;
+				height: 100%;
 				flex-direction: column;
 			}
 			.container div {
@@ -103,14 +101,10 @@
       	--mg-button-font-size: 2.8vh;
       	--mg-button-color: #32B6B0;
       }
-      #submit-section {
-        background: linear-gradient( to bottom, #3BB5A3, #00A2D9 )
+      .date-field {
+      	--mg-input-text-align: right;
+      	width: 100%;
       }
-      .submit-btn {
-        display: block;
-        margin: auto;
-        height: 3.6vh;
-      }      
 		</style>
 		<custom-ajax
 			id="name-duplication-check-ajax"
@@ -152,7 +146,8 @@
 
 			<div class="div-border-bottom div-margin-bottom">
 				<span>생일</span>
-				<mg-input class="input-common input-right" hide-label type="date" value="{{birthDate}}"></mg-input>
+				<mg-input-date class="date-field" value="{{birthDate}}"></mg-input-date>
+				<!-- <mg-input class="input-common input-right" hide-label type="date" value="{{birthDate}}"></mg-input> -->
 			</div>
 
 			<div class="div-border-bottom">
@@ -182,9 +177,9 @@
 				<mg-button button-text="확 인"></mg-button>
 			</div-->
 
-	    <div id="submit-section" class="row-flex default-padding" on-tap="_signUp">
-	      <img class="submit-btn" src="../../assets/images/check_image.png" />
-	    </div>
+			<div class="div-border-bottom">
+				<mg-button button-text="참여하기" on-tap="_validationCheck"></mg-button>
+			</div>
 		</div>
 	</template>
 	<script>
@@ -212,10 +207,7 @@
 				},				
 
 				birthDate: {
-					type: String,
-					value: function() {
-						return new Date();
-					}
+					type: String
 				},
 
 				password: {
@@ -306,86 +298,121 @@
 
 			_fileSelected: function(event) {
 				this.$['profile-preview'].src = URL.createObjectURL(event.target.files[0]);
-			},		
-
-			_signUp: function() {
-				if(this.valdationCheck()) {
-					var fileURL = this.$['profile-preview'].src;
-
-          // Cordova plugin 처리
-          if(navigator.camera && fileURL) {
-            var options = new FileUploadOptions();
-            options.fileKey = 'profile';
-            options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-            options.mimeType = 'image/png';
-
-            var params = new Object();
-            params = {
-							name: this.name,
-							birthDate: this.birthDate,
-							email: this.email,
-							password: this.password
-							// confirmPassword: this.confirmPassword,
-							// phoneNum: this.phoneNum,
-							// authNumber: this.authNumber
-            };
-            options.params = params;
-
-            var ft = new FileTransfer();
-            var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
-            ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/auth/sign_up'), function(event) {
-	            page('/sign_in');
-	            document.dispatchEvent(new Event('mg-spinner-deactive'));
-            }, function(error) {
-            	alert(error);
-              throw error;
-            }, options);
-          } else if (navigator.camera && !fileURL) {
-          	var signUpAjax = this.$['sign-up-ajax'];
-          	signUpAjax.body = {
-							name: this.name,
-							birthDate: this.birthDate,
-							email: this.email,
-							password: this.password          		
-          	};
-          	signUpAjax.generateRequest();
-
-          	this.fire('mg-spinner-active');
-          } else { // 브라우저 처리
-          	var uploadInput = this.$['upload-input'];
-            var file = uploadInput.files[0];
-
-            var formData = new FormData();
-            if(file) formData.append('profile', file);
-            formData.append('name', this.name);
-            formData.append('birthDate', this.birthDate);
-            formData.append('email', this.email);
-            formData.append('gender', (this.isMale) ? 'male' : 'female');
-            formData.append('password', this.password);
-
-            var signUpAjax = this.$['sign-up-ajax'];
-            signUpAjax.body = formData;
-            signUpAjax.generateRequest();
-          };
-				}
 			},
 
-			valdationCheck: function() {
+			_validationCheck: function() {
+				var warnAlert = document.createElement('warn-alert');
+
 				if(!this.name) {
-					alert('입력한 별명이 올바르지 않습니다.');
+					warnAlert.msg = '입력한 별명이 올바르지 않습니다.';
+					mgAlert({
+						content: warnAlert,
+						useCancelButton: true
+					});
 				} else if (!this.isNameDuplValid) {
-					alert('입력한 별명은 이미 등록되어 있습니다.');
+					warnAlert.msg = '입력한 별명은 이미 등록되어 있습니다.';
+					mgAlert({
+						content: warnAlert,
+						useCancelButton: true
+					});
 				} else if (!this.birthDate) {
-					alert('입력한 생일이 올바르지 않습니다.');
+					warnAlert.msg = '입력한 생일이 올바르지 않습니다.';
+					mgAlert({
+						content: warnAlert,
+						useCancelButton: true
+					});
 				} else if (!this.isEmailValid) {
-					alert('입력한 이메일이 올바르지 않습니다.');
+					warnAlert.msg = '입력한 이메일이 올바르지 않습니다.';
+					mgAlert({
+						content: warnAlert,
+						useCancelButton: true
+					});
 				} else if (!this.isPasswordValid) {
-					alert('입력한 비밀번호가 올바르지 않습니다.');
+					warnAlert.msg = '입력한 비밀번호가 올바르지 않습니다.';
+					mgAlert({
+						content: warnAlert,
+						useCancelButton: true
+					});
 				} else {
-					return true;
+					var me = this;
+					var infoAlert = document.createElement('info-alert');
+					infoAlert.title = '사용자 생성',
+					infoAlert.msg = '입력한 정보를 바탕으로 사용자를 생성 합니다.'
+					mgAlert({
+						content: infoAlert,
+						useCancelButton: true,
+						useConfirmButton: true,
+						cancelCallback: function() {
+							return;
+						},
+						confirmCallback: function() {
+							me._signUp();
+						}
+					});
 				}
 				
 				return false;
+			},			
+
+			_signUp: function() {
+				var fileURL = this.$['profile-preview'].src;
+
+        // Cordova plugin 처리
+        if(navigator.camera && fileURL) {
+          var options = new FileUploadOptions();
+          options.fileKey = 'profile';
+          options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+          options.mimeType = 'image/png';
+
+          var params = new Object();
+          params = {
+						name: this.name,
+						birthDate: this.birthDate,
+						email: this.email,
+						password: this.password
+						// confirmPassword: this.confirmPassword,
+						// phoneNum: this.phoneNum,
+						// authNumber: this.authNumber
+          };
+          options.params = params;
+
+          var ft = new FileTransfer();
+          var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+          ft.upload(fileURL, encodeURI(localStorage.baseUrl + '/auth/sign_up'), function(event) {
+            page('/sign_in');
+            document.dispatchEvent(new Event('mg-spinner-deactive'));
+          }, function(error) {
+          	alert(error);
+            throw error;
+          }, options);
+        } else if (navigator.camera && !fileURL) {
+        	var signUpAjax = this.$['sign-up-ajax'];
+        	signUpAjax.body = {
+						name: this.name,
+						birthDate: this.birthDate,
+						email: this.email,
+						password: this.password          		
+        	};
+        	signUpAjax.generateRequest();
+
+        	this.fire('mg-spinner-active');
+        } else { // 브라우저 처리
+        	var uploadInput = this.$['upload-input'];
+          var file = uploadInput.files[0];
+
+          var formData = new FormData();
+          if(file) formData.append('profile', file);
+          formData.append('name', this.name);
+          formData.append('birthDate', this.birthDate);
+          formData.append('email', this.email);
+          formData.append('gender', (this.isMale) ? 'male' : 'female');
+          formData.append('password', this.password);
+
+          var signUpAjax = this.$['sign-up-ajax'];
+          signUpAjax.body = formData;
+          signUpAjax.contentType = undefined;
+          signUpAjax.generateRequest();
+        };
 			},
 
 			isPasswordValid: function(password, confirmPassword) {

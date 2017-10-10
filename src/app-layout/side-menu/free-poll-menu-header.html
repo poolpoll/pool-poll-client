@@ -86,7 +86,7 @@
 			},
 
 			ready: function() {
-				this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+				this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
 			},
 
 			settingBtnTapped: function() {
@@ -116,9 +116,9 @@
 						options.mimeType = 'image/png';
 
 						var ft = new FileTransfer();
-						var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
-						ft.upload(fileURL, encodeURI(window.localStorage.baseUrl + '/users/profile'), function(event) {
-							window.localStorage.userInfo = event.response;
+						var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+						ft.upload(fileURL, encodeURI(localStorage.baseUrl + '/users/profile'), function(event) {
+							sessionStorage.userInfo = event.response;
 						}.bind(this), function(error) {
 							throw error;
 						}, options);
@@ -143,14 +143,14 @@
 			_computeImageSrc: function(userInfo) {
 				// base url 전역 변수로 수정해야 함
 				if(userInfo && userInfo.attachmentId) {
-					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+					var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
 					return baseUrl + '/attachments/preview/' + userInfo.attachmentId;
 				}
 			},
 
 			_uploadResponsed: function(response) {
 				this.userInfo = response.detail.response;
-				this.fire('set-local-storage', { key: 'userInfo', value: this.userInfo });
+				sessionStorage.userInfo = JSON.stringify(this.userInfo);
 			}
 		})
 	</script>

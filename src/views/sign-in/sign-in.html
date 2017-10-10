@@ -1,9 +1,10 @@
 <dom-module id="sign-in">
   <template>
     <style>
-      :host {
-        display: block;
-        overflow-y: hidden;
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         background: linear-gradient( to bottom, #3CB5A3, #23ACDB );
       }
       .top {
@@ -15,7 +16,7 @@
         height: 16vh;
       }
       .container {
-        height: 56vh;
+        flex: 1;
         background-color: #FFFFFF;
         border-radius: 5px 5px 0 0;
         margin: 0 10vw 0 10vw;
@@ -64,10 +65,11 @@
       last-response="{{userInfo}}">
     </custom-ajax>
 
-    <div class="top"></div>
-    
-    <img class="logo-img" src="../../assets/images/sign_in_logo.png">
-    
+    <div class="content-wrapper">
+      <div class="top"></div>
+      
+      <img class="logo-img" src="../../assets/images/sign_in_logo.png" />
+      
       <div class="container">
         <div class="inner-container">
           <mg-input hide-label hide-clear-btn placeholder="이메일" value="{{email}}"></mg-input>
@@ -85,6 +87,7 @@
           </div>
         </div>
       </div>
+    </div>
   </template>
 
   <script>
@@ -144,12 +147,25 @@
       signInResponsed: function(event) {
         var response = event.currentTarget.lastResponse;
         if(response) {
-          this.fire('set-local-storage', { key: 'userInfo', value: response });
+          sessionStorage.userInfo = JSON.stringify(response);
           location.reload();
         } else {
           this.fire('mg-spinner-deactive');
-          this.fire('toast-toggle', 'Login Failed');
+          var warnAlert = document.createElement('warn-alert');
+          warnAlert.msg = '로그인에 실패 했습니다.';
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true,
+            closeCallback: function() {
+              this.clearInput();
+            }.bind(this)
+          })
         }
+      },
+
+      clearInput: function() {
+        this.email = '';
+        this.password = '';
       },
 
       signUp: function() {

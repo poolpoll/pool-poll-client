@@ -48,7 +48,7 @@
 					<poll-list class="pages" route="polls"></poll-list>
 					<poll-join class="pages" route="poll_join"></poll-join>
 					<poll-charts class="pages" route="poll_charts"></poll-charts>
-					<profile-view class="pages" route="profile"></profile-view>
+					<!--profile-view class="pages" route="profile"></profile-view-->
 				</iron-pages>
 
 			</app-header-layout>
@@ -98,11 +98,24 @@
 
 			ready: function() {
 				document.addEventListener('before-routing-changed', function(event) {
-					// TODO: Before routing controll at here
+					var currentRouting = event.detail.currentRoute;
+					var targetRouting = event.detail.targetRoute;
+					
+					if(currentRouting == 'sign_in' && targetRouting == 'main') {
+						this.fire('initialize-selected-tab', 'my-poll');
+					}
 				}.bind(this));
 
 				document.addEventListener('after-routing-changed', function(event) {
 					var currentRouting = event.detail.currentRoute;
+
+					if(currentRouting == 'main') {
+						var pages = document.querySelector('iron-pages');
+						this.listen(pages, 'scroll', '_scrollChanged');
+					} else {
+						var pages = document.querySelector('iron-pages');
+						this.unlisten(pages, 'scroll', '_scrollChanged');
+					};
 
 					if(currentRouting == 'new_poll') {
 						// Remove new poll element start
@@ -122,6 +135,10 @@
 					var message = event.detail;
 					this.toggleToast(message);
 				}.bind(this));
+			},
+
+			_scrollChanged: function() {
+				this.querySelector('main-page')._scrollChanged(event);
 			},
 
 			/**

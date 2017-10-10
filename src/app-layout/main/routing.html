@@ -2,8 +2,8 @@
 
 <script>
 	page('/', function() {
-		var targetRoute = 'main'
-		page(targetRoute);
+		var targetRoute = (sessionStorage.userInfo) ? 'main' : 'sign_in';
+		page(targetRoute)
 	});
 
 	page('/main', function() {
@@ -86,7 +86,7 @@
 		}));
 	});
 
-	page('/poll_charts/:pollId', function(ctx) {
+	page('/polls/chart/:pollId', function(ctx) {
 		app.pollId = ctx.params.pollId;
 		var targetRoute = 'poll_charts';
 		document.dispatchEvent(new CustomEvent('before-routing-changed', {
@@ -96,9 +96,16 @@
 			}
 		}));
 		app.route = targetRoute;
+
 		document.dispatchEvent(new CustomEvent('after-routing-changed', {
 			detail: {
 				currentRoute: targetRoute
+			}
+		}));
+
+		document.dispatchEvent(new CustomEvent('poll-chart-routed', {
+			detail: {
+				pollId: ctx.params.pollId
 			}
 		}));
 	});

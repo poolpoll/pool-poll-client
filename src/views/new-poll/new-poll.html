@@ -73,6 +73,7 @@
         resize: none;
       }
       .del-btn {
+        display: none;
         position: absolute;
         right: -20vw;
         background-color: red;
@@ -160,17 +161,17 @@
           <div style="width: 10vw;">
             <span class="grey-color">제목</span>
           </div>
-          <mg-input id="name-input" class="flex-width" hide-label value="{{name}}"></mg-input>
+          <mg-input id="name-input" class="input-full-width" hide-label placeholder="나의 설문" value="{{name}}"></mg-input>
         </div>
       </div>
 
       <div id="expire-section" class="under-line">
         <div class="row-flex default-padding">
-          <div>
+          <div class="full-width">
             <span class="grey-color">마감 일시</span>
           </div>
-          <mg-input id="date-input" class="small-input" hide-label type="date" value="{{expireDate}}"></mg-input>
-          <mg-input id="time-input" class="small-input" hide-label type="time" value="{{expireTime}}"></mg-input>          
+          <mg-input-date id="date-input" class="small-input input-right full-width" readonly value="{{expireDate}}"></mg-input-date>
+          <mg-input-time id="time-input" class="samll-input input-right full-width" readonly value="{{expireTime}}"></mg-input-time>
         </div>
       </div>
 
@@ -179,7 +180,7 @@
           <div class="full-width">
             <span class="grey-color">복수 선택 가능</span>
           </div>
-          <mg-input id="limit-input" class="input-right" hide-label type="number" min="[[minLimit]]" max="[[maxLimit]]" placeholder="2"  value="{{multyCheckLimit}}" hidden="[[isHideMultyCheck]]"></mg-input>
+          <mg-input id="limit-input" class="input-full-width input-right" hide-label type="number" min="[[minLimit]]" max="[[maxLimit]]" placeholder="2"  value="{{multyCheckLimit}}" hidden="[[isHideMultyCheck]]"></mg-input>
           <span style="padding-right: 5%;" hidden="[[isHideMultyCheck]]">개</span>
           <mg-checkbox on-tap="_multyCheckTapped"></mg-checkbox>
         </div>
@@ -230,22 +231,24 @@
       </div>
 
       <template is="dom-repeat" items="{{options}}">
-        <div id="options-section" class="under-line">
-          <div id="option-wrapper" class="row-flex default-padding" on-track="_handleTrack">
-            <div class="row-flex full-width">
-              <div>
-                <span>[[_displayIndex(index)]].</span>
+        <div id="options-section">
+          <div class="column-flex under-line">
+            <div id="option-wrapper" class="column-flex full-width" on-track="_handleTrack">
+              <div class="row-flex full-width">
+                <div class="row-flex default-padding" style="position: relative; width: 100%">
+                  <span>[[_displayIndex(index)]].</span>
+                  <mg-input class="input-full-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
+                  <img id="[[_setDeleteIconId(index)]]" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
+                  <img id="[[_setImgId(index)]]" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
+                  <input id="[[_setInputId(index)]]" type="file" on-change="_imageSelected" accept="image/*" hidden>  
+                </div>
+                <div class="del-btn" index="[[index]]" on-tap="_deleteOptionTapped">
+                  <span class="full-width del-text">삭 제</span>
+                </div>
               </div>
-              <mg-input class="input-full-width" hide-label placeholder="선택지를 작성해 주세요."></mg-input>
-              <img id="[[_setDeleteIconId(index)]]" class="picture-img" hidden src="../../assets/images/close.png" on-tap="_imageDeleteBtnTapped"/>
-              <img id="[[_setImgId(index)]]" class="picture-img" src="../../assets/images/image_btn.png" on-tap="_openImageSelector" />
-              <input id="[[_setInputId(index)]]" type="file" on-change="_imageSelected" accept="image/*" hidden>      
+            <img class="preview" id="[[_setPreviewId(index)]]" />
             </div>
-            <div class="del-btn" index="[[index]]" on-tap="_deleteOptionTapped">
-              <span class="full-width del-text">삭 제</span>
-            </div>            
           </div>
-          <img class="preview" id="[[_setPreviewId(index)]]" />
         </div>
       </template>
 
@@ -260,7 +263,7 @@
           <div style="width: 15vw;">
             <span class="theme-color"># Tag</span>
           </div>
-          <mg-input id="tags-input" class="flex-width grey-color input-right" hide-label value="{{tags}}"></mg-input>          
+          <mg-input id="tags-input" class="input-full-width flex-width grey-color input-right" hide-label placeholder="[[tagPlaceholder]]" value="{{tags}}"></mg-input>          
         </div>
       </div>
 
@@ -309,8 +312,13 @@
         baseUrl: {
           type: String,
           value: function() {
-            return window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+            return localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
           }
+        },
+
+        tagPlaceholder: {
+          type: String,
+          value: '테그, 정보, 입력'
         }
       },
 
@@ -762,8 +770,10 @@
       clearValues: function() {
         this.name = undefined;
         this.$['description'].value = undefined;
-        this.expireDate = undefined;
-        this.expireTime = undefined;
+        var today = new Date();
+        today = today.toISOString().slice(0,10);
+        this.expireDate = today;
+        this.expireTime = '00:00';
         this.tags = undefined;
         this.multyCheckLimit = 1,
         this.options = []

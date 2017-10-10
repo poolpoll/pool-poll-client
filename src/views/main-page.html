@@ -28,26 +28,22 @@
 		</style>
 		<custom-ajax
 			id="my-poll-ajax"
-		 	resource-url="polls/my_polls"
-		 	last-response="{{myPolls}}">
+		 	resource-url="polls/my_polls">
 	 	</custom-ajax>
 
 	 	<custom-ajax
 	 		id="top-100-ajax"
-	 		resource-url="polls/top/100"
-	 		last-response="{{top100}}">
+	 		resource-url="polls/top/100">
  		</custom-ajax>
 
  		<custom-ajax
  			id="poll-by-tags"
- 			resource-url="polls/tags"
- 			last-response="{{pollsByTags}}">
+ 			resource-url="polls/tags">
 		</custom-ajax>
 
 		<custom-ajax
 			id="search-poll-ajax"
-			resource-url="polls/search"
-			last-response="{{searchedPoll}">
+			resource-url="polls/search">
 		</custom-ajax>
 
 		<custom-ajax
@@ -63,43 +59,112 @@
 		Polymer({
 			is: 'main-page',
 
+			properties: {
+				myPollList: {
+					type: Object,
+					value: function() {
+						return {
+							items: [],
+							page: 1
+						}
+					}
+				},
+
+				top100List: {
+					type: Object,
+					value: function() {
+						return {
+							items: [],
+							page: 1
+						}
+					}
+				},
+
+				tagList: {
+					type: Object,
+					value: function() {
+						return {
+							items: [],
+							page: 1
+						}
+					}
+				},
+
+				searchList: {
+					type: Object,
+					value: function() {
+						return {
+							items: [],
+							page: 1
+						}
+					}
+				}
+			},
+
 			listeners: {
-				'my-poll-ajax.response': '_dataChanged',
-				'top-100-ajax.response': '_dataChanged',
-				'poll-by-tags.response': '_dataChanged',
-				'search-poll-ajax.response': '_dataChanged',
+				'my-poll-ajax.response': '_initReponsedData',
+				'top-100-ajax.response': '_initReponsedData',
+				'poll-by-tags.response': '_initReponsedData',
+				'search-poll-ajax.response': '_initReponsedData',				
 				'check-poll-histories-ajax.response': '_checkAjaxResponsed'
 			},
 
 			ready: function() {
-				this.parentNode.addEventListener('scroll', function(event) {
-					this._scrollChanged(event);
-				}.bind(this));
-
 				document.addEventListener('mg-tab-view-selected', function(event) {
-					if(event.detail) this.selectedTap = event.detail;
+					var currentSelectedTap = event.detail;
+					if(currentSelectedTap != this.selectedTap) {
+						this.selectedTap = currentSelectedTap;
+						this._clearCards();
+					} else {
+						return;
+					}
 
-					this.page = 1;
-					var param = { page: this.page };
+					var param = { page: 1 };
 
 					switch (this.selectedTap) {
 						case 'my-poll':
-							this._myPollAjax(param);
+							if(!this.myPollList.items.length) { // 현재 가져온 데이터가 없을때
+								this.myPollList.page = 1;
+								this._myPollAjax(param);								
+							} else {
+								this._dataChanged(this.myPollList);
+							}
+
 							break;
 
 						case 'top':
-							this._topPollAjax();
+							if(!this.top100List.items.length) {
+								this._topPollAjax();	
+							} else {
+								this._dataChanged(this.top100List);
+							}
+							
 							break;
 
 						case 'tag':
-							this._tagPollAjax(param);
+							if(!this.tagList.items || !this.tagList.items.length) {
+								this.tagList.page = 1;
+								this._tagPollAjax(param);
+							} else {
+								this._dataChanged(this.tagList);
+							}
+							
 							break;
 
 						case 'search-icon':
+							if(this.searchList.items.length != 0) {
+								this._dataChanged(this.searchList);
+							}
 							break;
 
 						default:
-							this._myPollAjax(param);
+							if(!this.myPollList.items.length) {
+								this.myPollList.page = 1;
+								this._myPollAjax(param);								
+							} else {
+								this._dataChanged(this.myPollList);
+							}
+
 							break;
 					};
 				}.bind(this));
@@ -117,6 +182,7 @@
 			 * @param  Object params pagination을 위한 page object
 			 */
 			_myPollAjax: function(params) {
+				this.fire('mg-spinner-active');
 				var myPollAjax = this.$['my-poll-ajax'];
 				myPollAjax.params = params;
 				myPollAjax.generateRequest();
@@ -126,6 +192,7 @@
 			 * top 100 request ajax
 			 */
 			_topPollAjax: function() {
+				this.fire('mg-spinner-active');
 				var topPollAjax = this.$['top-100-ajax'];
 				topPollAjax.generateRequest();
 			},
@@ -135,6 +202,7 @@
 			 * @param  Object params pagination을 위한 page object
 			 */
 			_tagPollAjax: function(params) {
+				this.fire('mg-spinner-active');
 				var tagPollAjax = this.$['poll-by-tags'];
 				tagPollAjax.params = params;
 				tagPollAjax.generateRequest();
@@ -145,6 +213,8 @@
 			 * @param  Object params pagination을 위한 page object
 			 */
 			_searchPollAjax: function(params) {
+				this.fire('mg-spinner-active');
+				this.searchKeywords = params.name;
 				var searchPollAjax = this.$['search-poll-ajax'];
 				searchPollAjax.params = params;
 				searchPollAjax.generateRequest();
@@ -160,17 +230,15 @@
 				var scrollTop = event.target.scrollTop;
 
 				if(clientHeight + scrollTop == scrollHeight) {
-					this.page++;
-
 					switch (this.selectedTap) {
 						case 'my-poll':
-							this._myPollAjax({ page: this.page });
+							this._myPollAjax({ page: this.myPollList.page });
 							break;
 						case 'tag':
-							this._tagPollAjax({ page: this.page });
+							this._tagPollAjax({ page: this.tagList.page });
 							break;
 						case 'search-icon':
-							this._searchPollAjax({ page: this.page, name: this.keyWords });
+							this._searchPollAjax({ page: this.searchList.page, name: this.keyWords });
 							break;
 					}
 				}
@@ -179,7 +247,7 @@
 			/**
 			 * poll list 카드를 리셋
 			 */
-			_clearCards: function(event) {
+			_clearCards: function() {
 				var content = this.querySelector('#content');
 				while(content.childElementCount) {
 					content.removeChild(content.firstChild);
@@ -198,23 +266,136 @@
 				content.appendChild(rightContainer);
 			},
 
+
+			_initReponsedData: function(event) {
+				var responsedData = event.detail.response ? event.detail.response : [];
+
+				switch (this.selectedTap) {
+					case 'my-poll':
+						this.myPollList.items = (this.myPollList.items.length == 0) ? responsedData : this.myPollList.items.concat(responsedData);
+						this._dataChanged({
+							items: responsedData,
+							page: this.myPollList.page
+						});
+
+						break;
+
+					case 'top':
+						this.top100List.items = responsedData;
+						this._dataChanged(this.top100List);
+						break;
+
+					case 'tag':
+						this.tagList.items = (this.tagList.items.length == 0) ? responsedData : this.tagList.items.concat(responsedData);
+						this._dataChanged({
+							items: responsedData,
+							page: this.tagList.page
+						});
+
+						break;
+
+					case 'search-icon':
+						this.searchList.items = (this.searchList.items.length == 0) ? responsedData : this.searchList.items.concat(responsedData);
+						this._dataChanged({
+							items: responsedData,
+							page: this.searchList.page
+						});
+
+						break;
+				};
+
+				this.fire('mg-spinner-deactive');
+			},
+
 			/**
 			 * ajax request를 통해 리턴 받은 data를 화면에 출력
 			 * 각 poll card에 이벤트 리스너를 등록함
 			 */
-			_dataChanged: function(event) {
-				var data = event.detail.response;
-				if(this.page == 1 && !data || data.length == 0) {
-					console.log('TODO: No Data Helper Append')
+			_dataChanged: function(pollList) {
+				var myPollInformed = localStorage.myPollInformed ? localStorage.myPollInformed : false;
+				var tagInformed = localStorage.tagInformed ? localStorage.tagInformed : false;
+
+				var data = pollList.items;
+				var page = pollList.page;
+				if(page == 1 && data.length == 0) {
+					var infoAlert = document.createElement('info-alert');
+
+					switch (this.selectedTap) {
+						case 'my-poll':
+
+							if(!myPollInformed) {
+								infoAlert.title = '작성한 설문이 없습니다.';
+								infoAlert.msg = '첫번째 설문을 작성하시겠습니까?';
+
+								mgAlert({
+									content: infoAlert,
+									useConfirmButton: true,
+									useCancelButton: true,
+									confirmCallback: function() {
+										page('/new_poll');
+									},
+									cancelCallback: null
+								});
+
+								localStorage.myPollInformed = true;
+							};
+
+							break;
+						case 'tag':
+
+							if(!tagInformed) {
+								infoAlert.title = '설정한 Tag가 없습니다.';
+								infoAlert.msg = '당신의 관심 Tag를 등록 하시겠습니까?';
+
+								mgAlert({
+									content: infoAlert,
+									useConfirmButton: true,
+									useCancelButton: true,
+									confirmCallback: function() {
+										console.log('page to profile');
+									},
+									cancelCallback: null
+								});
+
+								localStorage.tagInformed = true;
+							};
+
+							break;
+						case 'search-icon':
+							infoAlert.title = '조회 결과가 없습니다.';
+							infoAlert.msg = '\'' + this.searchKeywords + '\' 의 검색 결과가 없습니다.';
+
+							mgAlert({
+								content: infoAlert,
+								useConfirmButton: false,
+								useCancelButton: true,
+								confirmCallback: null,
+								cancelCallback: null
+							});
+
+							break;
+					}
+				} else if (page > 1 && data.length == 0) {
+					var infoAlert = document.createElement('info-alert');
+					infoAlert.title = '조회 결과가 없습니다.';
+					infoAlert.msg = '더 이상 조회할 설문이 없습니다.';
+
+					mgAlert({
+						content: infoAlert,
+						useConfirmButton: false,
+						useCancelButton: true,
+						confirmCallback: function() {
+							page('/new_poll');
+						},
+						cancelCallback: null
+					});					
 				}
 
-				if(this.page == 1) this._clearCards(); // 조회한 페이지가 1이면 기존 카드를 전부 제거
-				if(this.page > 1 && data && data.length == 0) this.page--; // 조회한 페이지가 1을 초과하고 더이상 조회할 데이터가 없으면 페이지 값을 유지
-				if(!data || data.length == 0) return; // 호회 결과가 없으면 return
+				if(!data || data.length == 0) return; // 조회 결과가 없으면 return
 				
 				for(var i = 0; i < data.length; i++) {
 					var cardElement = document.createElement('mg-image-card');
-					var baseUrl = window.localStorage.baseUrl ? window.localStorage.baseUrl : 'http://localhost:3000';
+					var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
 
 					if(data[i].user.attachmentId) {
 						data[i].profileSrc = baseUrl + '/attachments/preview/' + data[i].user.attachmentId;	
@@ -226,8 +407,10 @@
 					cardElement.setData(data[i]);
 					cardElement.addEventListener('tap', function(event) {
 						var selectedPoll = event.currentTarget;
-						if(selectedPoll.userId == JSON.parse(window.localStorage.userInfo).id) {
-							page('/polls/chart/' + data[i].id);
+						if(selectedPoll.userId == JSON.parse(sessionStorage.userInfo).id) {
+							console.log('it is my poll!');
+							console.log('TODO: My Poll Report View');
+							// page('/polls/chart/' + data[i].id);
 						} else {
 							var checkPollHistoriesAjax = this.$['check-poll-histories-ajax'];
 							checkPollHistoriesAjax.resourceUrl = 'poll_histories/' + selectedPoll.id;
@@ -258,7 +441,25 @@
 						this.querySelector('.right-container').appendChild(cardElement);
 					}
 				}
+
+				this.pageCtrl();
 			},
+
+			pageCtrl: function() {
+				switch (this.selectedTap) {
+					case 'my-poll':
+						this.myPollList.page++;
+						break;
+
+					case 'tag':
+						this.tagList.page++;
+						break;
+
+					case 'search-icon':
+						this.searchList.page++;
+						break;
+				};
+			},			
 
 			_checkAjaxResponsed: function(event) {
 				var pollId = event.detail.response.pollId;

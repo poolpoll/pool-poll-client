@@ -1,11 +1,31 @@
 <dom-module id="info-alert">
 	<template>
+		<style>
+			:host {
+				width: 100%;
+			}
+			#container {
+				display: flex;
+				flex-direction: column;
+			}
+			.title {
+				display: block;
+				font-size: 2vh;
+				padding: 2%;
+			}
+			.msg {
+				display: block;
+				font-size: 1.8vh;
+				color: #A3A3A3;
+				padding: 2%;
+			}
+		</style>
 		<div id="container">
 			<div class="title">
 				<span>[[title]]</span>
 			</div>
-			<div class="content">
-				<span>[[content]]
+			<div class="msg">
+				<span>[[msg]]
 			</div>
 		</div>
 	</template>
@@ -19,7 +39,7 @@
 					value: "Inform!"
 				},
 
-				content: {
+				msg: {
 					type: String,
 					value: "Content text will be here."
 				}

@@ -1,109 +1,264 @@
-<script src="../../../bower_components/chart.js/dist/Chart.bundle.js"></script>
-
 <dom-module id="poll-charts">
   <template>
     <style>
-      :host {
-        display: block;
-        @apply(--layout-flex);
+      #container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
-      .flex {
-        @apply(--layout-flex);
+      .row-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
       }
-      .horizontal {
-        @apply(--layout-horizontal);
+      .default-padding {
+        padding: 3vw;
       }
-      .vertical {
-        @apply(--layout-vertical);
+      .under-line {
+        background-color: #FFFFFF;
+        border-bottom: 1px #C2C4C7 solid;
       }
-      .justified {
-        @apply(--layout-justified);
+      .user-name-container {
+        margin-left: 3vw;
+        width: 71vw;
       }
-      .info-card {
-        border: 1px solid #000000;
-        background-color: white;
-        padding: 3%;
-        margin: 3%;
-        @apply(--layout-flex);
+      .profile-img {
+        width: 10vw;
+        height: 10vw;
+        border-radius: 100%;
       }
-      .subtitle {
-        font-size: 14px;
-        opacity: 0.5;
+      .full-width {
+        width: 100%;
       }
-      .date-range {
-        font-size: 14px;
-        opacity: 0.5;
-        padding-right: 5%;
+      .gray-font {
+        color: #C2C4C7;
       }
-      iron-pages {
-        padding: 3%;
+      mg-checkbox {
+        --mg-checkbox-size: 5vw;
+        --mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
+        --mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
+      }
+      textarea {
+        min-height: 10vh;
+        margin: auto;
+        width: -webkit-fill-available;
+        font-size: 10pt;
+        resize: none;
+      }
+      mg-button {
+        --mg-button-border-radius: 0 5px 5px 0;
+        --mg-button-width: 10vw;
+        --mg-button-height: 10vh;
+        --mg-button-font-size: 2vh;
+        --mg-button-color: #32B6B0;
       }
     </style>
 
     <custom-ajax
-      id="get-poll-detail-ajax"
-      last-response="{{pollDetail}}">
+      id="poll-ajax"
+      last-response="{{pollInfo}}">
     </custom-ajax>
 
     <custom-ajax
-      id="get-question-detail-ajax"
-      last-response="{{questionDetail}}">
+      id="comment-ajax"
+      last-response="{{commentList}}">
     </custom-ajax>
 
-    <div class="horizontal justified flex padding">
-      <paper-icon-button icon="icons:list" type="table" on-tap="typeChanged"></paper-icon-button>
-      <paper-icon-button icon="editor:insert-chart" type="bar" on-tap="typeChanged"></paper-icon-button>
-      <paper-icon-button icon="editor:pie-chart-outlined" type="pie" on-tap="typeChanged"></paper-icon-button>
-      <paper-icon-button icon="editor:show-chart" type="line" on-tap="typeChanged"></paper-icon-button>
+    <custom-ajax
+      id="comment-regist-ajax"
+      method="POST"
+      content-type="application/json">
+    </custom-ajax>
+    
+    <div id="container">
+      <div id="profile-section" class="under-line">
+        <div class="row-flex default-padding">
+          <img id="profile" class="profile-img" src="[[profileSrc]]">
+          <div class="user-name-container">
+            <span id="user-name">[[userName]]</span>
+          </div>
+          <div>
+            <span id="level">Lv. [[level]]</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="poll-name-section" class="under-line">
+        <div class="default-padding">
+          <span>[[pollName]]</span>
+        </div>
+      </div>
+
+      <div id="poll-expire-section" class="under-line">
+        <div class="row-flex default-padding">
+          <div class="full-width">
+            <span class="gray-font">마감 일시</span>
+          </div>
+          <mg-input-date class="full-width" value="[[expireDate]]"></mg-input-date>
+          <mg-input-time class="full-width" value="[[expireTime]]"></mg-input-time>
+        </div>
+      </div>
+
+      <div id="poll-description-section" class="under-line">
+        <div class="default-padding">
+          <span>[[description]]</span>
+        </div>
+      </div>
+
+      <template is="dom-if" if="[[isMultyCheck]]">
+        <div id="multi-check-section" class="under-line">
+          <div class="row-flex default-padding">
+            <div class="full-width">
+              <span>복수 선택 가능</span>
+            </div>
+            <template is="dom-repeat" items="[[repeatItems]]">
+              <mg-checkbox style="padding-left: 1vw;" disabled checked></mg-checkbox>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <div id="chart-selection-section" class="under-line">
+        <div class="row-flex default-padding">
+          <paper-icon-button style="margin-left:auto; margin-right: auto;" icon="editor:insert-chart" type="bar" on-tap="_typeChanged"></paper-icon-button>
+        </div>
+      </div>
+
+      <div id="chart-section" class="under-line">
+        <iron-pages id="pages" attr-for-selected="chart-type" selected="{{currentChartType}}">
+          <poll-chart-table chart-type="table" options="{{pollInfo.options}}"></poll-chart-table>
+          <poll-chart-bar chart-type="bar" options="{{pollInfo.options}}"></poll-chart-bar>
+          <poll-chart-pie chart-type="pie" options="{{pollInfo.options}}"></poll-chart-pie>
+          <poll-chart-line chart-type="line" options="{{pollInfo.options}}"></poll-chart-line>
+        </iron-pages>
+      </div>
+
+      <div id="add-comment-section" class="under-line">
+        <div class="default-padding">
+          <div class="row-flex">
+            <textarea on-input="_onInput" max-length="[[maxLength]]" placeholder="댓글을 입력해주세요."></textarea>
+            <mg-button button-text="등록" on-tap="registComment"></mg-button>
+          </div>
+        </div>
+      </div>
+
+      <div id="comment-section" class="under-line">
+        <div class="default-padding">
+          <template is="dom-repeat" items="[[commentList]]">
+            <div class="row-flex">
+              <span>[[item.user.name]]</span>
+            </div>
+            <div class="row-flex">
+              <span>[[item.comment]]</span>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
-
-    <div class="info-card">
-      <span class="title">[[pollDetail.name]]</span></br>
-      <span class="subtitle">[[pollDetail.description]]</span></br>
-      <span class="date-range">[[pollDetail.fromDate]] - [[pollDetail.toDate]]</span>
-    </div>
-
-    <iron-pages attr-for-selected="type" selected="{{type}}">
-      <poll-chart-table type="table" question-detail="[[questionDetail]]"></poll-chart-table>
-      <poll-chart-bar type="bar" question-detail="[[questionDetail]]"></poll-chart-bar>
-      <poll-chart-pie type="pie" question-detail="[[questionDetail]]"></poll-chart-pie>
-      <poll-chart-line type="line" question-detail="[[questionDetail]]"></poll-chart-line>
-    </iron-pages>
-
   </template>
   <script>
     Polymer({
       is: 'poll-charts',
 
       properties: {
-        type: {
+        pollId: {
+          type: Number,
+          observer: '_pollIdChanged'
+        },
+
+        pollInfo: {
+          type: Object,
+          observer: '_pollInfoChanged'
+        },
+
+        repeatItems: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        comment: {
           type: String,
-          value: 'table'
+          observer: '_commentChanged'
+        },
+
+        currentChartType: {
+          type: String,
+          value: 'bar'
+        },
+
+        currentLength: {
+          type: Number,
+          value: 0
+        },
+
+        maxLength: {
+          type: Number,
+          value: 60
         }
       },
 
       ready: function() {
-        document.addEventListener('poll-detail-selected', function(event) {
-          this.getPollDetail(event.detail.pollId);
+        document.addEventListener('poll-chart-routed', function(event) {
+          this.pollId = event.detail.pollId;
         }.bind(this));
       },
 
-      listenser: {
-        'get-poll-detail-ajax.response': 'pollsResponsed'
+      _pollIdChanged: function(pollId) {
+        var pollAjax = this.$['poll-ajax'];
+        pollAjax.resourceUrl = 'polls/' + pollId;
+        pollAjax.generateRequest();
+
+        var commentAjax = this.$['comment-ajax'];
+        commentAjax.resourceUrl = 'comments/' + pollId;
+        commentAjax.generateRequest();
       },
 
-      typeChanged: function(event) {
-        this.type = event.target.getAttribute('type');
+      _pollInfoChanged: function(pollInfo) {
+        if(!pollInfo) return;
+        var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+        this.profileSrc = baseUrl + '/attachments/preview/' + pollInfo.poll.user.attachmentId;
+        this.userName = pollInfo.poll.user.name;
+        this.level = pollInfo.poll.user.level;
+        this.pollName = pollInfo.poll.name;
+        this.expireDate = pollInfo.poll.expireDate;
+        this.expireTime = pollInfo.poll.expireTime;
+        this.description = pollInfo.poll.description
+        this.multyCheckLimit = pollInfo.poll.multyCheckLimit;
+        this.tag = pollInfo.poll.tags;
+        if(pollInfo.poll.multyCheckLimit > 1) {
+          this.isMultyCheck = true;
+          for(var i = 1; i <= pollInfo.poll.multyCheckLimit; i++) {
+            this.repeatItems.push({});
+          };
+        } else {
+          this.isMultyCheck = false;
+        }
+        this.options = pollInfo.options;
       },
 
-      getPollDetail: function(pollId) {
-        var getPollDetailAjax = this.$['get-poll-detail-ajax'];
-        getPollDetailAjax.resourceUrl = 'polls/' + pollId;
-        getPollDetailAjax.generateRequest();
+      _typeChanged: function(event) {
+        this.currentChartType = event.currentTarget.getAttribute('type');
+      },
 
-        var getQuestionDetailAjax = this.$['get-question-detail-ajax'];
-        getQuestionDetailAjax.resourceUrl = 'questions/' + pollId;
-        getQuestionDetailAjax.generateRequest();
+      _onInput: function(event) {
+        this.comment = event.currentTarget.value;
+      },
+
+      _commentChanged: function(comment) {
+        this.currentLength = comment.length;
+      },
+
+      registComment: function(event) {
+        var commentRegistAjax = this.$['comment-regist-ajax'];
+        commentRegistAjax.resourceUrl = 'comments/' + this.pollId;
+        commentRegistAjax.body = {
+          comment: this.comment,
+          pollId: this.pollId
+        };
+
+        commentRegistAjax.generateRequest();
       }
     })
   </script>
