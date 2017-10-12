@@ -38,20 +38,22 @@
         --mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
         --mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
       }
-      textarea {
-        min-height: 10vh;
-        margin: auto;
-        width: -webkit-fill-available;
-        font-size: 10pt;
-        resize: none;
+      .input-textarea {
+        --mg-textarea-min-height: 9vh;
+        margin-right: 2%;
+        flex: 1;
       }
-      mg-button {
-        --mg-button-border-radius: 0 5px 5px 0;
+      .regist-btn {
+        --mg-button-border-radius: 5px;
         --mg-button-width: 10vw;
         --mg-button-height: 10vh;
         --mg-button-font-size: 2vh;
         --mg-button-color: #32B6B0;
       }
+      .spacer {
+        flex: auto;
+        background-color: #FFFFFF;
+      }      
     </style>
 
     <custom-ajax
@@ -118,9 +120,9 @@
         </div>
       </template>
 
-      <div id="chart-selection-section" class="under-line">
+      <!--div id="chart-selection-section" class="under-line">
         <div class="row-flex default-padding">
-          <paper-icon-button style="margin-left:auto; margin-right: auto;" icon="editor:insert-chart" type="bar" on-tap="_typeChanged"></paper-icon-button>
+          <paper-icon-button style="margin-left:auto; margin-right: auto;" icon="editor:insert-chart" type="bar"></paper-icon-button>
         </div>
       </div>
 
@@ -131,28 +133,23 @@
           <poll-chart-pie chart-type="pie" options="{{pollInfo.options}}"></poll-chart-pie>
           <poll-chart-line chart-type="line" options="{{pollInfo.options}}"></poll-chart-line>
         </iron-pages>
-      </div>
+      </div-->
+
+      <div class="spacer under-line"></div>
 
       <div id="add-comment-section" class="under-line">
         <div class="default-padding">
           <div class="row-flex">
-            <textarea on-input="_onInput" max-length="[[maxLength]]" placeholder="댓글을 입력해주세요."></textarea>
-            <mg-button button-text="등록" on-tap="registComment"></mg-button>
+            <mg-textarea class="input-textarea" max-length="[[maxLength]]" placeholder="댓글을 입력해주세요." value="{{comment}}"></mg-textarea>
+            <mg-button class="regist-btn" button-text="등록" on-tap="_validateRegist"></mg-button>
           </div>
         </div>
       </div>
 
       <div id="comment-section" class="under-line">
-        <div class="default-padding">
-          <template is="dom-repeat" items="[[commentList]]">
-            <div class="row-flex">
-              <span>[[item.user.name]]</span>
-            </div>
-            <div class="row-flex">
-              <span>[[item.comment]]</span>
-            </div>
-          </template>
-        </div>
+        <template is="dom-repeat" items="[[commentList]]">
+          <pp-comment item="[[item]]"></pp-comment>
+        </template>
       </div>
     </div>
   </template>
@@ -178,11 +175,6 @@
           }
         },
 
-        comment: {
-          type: String,
-          observer: '_commentChanged'
-        },
-
         currentChartType: {
           type: String,
           value: 'bar'
@@ -196,23 +188,36 @@
         maxLength: {
           type: Number,
           value: 60
+        },
+
+        detailCommentList: {
+          type: Array
         }
+      },
+
+      listeners: {
+        'comment-regist-ajax.response': '_pollIdChanged'
       },
 
       ready: function() {
         document.addEventListener('poll-chart-routed', function(event) {
           this.pollId = event.detail.pollId;
         }.bind(this));
+
+        document.addEventListener('comment-changed', function(event) {
+          this._pollIdChanged();
+        }.bind(this));
       },
 
-      _pollIdChanged: function(pollId) {
-        var pollAjax = this.$['poll-ajax'];
-        pollAjax.resourceUrl = 'polls/' + pollId;
-        pollAjax.generateRequest();
+      _pollIdChanged: function() {
+        this.excutePollAjax();
+        this.excuteCommentAjax();
+      },
 
-        var commentAjax = this.$['comment-ajax'];
-        commentAjax.resourceUrl = 'comments/' + pollId;
-        commentAjax.generateRequest();
+      excutePollAjax: function(pollId) {
+        var pollAjax = this.$['poll-ajax'];
+        pollAjax.resourceUrl = 'polls/' + this.pollId;
+        pollAjax.generateRequest();
       },
 
       _pollInfoChanged: function(pollInfo) {
@@ -238,19 +243,44 @@
         this.options = pollInfo.options;
       },
 
-      _typeChanged: function(event) {
-        this.currentChartType = event.currentTarget.getAttribute('type');
+      excuteCommentAjax: function(pollId) {
+        var commentAjax = this.$['comment-ajax'];
+        commentAjax.resourceUrl = 'comments/' + this.pollId;
+        commentAjax.generateRequest();
       },
 
-      _onInput: function(event) {
-        this.comment = event.currentTarget.value;
+      _validateRegist: function(event) {
+        if(this.comment) {
+          var infoAlert = document.createElement('info-alert');
+          infoAlert.title = '댓글 작성';
+          infoAlert.msg = '댓글을 작성하시겠습니까?';
+
+          var me = this;
+
+          mgAlert({
+            content: infoAlert,
+            useCancelButton: true,
+            useConfirmButton: true,
+            cancelCallback: null,
+            confirmCallback: function() {
+              me.registComment();
+            }
+          });
+        } else {
+          var warnAlert = document.createElement('warn-alert');
+          warnAlert.msg = '댓글의 내용을 입력해 주세요 .';
+
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true,
+            useConfirmButton: false,
+            cancelCallback: null,
+            confirmCallback: null
+          });
+        }
       },
 
-      _commentChanged: function(comment) {
-        this.currentLength = comment.length;
-      },
-
-      registComment: function(event) {
+      registComment: function() {
         var commentRegistAjax = this.$['comment-regist-ajax'];
         commentRegistAjax.resourceUrl = 'comments/' + this.pollId;
         commentRegistAjax.body = {
@@ -258,7 +288,8 @@
           pollId: this.pollId
         };
 
-        commentRegistAjax.generateRequest();
+        this.comment = '';
+        commentRegistAjax.generateRequest();        
       }
     })
   </script>

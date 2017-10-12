@@ -1,3 +1,5 @@
+<script src="../../../bower_components/chart.js/dist/Chart.js"></script>
+
 <dom-module id="poll-chart-bar">
   <template>
     <style>
@@ -35,11 +37,12 @@
           backgroundColor.push(randomColor);
           borderColor.push(randomColor);
         });
+        
+        if(!this.canvas) this.canvas = document.createElement('canvas');
+        
+        this.$['chart-section'].appendChild(this.canvas);
 
-        var canvas = document.createElement('canvas');
-        this.$['chart-section'].appendChild(canvas);
-
-        var barChart = new Chart(canvas, {
+        var barChart = new Chart(this.canvas, {
           type: 'bar',
           data: {
             labels: labels,

@@ -24,7 +24,7 @@
 				display: flex;
 				flex-direction: column;
 				margin: 0 2vw 2vw 1vw;
-			}
+			}			
 		</style>
 		<custom-ajax
 			id="my-poll-ajax"
@@ -316,8 +316,8 @@
 				var tagInformed = localStorage.tagInformed ? localStorage.tagInformed : false;
 
 				var data = pollList.items;
-				var page = pollList.page;
-				if(page == 1 && data.length == 0) {
+				var currentPageCnt = pollList.page;
+				if(currentPageCnt == 1 && data.length == 0) {
 					var infoAlert = document.createElement('info-alert');
 
 					switch (this.selectedTap) {
@@ -349,6 +349,7 @@
 
 								mgAlert({
 									content: infoAlert,
+									width: '60%',
 									useConfirmButton: true,
 									useCancelButton: true,
 									confirmCallback: function() {
@@ -375,7 +376,7 @@
 
 							break;
 					}
-				} else if (page > 1 && data.length == 0) {
+				} else if (currentPageCnt > 1 && data.length == 0) {
 					var infoAlert = document.createElement('info-alert');
 					infoAlert.title = '조회 결과가 없습니다.';
 					infoAlert.msg = '더 이상 조회할 설문이 없습니다.';
@@ -408,9 +409,7 @@
 					cardElement.addEventListener('tap', function(event) {
 						var selectedPoll = event.currentTarget;
 						if(selectedPoll.userId == JSON.parse(sessionStorage.userInfo).id) {
-							console.log('it is my poll!');
-							console.log('TODO: My Poll Report View');
-							// page('/polls/chart/' + data[i].id);
+							page('/polls/chart/' + selectedPoll.id);
 						} else {
 							var checkPollHistoriesAjax = this.$['check-poll-histories-ajax'];
 							checkPollHistoriesAjax.resourceUrl = 'poll_histories/' + selectedPoll.id;

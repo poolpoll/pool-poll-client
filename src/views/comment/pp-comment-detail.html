@@ -1,0 +1,215 @@
+<dom-module id="pp-comment-detail">
+	<template>
+		<style>
+      .row-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .row-reverse-flex {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+      }
+      .comment-profile-img {
+        display: block;
+        margin: auto;
+        width: 8vw;
+        height: 8vw;
+        border-radius: 100%;
+      }
+      .under-line {
+        background-color: #FFFFFF;
+        border-bottom: 1px #C2C4C7 solid;
+      }      
+      .full-width {
+        width: 100%;
+      }
+      .medium-font {
+        font-size: 10pt;
+      }      
+      .small-font {
+        font-size: 8pt;
+      }
+      .input-small-font {
+        --mg-font-size: 8pt;
+      }
+      .input-text-align {
+        --mg-input-text-align: right;
+      }
+      .gray-font {
+        color: #C2C4C7;
+      }
+      .font-btn-padding {
+        padding: 2% 0 2% 3%;
+      }
+      #comment-textarea {
+        --mg-textarea-font-size: 9pt;
+      }
+		</style>
+
+    <custom-ajax
+      id="modify-comment-ajax"
+      method="PUT"
+      content-type="application/json">
+    </custom-ajax>
+
+    <custom-ajax
+      id="delete-comment-ajax"
+      method="DELETE">
+    </custom-ajax>    
+
+    <div class="row-flex">
+      <div style="width: 12vw;">
+        <img class="comment-profile-img" src="[[_commentProfileImgSrc(item.user.attachmentId)]]" />
+      </div>
+      <div class="full-width">
+        <div class="row-flex full-width">
+          <span class="full-width medium-font">[[item.user.name]]</span>
+          <span class="small-font">Lv.</span><span class="small-font" style="color: #E906E1">[[item.user.level]]</span>
+        </div>
+        <div class="row-flex full-width">
+          <mg-input-date class="input-small-font input-text-align gray-font full-width" readonly value="[[_formatUpdatedDate(item.updatedAt)]]"></mg-input-date>
+          <mg-input-time class="input-small-font input-text-align  gray-font" style="width: 25vw;" readonly value="[[_formatUpdatedTime(item.updatedAt)]]"></mg-input-time>
+        </div>
+      </div>
+    </div>
+    <div style="padding-bottom: 2%;">
+      <mg-textarea id="comment-textarea" class="under-line" readonly auto-grow value="{{item.comment}}"></mg-textarea>
+    </div>
+
+    <div class="row-reverse-flex">
+      <template is="dom-if" if="[[isMyComment(item.userId)]]">
+        <span class="small-font gray-font font-btn-padding" on-tap="_confirmDeleteComment">댓글 삭제</span>
+        <span class="small-font gray-font font-btn-padding" on-tap="_modifyComment">[[detailCommentModifyLabel]]</span>
+      </template>
+    </div>
+	</template>
+	<script>
+		Polymer({
+			is: 'pp-comment-detail',
+
+			properties: {
+				item: {
+					type: Object,
+          observer: '_itemChanged'
+				},
+
+        detailCommentModifyLabel: {
+          type: String,
+          value: '댓글 수정'
+        }
+			},
+
+      listeners: {
+        'modify-comment-ajax.response': '_refreshComments',
+        'delete-comment-ajax.response': '_refreshComments'
+      },
+
+      _itemChanged: function(item) {
+        this.commentId = item.id;
+      },
+
+      _commentProfileImgSrc: function(attachmentId) {
+        var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+        return baseUrl + '/attachments/preview/' + attachmentId;
+      },
+
+      _formatUpdatedDate: function(updatedAt) {
+        var updatedAt = new Date(updatedAt);
+        return updatedAt.toISOString().slice(0, 9);
+      },
+
+      _formatUpdatedTime: function(updatedAt) {
+        var updatedAt = new Date(updatedAt);
+        return updatedAt.getHours() + ':' + updatedAt.getMinutes();
+      },
+
+      isMyComment: function(userId) {
+        var userInfo = JSON.parse(sessionStorage.userInfo);
+        if(userId == userInfo.id) return true;
+        return false;
+      },
+
+      _modifyComment: function() {
+        var commentTextarea = this.$['comment-textarea'];
+        if(this.detailCommentModifyLabel == '댓글 수정') {
+          commentTextarea.readonly = false;
+          commentTextarea.focus(event);
+
+          this.detailCommentModifyLabel = '수정 완료';
+        } else {
+          commentTextarea.readonly = true;
+          this.detailCommentModifyLabel = '댓글 수정';
+          this._validateModify();
+        };
+      },
+
+      _validateModify: function() {
+        if(this.item.comment) {
+          var infoAlert = document.createElement('info-alert');
+          infoAlert.title = '댓글 수정';
+          infoAlert.msg = '수정한 댓글을 저장 할까요?';
+          var me = this;
+
+          mgAlert({
+            content: infoAlert,
+            useCancelButton: true,
+            useConfirmButton: true,
+            cancelCallback: null,
+            confirmCallback: function() {
+              me._modifyCommentAjax();
+            }
+          });
+        } else {
+          var warnAlert = document.createElement('warn-alert');
+          warnAlert.msg = '댓글의 내용을 입력해 주세요.';
+
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true,
+            useConfirmButton: false,
+            cancelCallback: null,
+            confirmCallback: null
+          });
+        };
+      },
+
+      _modifyCommentAjax: function() {
+        modifyCommentAjax = this.$['modify-comment-ajax'];
+        modifyCommentAjax.resourceUrl = 'comment_details/' + this.commentId;
+        modifyCommentAjax.body = {
+          comment: this.item.comment
+        };
+
+        modifyCommentAjax.generateRequest();
+      },
+
+      _confirmDeleteComment: function() {
+        var warnAlert = document.createElement('warn-alert');
+        warnAlert.msg = '댓글을 삭제 할까요?';
+        var me = this;
+
+        mgAlert({
+          content: warnAlert,
+          useCancelButton: true,
+          useConfirmButton: true,
+          cancelCallback: null,
+          confirmCallback: function() {
+            me._deleteCommentAjax();
+          }
+        });        
+      },
+
+      _deleteCommentAjax: function() {
+        var deleteCommentAjax = this.$['delete-comment-ajax'];
+        deleteCommentAjax.resourceUrl = 'comment_details/' + this.commentId;
+        deleteCommentAjax.generateRequest();
+      },
+
+      _refreshComments: function() {
+        this.fire('comment-changed');
+      }
+		})
+	</script>
+</dom-module>

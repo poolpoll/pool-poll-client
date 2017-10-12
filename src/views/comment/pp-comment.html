@@ -1,0 +1,404 @@
+<dom-module id="pp-comment">
+	<template>
+		<style>
+      .default-padding {
+        padding: 3vw;
+      }
+      .default-margin {
+        margin: 3vw;
+      }
+      .row-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .row-reverse-flex {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+      }      
+      .under-line {
+        background-color: #FFFFFF;
+        border-bottom: 1px #C2C4C7 solid;
+      }
+      .comment-profile-img {
+        display: block;
+        margin: auto;
+        width: 8vw;
+        height: 8vw;
+        border-radius: 100%;
+      }
+      .full-width {
+        width: 100%;
+      }
+      .medium-font {
+        font-size: 10pt;
+      }
+      .small-font {
+        font-size: 8pt;
+      }
+      .regist-btn {
+        --mg-button-border-radius: 5px;
+        --mg-button-width: 10vw;
+        --mg-button-height: 10vh;
+        --mg-button-font-size: 2vh;
+        --mg-button-color: #32B6B0;
+      }
+      .input-small-font {
+        --mg-font-size: 8pt;
+      }
+      .input-text-align {
+        --mg-input-text-align: right;
+      }
+      .font-btn-padding {
+        padding-top: 2%;
+        padding-left: 3%;
+      }
+      .gray-font {
+        color: #C2C4C7;
+      }
+      .input-textarea {
+        --mg-textarea-min-height: 9vh;
+        margin-right: 2%;
+        flex: 1;
+      }
+      .regist-btn {
+        --mg-button-border-radius: 5px;
+        --mg-button-width: 10vw;
+        --mg-button-height: 10vh;
+        --mg-button-font-size: 2vh;
+        --mg-button-color: #32B6B0;
+      }
+      #comment-textarea {
+        --mg-textarea-font-size: 9pt;
+      }
+		</style>
+
+    <custom-ajax
+      id="comment-detail-ajax"
+      last-response="{{detailCommentList}}">
+    </custom-ajax>
+
+    <custom-ajax
+      id="comment-detail-regist-ajax"
+      method="POST"
+      content-type="application/json">
+    </custom-ajax>
+
+    <custom-ajax
+      id="modify-comment-ajax"
+      method="PUT"
+      content-type="application/json">
+    </custom-ajax>
+
+    <custom-ajax
+      id="delete-comment-ajax"
+      method="DELETE">
+    </custom-ajax>
+
+    <div class="default-margin default-padding" style="border: 1px #C2C4C7 solid; border-radius: 5px;">
+      <div class="under-line">
+        <div class="row-flex" style="padding-bottom: 2%;">
+          <div style="width: 12vw;">
+            <img class="comment-profile-img" src="[[_commentProfileImgSrc(item.user.attachmentId)]]" />
+          </div>
+          <div class="full-width">
+            <div class="row-flex full-width">
+              <span class="full-width medium-font">[[item.user.name]]</span>
+              <span class="small-font">Lv.</span><span class="small-font" style="color: #E906E1">[[item.user.level]]</span>
+            </div>
+            <div class="row-flex full-width">
+              <mg-input-date class="input-small-font input-text-align gray-font full-width" readonly value="[[_formatUpdatedDate(item.updatedAt)]]"></mg-input-date>
+              <mg-input-time class="input-small-font input-text-align  gray-font" style="width: 25vw;" readonly value="[[_formatUpdatedTime(item.updatedAt)]]"></mg-input-time>
+            </div>
+          </div>
+        </div>
+        <div>
+          <mg-textarea id="comment-textarea" readonly auto-grow value="{{item.comment}}"></mg-textarea>
+        </div>
+      </div>
+
+      <!-- Detail Comment Section -->
+      <div id="detail-section" style="padding: 1.5vw 0 0 1.5vw; margin: 1.5vw 0 0 1.5vw; border-left: 3px solid #39B1A8;" hidden>
+        <template is="dom-repeat" items="[[detailCommentList]]">
+        	<pp-comment-detail item="[[item]]"></pp-comment-detail>
+        </template>
+      </div>
+      <!-- Detail Comment Section -->
+
+      <!-- Detail Comment Write Section -->
+      <div id="detail-write-section" style="padding: 3vw 0 3vw 3vw;" class="under-line" hidden>
+        <div class="row-flex">
+          <mg-textarea id="input-textarea" class="input-textarea" max-length="[[maxLength]]" placeholder="댓글을 입력해주세요." value="{{commentDetail}}"></mg-textarea>
+          <mg-button class="regist-btn" button-text="등록" comment-id="[[item.id]]" on-tap="_validateRegist"></mg-button>
+        </div>              
+      </div>
+      <!-- Detail Comment Write Section -->
+
+      <div class="row-reverse-flex">
+        <template is="dom-if" if="[[item.commentDetailCount]]">
+          <span class="small-font gray-font font-btn-padding" on-tap="_spreadDetailComments">[[spreadDetailCommentsLabel]]</span>
+        </template>
+
+        <template is="dom-if" if="[[isMyComment(item.userId)]]">
+          <span class="small-font gray-font font-btn-padding" on-tap="_confirmDeleteComment">댓글 삭제</span>
+          <span class="small-font gray-font font-btn-padding" on-tap="_modifyComment">[[modifyCommentLabel]]</span>
+        </template>
+        <span class="small-font gray-font font-btn-padding" on-tap="_spreadWriteComment">[[spreadWriteCommentLabel]]</span>
+      </div>
+    </div>		
+	</template>
+	<script>
+		Polymer({
+			is: 'pp-comment',
+
+			properties: {
+				item: {
+					type: Object,
+					observer: '_itemChanged'
+				},
+
+				isDetailCommentsSpread: {
+					type: Boolean,
+					value: false
+				},
+
+				spreadDetailCommentsLabel: {
+					type: String,
+					value: '펼치기'
+				},
+
+        modifyCommentLabel: {
+          type: String,
+          value: '댓글 수정'
+        },
+
+        isWriteCommentSpread: {
+          type: Boolean,
+          value: false
+        },
+
+        spreadWriteCommentLabel: {
+          type: String,
+          value: '댓글 작성'
+        }
+			},
+
+			listeners: {
+				'comment-detail-regist-ajax.response': '_refreshComments',
+        'modify-comment-ajax.response': '_refreshComments',
+        'delete-comment-ajax.response': '_refreshComments'
+			},
+
+      ready: function() {
+        document.addEventListener('comment-changed', function(event) {
+          this._commentDetailAjax();
+        }.bind(this));
+      },
+
+			_itemChanged: function(item) {
+				this.commentId = item.id;
+			},
+
+      _commentProfileImgSrc: function(attachmentId) {
+        var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+        return baseUrl + '/attachments/preview/' + attachmentId;
+      },
+
+      _formatUpdatedDate: function(updatedAt) {
+        var updatedAt = new Date(updatedAt);
+        return updatedAt.toISOString().slice(0, 9);
+      },
+
+      _formatUpdatedTime: function(updatedAt) {
+        var updatedAt = new Date(updatedAt);
+        return updatedAt.getHours() + ':' + updatedAt.getMinutes();
+      },
+
+      _spreadDetailComments: function() {
+      	var detailSection = this.$['detail-section'];
+      	if(this.isDetailCommentsSpread) {
+      		detailSection.setAttribute('hidden', true);
+      		this.spreadDetailCommentsLabel = '펼치기';
+      	} else {
+      		detailSection.removeAttribute('hidden');
+      		this._commentDetailAjax(this.commentId);
+      		this.spreadDetailCommentsLabel = '접기';
+
+      	};
+
+      	this.isDetailCommentsSpread = !this.isDetailCommentsSpread;
+      },
+
+      _spreadWriteComment: function(event) {
+        var writeSection = this.$['detail-write-section'];
+        if(this.isWriteCommentSpread) {
+          writeSection.setAttribute('hidden', true);
+          this.spreadWriteCommentLabel = '댓글 작성';
+        } else {
+          writeSection.removeAttribute('hidden');
+          this.spreadWriteCommentLabel = '작성 취소';
+
+          this.$['input-textarea'].focus(event);
+        };
+
+        this.isWriteCommentSpread = !this.isWriteCommentSpread;
+      },
+
+      isMyComment: function(userId) {
+        var userInfo = JSON.parse(sessionStorage.userInfo);
+        if(userId == userInfo.id) return true;
+        return false;
+      },
+
+      _closeTextArea: function() {
+      	var detailWriteSection = this.$['detail-write-section'];
+        this.spreadWriteCommentLabel = '댓글 작성';
+      	detailWriteSection.setAttribute('hidden', true);
+      },
+
+      _commentDetailAjax: function(commentId) {
+      	this.clearView();
+        var commentDetailAjax = this.$['comment-detail-ajax'];
+        commentDetailAjax.resourceUrl = 'comment_details/' + this.commentId;
+        commentDetailAjax.generateRequest();
+      },
+
+      clearView: function() {
+      	this._closeTextArea();
+      	this.commentDetail = '';
+      },
+
+      _validateRegist: function() {
+        if(this.commentDetail) {
+          var infoAlert = document.createElement('info-alert');
+          infoAlert.title = '댓글 작성';
+          infoAlert.msg = '작성한 댓글을 저장 할까요?';
+          var me = this;
+
+          mgAlert({
+            content: infoAlert,
+            useCancelButton: true,
+            useConfirmButton: true,
+            cancelCallback: null,
+            confirmCallback: function() {
+              me.registComment();
+            }
+          });
+        } else {
+          var warnAlert = document.createElement('warn-alert');
+          warnAlert.msg = '댓글의 내용을 입력해 주세요.';
+
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true,
+            useConfirmButton: false,
+            cancelCallback: null,
+            confirmCallback: null
+          });
+        }
+      },
+
+
+      registComment: function() {
+        // TODO: 펼치기가 반드시 된 상태에서 댓글이 저장되도록 하기 위해 추가된 하드코딩
+        // mg-textarea가 랜더되기 전에 값이 셋팅 되면 랜더될 때 height (auto-grow)를 정상적으로 가져오지 못함
+        var detailSection = this.$['detail-section'];
+        detailSection.removeAttribute('hidden');
+        this.spreadDetailCommentsLabel = '접기';
+        this.isDetailCommentsSpread = true;
+        // TODO: 펼치기가 반드시 된 상태에서 댓글이 저장되도록 하기 위해 추가된 하드코딩
+
+        var commentDetailRegistAjax = this.$['comment-detail-regist-ajax'];
+        commentDetailRegistAjax.resourceUrl = 'comment_details/' + this.commentId;
+        commentDetailRegistAjax.body = {
+          comment: this.commentDetail,
+          commentId: this.commentId
+        };
+
+        commentDetailRegistAjax.generateRequest();
+      },
+
+      _modifyComment: function(event) {
+        var commentTextarea = this.$['comment-textarea'];
+        if(this.modifyCommentLabel == '댓글 수정') {
+          commentTextarea.readonly = false;
+          commentTextarea.focus(event);
+
+          this.modifyCommentLabel = '수정 완료';
+        } else {
+          commentTextarea.readonly = true;
+          this.modifyCommentLabel = '댓글 수정';
+          this._validateModify();
+        };
+      },
+
+      _validateModify: function() {
+        if(this.item.comment) {
+          var infoAlert = document.createElement('info-alert');
+          infoAlert.title = '댓글 수정';
+          infoAlert.msg = '수정한 댓글을 저장 할까요?';
+          var me = this;
+
+          mgAlert({
+            content: infoAlert,
+            useCancelButton: true,
+            useConfirmButton: true,
+            cancelCallback: null,
+            confirmCallback: function() {
+              me._modifyCommentAjax();
+            }
+          });
+        } else {
+          var warnAlert = document.createElement('warn-alert');
+          warnAlert.msg = '댓글의 내용을 입력해 주세요.';
+
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true,
+            useConfirmButton: false,
+            cancelCallback: null,
+            confirmCallback: null
+          });
+        }
+      },
+
+      _modifyCommentAjax: function() {
+        modifyCommentAjax = this.$['modify-comment-ajax'];
+        modifyCommentAjax.resourceUrl = 'comments/' + this.commentId;
+        modifyCommentAjax.body = {
+          comment: this.item.comment
+        };
+
+        modifyCommentAjax.generateRequest();
+      },
+
+      _confirmDeleteComment: function() {
+        var warnAlert = document.createElement('warn-alert');
+        warnAlert.msg = '댓글을 삭제 할까요?';
+        var me = this;
+
+        mgAlert({
+          content: warnAlert,
+          useCancelButton: true,
+          useConfirmButton: true,
+          cancelCallback: null,
+          confirmCallback: function() {
+            me._deleteCommentAjax();
+          }
+        });
+      },
+
+      _deleteCommentAjax: function() {
+        var deleteCommentAjax = this.$['delete-comment-ajax'];
+        deleteCommentAjax.resourceUrl = 'comments/' + this.commentId;
+
+        deleteCommentAjax.generateRequest();
+      },
+
+      _refreshComments: function() {
+        this.fire('comment-changed');
+      }
+		})
+	</script>
+</dom-module>

@@ -48,7 +48,8 @@
     "mg-image-card": "possible819/mg-image-card#^1.0.0",
     "mg-checkbox": "possible819/mg-checkbox#^1.0.0",
     "mg-spinner": "possible819/mg-spinner#^1.0.0",
-    "mg-alert": "https://github.com/possible819/mg-alert.git#^1.0.0"
+    "mg-alert": "https://github.com/possible819/mg-alert.git#^1.0.0",
+    "mg-textarea": "https://github.com/possible819/mg-textarea.git#^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
