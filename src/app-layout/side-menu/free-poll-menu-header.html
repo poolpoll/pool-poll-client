@@ -117,8 +117,8 @@
 
 						var ft = new FileTransfer();
 						var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
-						ft.upload(fileURL, encodeURI(localStorage.baseUrl + '/users/profile'), function(event) {
-							sessionStorage.userInfo = event.response;
+						ft.upload(fileURL, encodeURI(baseUrl + '/users/profile'), function(event) {
+							sessionStorage.userInfo = JSON.stringify(event.response);
 						}.bind(this), function(error) {
 							throw error;
 						}, options);

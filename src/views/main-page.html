@@ -123,47 +123,29 @@
 
 					switch (this.selectedTap) {
 						case 'my-poll':
-							if(!this.myPollList.items.length) { // 현재 가져온 데이터가 없을때
-								this.myPollList.page = 1;
-								this._myPollAjax(param);								
-							} else {
-								this._dataChanged(this.myPollList);
-							}
+							this.myPollList.page = 1;
+							this._myPollAjax(param);
 
 							break;
 
 						case 'top':
-							if(!this.top100List.items.length) {
-								this._topPollAjax();	
-							} else {
-								this._dataChanged(this.top100List);
-							}
-							
+							this._topPollAjax();
+
 							break;
 
 						case 'tag':
-							if(!this.tagList.items || !this.tagList.items.length) {
-								this.tagList.page = 1;
-								this._tagPollAjax(param);
-							} else {
-								this._dataChanged(this.tagList);
-							}
+							this.tagList.page = 1;
+							this._tagPollAjax(param);
 							
 							break;
 
 						case 'search-icon':
-							if(this.searchList.items.length != 0) {
-								this._dataChanged(this.searchList);
-							}
+							this._dataChanged(this.searchList);
 							break;
 
 						default:
-							if(!this.myPollList.items.length) {
-								this.myPollList.page = 1;
-								this._myPollAjax(param);								
-							} else {
-								this._dataChanged(this.myPollList);
-							}
+							this.myPollList.page = 1;
+							this._myPollAjax(param);
 
 							break;
 					};
@@ -363,8 +345,11 @@
 
 							break;
 						case 'search-icon':
+							if(!this.searchKeywords) break;
+							
 							infoAlert.title = '조회 결과가 없습니다.';
 							infoAlert.msg = '\'' + this.searchKeywords + '\' 의 검색 결과가 없습니다.';
+
 
 							mgAlert({
 								content: infoAlert,
