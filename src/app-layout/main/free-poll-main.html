@@ -9,16 +9,12 @@
 				-ms-user-select: none;
 				user-select: none;
 			}
-			::-webkit-scrollbar { 
-			    display: none; 
-			}
 			:host {
 				display: block;
 				overflow: hidden;
 			}
 			iron-pages {
 				height: 100%;
-				overflow: overlay;
 				background-color: #EDEFEE;
 			}
 		</style>
@@ -102,20 +98,22 @@
 					var targetRouting = event.detail.targetRoute;
 					
 					if(currentRouting == 'sign_in' && targetRouting == 'main') {
-						this.fire('initialize-selected-tab', 'my-poll');
+						this.fire('initialize-selected-tab', 'top');
 					}
 				}.bind(this));
 
 				document.addEventListener('after-routing-changed', function(event) {
 					var currentRouting = event.detail.currentRoute;
 
-					if(currentRouting == 'main') {
-						var pages = document.querySelector('iron-pages');
-						this.listen(pages, 'scroll', '_scrollChanged');
-					} else {
-						var pages = document.querySelector('iron-pages');
-						this.unlisten(pages, 'scroll', '_scrollChanged');
-					};
+					// if(currentRouting == 'main') {
+					// 	var pages = document.querySelector('iron-pages');
+					// 	this.listen(pages, 'scroll', '_scrollChanged');
+					// 	this.fire('mg-tab-view-selected');
+
+					// } else {
+					// 	var pages = document.querySelector('iron-pages');
+					// 	this.unlisten(pages, 'scroll', '_scrollChanged');
+					// };
 
 					if(currentRouting == 'new_poll') {
 						// Remove new poll element start
@@ -135,10 +133,6 @@
 					var message = event.detail;
 					this.toggleToast(message);
 				}.bind(this));
-			},
-
-			_scrollChanged: function() {
-				this.querySelector('main-page')._scrollChanged(event);
 			},
 
 			/**

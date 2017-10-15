@@ -1,0 +1,162 @@
+<dom-module id="pp-search-poll-tab">
+	<template>
+		<style>
+			#content {
+				display: flex;
+				flex-direction: row;
+			}
+			.left-container {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				margin: 0 1vw 2vw 2vw;
+			}
+			.right-container {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				margin: 0 2vw 2vw 1vw;
+			}			
+		</style>
+		
+		<custom-ajax
+			id="check-poll-histories-ajax">
+		</custom-ajax>
+
+		<div id="content" class="content">
+			<div class="left-container"></div>
+			<div class="right-container"></div>
+		</div>		
+	</template>
+	<script>
+		Polymer({
+			is: 'pp-search-poll-tab',
+
+			properties: {
+				/**
+				 * Poll Items & query option
+				 * @type Object
+				 */
+				data: {
+					type: Object,
+					observer: '_dataChanged'
+				},
+
+				page: {
+					type: Number
+				},
+
+				keywords: {
+					type: String
+				}
+			},
+
+			listeners: {
+				'check-poll-histories-ajax.response': '_checkAjaxResponsed'
+			},			
+
+			_dataChanged: function(data) {
+				if(!data || data.length == 0) {
+					if(this.page == 1) this.alertNoData();
+					return;
+				};
+				
+				this._clearCards();
+
+				for(var i = 0; i < data.length; i++) {
+					var cardElement = document.createElement('mg-image-card');
+					var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+
+					if(data[i].user.attachmentId) {
+						data[i].profileSrc = baseUrl + '/attachments/preview/' + data[i].user.attachmentId;	
+					}
+					if(data[i].attachmentId) {
+						data[i].thumbnailSrc = baseUrl + '/attachments/preview/' + data[i].attachmentId;
+					}
+
+					cardElement.setData(data[i]);
+					cardElement.addEventListener('tap', function(event) {
+						var selectedPoll = event.currentTarget;
+						if(selectedPoll.userId == JSON.parse(sessionStorage.userInfo).id) {
+							page('/polls/chart/' + selectedPoll.id);
+						} else {
+							var checkPollHistoriesAjax = this.$['check-poll-histories-ajax'];
+							checkPollHistoriesAjax.resourceUrl = 'poll_histories/' + selectedPoll.id;
+							checkPollHistoriesAjax.generateRequest();
+						}
+					}.bind(this));
+
+					var leftContainerHeight = 0;
+					var rightContainerHeight = 0;
+					
+					var leftContainerChilds = this.querySelector('.left-container').children;
+					if(leftContainerChilds.length) {
+						for(var x = 0; x < leftContainerChilds.length; x++) {
+							leftContainerHeight = leftContainerHeight + leftContainerChilds[x].offsetHeight;
+						};
+					};
+
+					var rightContainerChilds = this.querySelector('.right-container').children;
+					if(rightContainerChilds.length) {
+						for(var y = 0; y < rightContainerChilds.length; y++) {
+							rightContainerHeight = rightContainerHeight + rightContainerChilds[y].offsetHeight;
+						};
+					};
+
+					if(leftContainerHeight <= rightContainerHeight) { // 왼쪽이 짧거나 같을 때 처리
+						this.querySelector('.left-container').appendChild(cardElement);
+					} else { //  오른족이 짧을때 처리
+						this.querySelector('.right-container').appendChild(cardElement);
+					}
+				};
+			},
+
+			alertNoData: function() {
+				var infoAlert = document.createElement('info-alert');
+				infoAlert.title = '조회 결과가 없습니다.';
+				infoAlert.msg = '\'' + this.keywords + '\' 의 검색 결과가 없습니다.';
+
+				mgAlert({
+					content: infoAlert,
+					useConfirmButton: false,
+					useCancelButton: true,
+					confirmCallback: null,
+					cancelCallback: null
+				});
+			},			
+
+			/**
+			 * poll list 카드를 리셋
+			 */
+			_clearCards: function() {
+				var content = this.querySelector('#content');
+				while(content.childElementCount) {
+					content.removeChild(content.firstChild);
+				};
+
+				var leftContainer = document.createElement('div');
+				var rightContainer = document.createElement('div');
+				leftContainer.classList.add('left-container');
+				leftContainer.classList.add('style-scope');
+				leftContainer.classList.add('pp-search-poll-tab');
+				rightContainer.classList.add('right-container');
+				rightContainer.classList.add('style-scope');
+				rightContainer.classList.add('pp-search-poll-tab');
+
+				content.appendChild(leftContainer);
+				content.appendChild(rightContainer);
+			},
+
+			_checkAjaxResponsed: function(event) {
+				var pollId = event.detail.response.pollId;
+				var pollHistories = event.detail.response.data;
+
+				if(pollHistories) {
+					page('/polls/chart/' + pollId);
+				} else {
+					page('/polls/join/' + pollId);
+				}
+			}
+		})
+	</script>
+</dom-module>
