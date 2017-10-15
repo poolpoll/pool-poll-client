@@ -11,9 +11,17 @@
         flex-direction: row;
         align-items: center;
       }
+      .row-reverse-flex {
+        display: flex;
+        flex-direction: row-reverse;
+      }
       .default-padding {
         padding: 3vw;
       }
+      .top-line {
+        background-color: #FFFFFF;
+        border-top: 1px #C2C4C7 solid;
+      }      
       .under-line {
         background-color: #FFFFFF;
         border-bottom: 1px #C2C4C7 solid;
@@ -32,6 +40,9 @@
       }
       .gray-font {
         color: #C2C4C7;
+      }
+      .red-font {
+        color: #F0617C;
       }
       mg-checkbox {
         --mg-checkbox-size: 5vw;
@@ -71,6 +82,17 @@
       method="POST"
       content-type="application/json">
     </custom-ajax>
+
+    <custom-ajax
+      id="add-like-ajax"
+      method="POST"
+      content-type="application/json">
+    </custom-ajax>
+
+    <custom-ajax
+      id="delete-like-ajax"
+      method="DELETE">
+    </custom-ajax>
     
     <div id="container">
       <div id="profile-section" class="under-line">
@@ -92,13 +114,21 @@
       </div>
 
       <div id="poll-expire-section" class="under-line">
-        <div class="row-flex default-padding">
-          <div class="full-width">
-            <span class="gray-font">마감 일시</span>
+        <template is="dom-if" if="[[activeFlag]]">
+          <div class="row-flex default-padding">
+            <div class="full-width">
+              <span class="gray-font">마감 일시</span>
+            </div>
+            <mg-input-date class="full-width" value="[[expireDate]]"></mg-input-date>
+            <mg-input-time class="full-width" value="[[expireTime]]"></mg-input-time>
           </div>
-          <mg-input-date class="full-width" value="[[expireDate]]"></mg-input-date>
-          <mg-input-time class="full-width" value="[[expireTime]]"></mg-input-time>
-        </div>
+        </template>
+
+        <template is="dom-if" if="[[!activeFlag]]">
+          <div class="default-padding">
+            <span class="red-font">이미 마감된 설문 입니다.</span>
+          </div>
+        </template>
       </div>
 
       <div id="poll-description-section" class="under-line">
@@ -135,9 +165,17 @@
         </iron-pages>
       </div-->
 
-      <div class="spacer under-line"></div>
+      <div class="spacer"></div>
 
-      <div id="add-comment-section" class="under-line">
+      <template is="dom-if" if="[[!_isMyPoll(pollInfo.poll.userId)]]">
+        <div id="like-btn-section" style="background-color: #FFFFFF;">
+          <div class="default-padding">
+            <img style="display: block; margin: auto; height: 3vh; width: auto;" src="[[likeImgSrc]]" on-tap="_likeTapped" />
+          </div>
+        </div>
+      </template>
+
+      <div id="add-comment-section" class="top-line under-line">
         <div class="default-padding">
           <div class="row-flex">
             <mg-textarea class="input-textarea" max-length="[[maxLength]]" placeholder="댓글을 입력해주세요." value="{{comment}}"></mg-textarea>
@@ -192,11 +230,22 @@
 
         detailCommentList: {
           type: Array
+        },
+
+        isLike: {
+          type: Boolean
+        },
+
+        likeImgSrc: {
+          type: String,
+          computed: '_likeImgSrcComputed(isLike)'
         }
       },
 
       listeners: {
-        'comment-regist-ajax.response': '_pollIdChanged'
+        'comment-regist-ajax.response': '_pollIdChanged',
+        'add-like-ajax.response': '_likeAjaxResponsed',
+        'delete-like-ajax.response': '_likeAjaxResponsed'
       },
 
       ready: function() {
@@ -222,6 +271,7 @@
 
       _pollInfoChanged: function(pollInfo) {
         if(!pollInfo) return;
+        this.pollInfo = pollInfo;
         var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
         this.profileSrc = baseUrl + '/attachments/preview/' + pollInfo.poll.user.attachmentId;
         this.userName = pollInfo.poll.user.name;
@@ -232,6 +282,9 @@
         this.description = pollInfo.poll.description
         this.multyCheckLimit = pollInfo.poll.multyCheckLimit;
         this.tag = pollInfo.poll.tags;
+        this.isLike = pollInfo.like ? true : false;
+        this.like = pollInfo.like;
+        this.activeFlag = pollInfo.poll.activeFlag;
         if(pollInfo.poll.multyCheckLimit > 1) {
           this.isMultyCheck = true;
           for(var i = 1; i <= pollInfo.poll.multyCheckLimit; i++) {
@@ -241,6 +294,18 @@
           this.isMultyCheck = false;
         }
         this.options = pollInfo.options;
+      },
+
+      _isMyPoll: function(pollUserId) {
+        return pollUserId == JSON.parse(sessionStorage.userInfo).id ? true : false;
+      },
+
+      _likeImgSrcComputed: function(isLike) {
+        if(isLike) {
+          return '../../src/assets/images/like-icon.png';
+        } else {
+          return '../../src/assets/images/dislike-icon.svg';
+        }
       },
 
       excuteCommentAjax: function(pollId) {
@@ -280,6 +345,50 @@
         }
       },
 
+      _likeTapped: function() {
+        this.isLike = !this.isLike;
+
+        if(this.isLike) {
+          var addLikeAjax = this.$['add-like-ajax'];
+          addLikeAjax.resourceUrl = 'like_histories';
+          addLikeAjax.body = {
+            pollId: this.pollId
+          };
+          addLikeAjax.generateRequest();
+        } else {
+          var deleteLikeAjax = this.$['delete-like-ajax'];
+          deleteLikeAjax.resourceUrl = 'like_histories/' + this.like.id;
+          deleteLikeAjax.generateRequest();
+        };
+      },
+
+      _likeAjaxResponsed: function(event) {
+        var me = this;
+        var infoAlert = document.createElement('info-alert');
+
+        switch (event.target.id) {
+          case 'add-like-ajax':
+            infoAlert.title =  '좋아요!';
+            infoAlert.msg = '\'' + this.pollInfo.poll.name + '\'';
+            break;
+
+          case 'delete-like-ajax':
+            infoAlert.title = '좋아요 취소!';
+            infoAlert.msg = '\'' + this.pollInfo.poll.name + '\'';
+            break;
+        };
+
+        mgAlert({
+          content: infoAlert,
+          useCancelButton: true,
+          useConfirmButton: false,
+          cancelCallback: function() {
+            me._pollIdChanged();    
+          },
+          confirmCallback: null
+        });
+      },     
+
       registComment: function() {
         var commentRegistAjax = this.$['comment-regist-ajax'];
         commentRegistAjax.resourceUrl = 'comments/' + this.pollId;
@@ -289,7 +398,7 @@
         };
 
         this.comment = '';
-        commentRegistAjax.generateRequest();        
+        commentRegistAjax.generateRequest();
       }
     })
   </script>

@@ -72,10 +72,10 @@
       
       <div class="container">
         <div class="inner-container">
-          <mg-input hide-label hide-clear-btn placeholder="이메일" value="{{email}}"></mg-input>
+          <mg-input id="email-input" hide-label hide-clear-btn placeholder="이메일" value="{{email}}"></mg-input>
         </div>
         <div class="inner-container">
-          <mg-input hide-label hide-clear-btn placeholder="비밀번호" type="password" value="{{password}}" on-keypress="_keyPressed"></mg-input>
+          <mg-input id="password-input" hide-label hide-clear-btn placeholder="비밀번호" type="password" value="{{password}}" on-keypress="_keyPressed"></mg-input>
         </div>
         <div class="inner-container">
           <mg-button button-text="들어가기" on-tap="signIn"></mg-button>
@@ -122,11 +122,11 @@
         'sign-in-ajax.response': 'signInResponsed'
       },
 
-      ready: function() {
+      ready: function(event) {
         this.fire('hide-header-toolbar');
       },
 
-      _keyPressed: function(event) {
+      _keyPressed: function() {
         if(event.charCode == 13) {
           this.signIn();
         }
@@ -145,6 +145,7 @@
       },
 
       signInResponsed: function(event) {
+        this.clearInput();
         var response = event.currentTarget.lastResponse;
         if(response) {
           sessionStorage.userInfo = JSON.stringify(response);
