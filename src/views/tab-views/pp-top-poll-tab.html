@@ -7,16 +7,18 @@
 			}
 			.left-container {
 				width: 100%;
+				height: fit-content;
 				display: flex;
 				flex-direction: column;
 				margin: 0 1vw 2vw 2vw;
 			}
 			.right-container {
 				width: 100%;
+				height: fit-content;
 				display: flex;
 				flex-direction: column;
 				margin: 0 2vw 2vw 1vw;
-			}			
+			}
 		</style>
 
 		<custom-ajax
@@ -48,8 +50,12 @@
 			},			
 
 			_dataChanged: function(data) {
-				if(!data || data.length == 0) return; // 조회 결과가 없으면 return
-				
+				if(!data || data.length == 0) {
+					var isMyPollInformed = localStorage.myPollInformed ? localStorage.myPollInformed : false;
+					if(this.page == 1 && !isMyPollInformed) this.alertNoData();
+					return;
+				};
+
 				this._clearCards();
 
 				for(var i = 0; i < data.length; i++) {
@@ -75,30 +81,19 @@
 						}
 					}.bind(this));
 
-					var leftContainerHeight = 0;
-					var rightContainerHeight = 0;
+					var leftContainer = this.querySelector('.left-container');
+					var rightContainer = this.querySelector('.right-container');
+
+					var leftContainerHeight = leftContainer.scrollHeight;
+					var rightContainerHeight = rightContainer.scrollHeight;
 					
-					var leftContainerChilds = this.querySelector('.left-container').children;
-					if(leftContainerChilds.length) {
-						for(var x = 0; x < leftContainerChilds.length; x++) {
-							leftContainerHeight = leftContainerHeight + leftContainerChilds[x].offsetHeight;
-						};
-					};
-
-					var rightContainerChilds = this.querySelector('.right-container').children;
-					if(rightContainerChilds.length) {
-						for(var y = 0; y < rightContainerChilds.length; y++) {
-							rightContainerHeight = rightContainerHeight + rightContainerChilds[y].offsetHeight;
-						};
-					};
-
 					if(leftContainerHeight <= rightContainerHeight) { // 왼쪽이 짧거나 같을 때 처리
 						this.querySelector('.left-container').appendChild(cardElement);
 					} else { //  오른족이 짧을때 처리
 						this.querySelector('.right-container').appendChild(cardElement);
 					}
 				};
-			},			
+			},
 
 			/**
 			 * poll list 카드를 리셋
@@ -113,14 +108,14 @@
 				var rightContainer = document.createElement('div');
 				leftContainer.classList.add('left-container');
 				leftContainer.classList.add('style-scope');
-				leftContainer.classList.add('pp-top-poll-tab');
+				leftContainer.classList.add('pp-my-poll-tab');
 				rightContainer.classList.add('right-container');
 				rightContainer.classList.add('style-scope');
-				rightContainer.classList.add('pp-top-poll-tab');
+				rightContainer.classList.add('pp-my-poll-tab');
 
 				content.appendChild(leftContainer);
 				content.appendChild(rightContainer);
-			},
+			},			
 
 			_checkAjaxResponsed: function(event) {
 				var pollId = event.detail.response.pollId;

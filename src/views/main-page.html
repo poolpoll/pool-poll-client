@@ -100,7 +100,7 @@
 				searchPollPage: {
 					type: Number,
 					value: 1
-				},				
+				}
 			},
 
 			listeners: {
@@ -154,50 +154,9 @@
 			},
 
 			/**
-			 * my poll request ajax
-			 * @param  Object params pagination을 위한 page object
-			 */
-			_myPollAjax: function() {
-				this.fire('mg-spinner-active');
-				var myPollAjax = this.$['my-poll-ajax'];
-				myPollAjax.params = {	page: this.myPollPage	};
-				myPollAjax.generateRequest();
-			},
-
-			/**
-			 * top 100 request ajax
-			 */
-			_topPollAjax: function() {
-				this.fire('mg-spinner-active');
-				var topPollAjax = this.$['top-100-ajax'];
-				topPollAjax.generateRequest();
-			},
-
-			/**
-			 * tag request ajax
-			 * @param  Object params pagination을 위한 page object
-			 */
-			_tagPollAjax: function() {
-				this.fire('mg-spinner-active');
-				var tagPollAjax = this.$['poll-by-tags'];
-				tagPollAjax.params = { page: this.tagPollPage };
-				tagPollAjax.generateRequest();
-			},
-
-			/**
-			 * search request ajax
-			 * @param  Object params pagination을 위한 page object
-			 */
-			_searchPollAjax: function() {
-				this.fire('mg-spinner-active');
-				var searchPollAjax = this.$['search-poll-ajax'];
-				searchPollAjax.params = {	name: this.keyWords, page: this.searchPollPage };
-				searchPollAjax.generateRequest();
-			},
-
-			/**
 			 * 화면 스크롤 변경시 이벤트 리스너
 			 * 최하단으로 스크롤 이동시 ajax 호출 (infinite scroll)
+			 * 최상단으로 스크롤 이동시 ajax 호출 (pull to refresh)
 			 */
 			_scrollChanged: function(event) {
 				var scrollTop = event.target.scrollTop;
@@ -205,17 +164,15 @@
 				var clientHeight = event.target.clientHeight;
 
 				// Scroll Bottom
-				if(clientHeight + scrollTop == scrollHeight) {
-					this.prevScrollPostion = scrollTop;
-					this.infiniteScroll();
-				}
-
-				// Scroll top 
-				if(scrollTop == 0) {
-					this.pullToRefresh();
-				}
+				if(clientHeight + scrollTop == scrollHeight) this.infiniteScroll();
+				// Scroll Top
+				if (scrollTop == 0) this.pullToRefresh();
 			},
 
+			/**
+			 * Called by Scroll Event Listener
+			 * 스크롤이 최하단에 닿으면 추가 데이터를 가져온다.
+			 */
 			infiniteScroll: function() {
 				switch (this.selectedTap) {
 					case 'my-poll':
@@ -233,6 +190,10 @@
 				}
 			},
 
+			/**
+			 * Called by Scroll Event Listener
+			 * 스크롤이 최상단에 닿으면 데이터를 refresh한다
+			 */
 			pullToRefresh: function() {
 				switch (this.selectedTap) {
 					case 'my-poll':
@@ -265,17 +226,53 @@
 				};
 			},
 
+			/**
+			 * my poll request ajax
+			 */
+			_myPollAjax: function() {
+				this.fire('mg-spinner-active');
+				var myPollAjax = this.$['my-poll-ajax'];
+				myPollAjax.params = {	page: this.myPollPage	};
+				myPollAjax.generateRequest();
+			},
+
+			/**
+			 * top 100 request ajax
+			 */
+			_topPollAjax: function() {
+				this.fire('mg-spinner-active');
+				var topPollAjax = this.$['top-100-ajax'];
+				topPollAjax.generateRequest();
+			},
+
+			/**
+			 * tag request ajax
+			 */
+			_tagPollAjax: function() {
+				this.fire('mg-spinner-active');
+				var tagPollAjax = this.$['poll-by-tags'];
+				tagPollAjax.params = { page: this.tagPollPage };
+				tagPollAjax.generateRequest();
+			},
+
+			/**
+			 * search request ajax
+			 */
+			_searchPollAjax: function() {
+				this.fire('mg-spinner-active');
+				var searchPollAjax = this.$['search-poll-ajax'];
+				searchPollAjax.params = {	name: this.keyWords, page: this.searchPollPage };
+				searchPollAjax.generateRequest();
+			},			
+
 			_initReponsedData: function(event) {
 				var responsedData = event.detail.response ? event.detail.response : [];
 
 				switch (this.selectedTap) {
 					case 'my-poll':
+						this.myPollList = responsedData;					
 						if(this.myPollPage == 1) {
 							this.topScrollAdjust();
-							this.myPollList = responsedData;
-						} else if (responsedData.length > 0 && this.myPollPage > 1) {
-							this.myPollList = this.myPollList.concat(responsedData);
-							this.querySelector('#outer-scroller').scrollTo(0, this.prevScrollPostion);
 						} else if (responsedData.length == 0 && this.myPollPage > 1) {
 							this.myPollPage--;
 						};
@@ -288,12 +285,9 @@
 						break;
 
 					case 'tag':
+						this.tagList = responsedData;					
 						if(this.tagPollPage == 1) {
 							this.topScrollAdjust();
-							this.tagList = responsedData;
-						} else if (responsedData.length > 0 && this.tagPollPage > 1) {
-							this.tagList = this.tagList.concat(responsedData);
-							this.querySelector('#outer-scroller').scrollTo(0, this.prevScrollPostion);
 						} else if (responsedData.length == 0 && this.tagPollPage > 1) {
 							this.tagPollPage--;
 						};
@@ -301,12 +295,9 @@
 						break;
 
 					case 'search-icon':
+						this.searchList = responsedData;					
 						if(this.searchPollPage == 1) {
 							this.topScrollAdjust();
-							this.searchList = responsedData;
-						} else if (responsedData.length > 0 && this.searchPollPage > 1) {
-							this.searchList = this.searchList.concat(responsedData);
-							this.querySelector('#outer-scroller').scrollTo(0, this.prevScrollPostion);
 						} else if (responsedData.length == 0 && this.searchPollPage > 1) {
 							this.searchPollPage--;
 						};
@@ -317,10 +308,13 @@
 				this.fire('mg-spinner-deactive');
 			},
 
+			/**
+			 * 조회하는 탭의 page가 1이면 pull box가 보이지 않도록 스크롤을 이동
+			 */
 			topScrollAdjust: function() {
 				var pullBoxHeight = this.querySelector('#pull-box').scrollHeight;
 				var outerScroller = this.querySelector('#outer-scroller');
-				outerScroller.scrollTo(0, pullBoxHeight);
+				outerScroller.scrollTop = pullBoxHeight;
 			}
 		})
 	</script>
