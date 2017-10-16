@@ -768,13 +768,13 @@
        * 폼에 설정한 모든 값들을 초기화 합니다.
        */
       clearValues: function() {
-        this.name = undefined;
-        this.$['description'].value = undefined;
+        this.name = '';
+        this.$['description'].value = '';
         var today = new Date();
         today = today.toISOString().slice(0,10);
         this.expireDate = today;
         this.expireTime = '00:00';
-        this.tags = undefined;
+        this.tags = '';
         this.multyCheckLimit = 1,
         this.options = []
       },

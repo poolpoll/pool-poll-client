@@ -106,27 +106,10 @@
 				document.addEventListener('after-routing-changed', function(event) {
 					var currentRouting = event.detail.currentRoute;
 
-					// if(currentRouting == 'main') {
-					// 	var pages = document.querySelector('iron-pages');
-					// 	this.listen(pages, 'scroll', '_scrollChanged');
-					// 	this.fire('mg-tab-view-selected');
-
-					// } else {
-					// 	var pages = document.querySelector('iron-pages');
-					// 	this.unlisten(pages, 'scroll', '_scrollChanged');
-					// };
-
 					if(currentRouting == 'new_poll') {
-						// Remove new poll element start
 						var pages = this.$['pages'];
-						var oldElement = pages.querySelector('new-poll');
-						pages.removeChild(oldElement);
-						// Remove new poll element end
-
-						var newPollElement = document.createElement('new-poll');
-						newPollElement.setAttribute('route', 'new_poll');
-						newPollElement.setAttribute('class', 'pages');
-						pages.appendChild(newPollElement);
+						var newPolElement = pages.querySelector('new-poll');
+						newPolElement.clearValues();
 					};
 				}.bind(this));
 
