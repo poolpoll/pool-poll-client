@@ -45,7 +45,7 @@
 
 		<mg-tab-view id="tab-view" headers="[[headers]]" selected="[[selectedTab]]" hidden="[[hideHeaderTab]]"></mg-tab-view>
 		<img id="search-icon" style="height:1.5em; margin:auto; padding-left: 5vw; padding-right:5vw;" hidden src="../../assets/images/search_icon.png" on-tap="searchIconTapped">	
-		<mg-input id="search-input" hide-label placeholder="Search..." autofocus on-tap="_searchButtonTapped" hidden="[[hideSearchInput]]" btn-src="./src/assets/images/search_icon.png" value="{{searchKeywords}}"></mg-input>
+		<mg-input id="search-input" hide-label placeholder="Search..." on-tap="_searchButtonTapped" hidden="[[hideSearchInput]]" btn-src="./src/assets/images/search_icon.png" on-keypress="_keyPressed" value="{{searchKeywords}}"></mg-input>
 	</template>
 	<script>
 		Polymer({
@@ -128,7 +128,8 @@
 				searchInput.style.display = 'block';
 				searchInput.style.paddingRight = '3%';
 				searchInput.style.paddingLeft = '3%';
-				searchInput.value = null;
+				searchInput.value = this.searchKeywords;
+				
 				this.fire('mg-modal-toggle', {
 					screen: searchInput,
 					name: 'search-input',
@@ -140,6 +141,13 @@
 				});
 
 				this.hideSearchInput = false;
+				searchInput.focus(event);
+			},
+
+			_keyPressed: function(event) {
+        if(event.charCode == 13) {
+          this._searchButtonTapped();
+        }
 			},
 
 			/**
