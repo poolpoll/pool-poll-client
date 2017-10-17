@@ -68,7 +68,7 @@
 
 				myPollPage: {
 					type: Number,
-					value: 1
+					value: 0
 				},
 
 				top100List: {
@@ -87,7 +87,7 @@
 
 				tagPollPage: {
 					type: Number,
-					value: 1
+					value: 0
 				},				
 
 				searchList: {
@@ -99,7 +99,7 @@
 
 				searchPollPage: {
 					type: Number,
-					value: 1
+					value: 0
 				}
 			},
 
@@ -112,12 +112,13 @@
 
 			ready: function() {
 				document.addEventListener('mg-tab-view-selected', function(event) {
+					this.topScrollAdjust();
 					var currentSelectedTap = event.detail;
 					this.selectedTap = typeof(currentSelectedTap) == 'string' ? currentSelectedTap : this.selectedTap;
 
 					switch (this.selectedTap) {
 						case 'my-poll':
-							this._myPollAjax();
+							this.topScrollAdjust();
 
 							break;
 
@@ -127,16 +128,8 @@
 							break;
 
 						case 'tag':
-							this._tagPollAjax();
+							this.topScrollAdjust();
 							
-							break;
-
-						case 'search-icon':
-							break;
-
-						default:
-							this._myPollAjax();
-
 							break;
 					};
 				}.bind(this));
@@ -259,10 +252,12 @@
 			 * search request ajax
 			 */
 			_searchPollAjax: function() {
-				this.fire('mg-spinner-active');
-				var searchPollAjax = this.$['search-poll-ajax'];
-				searchPollAjax.params = {	name: this.keyWords, page: this.searchPollPage };
-				searchPollAjax.generateRequest();
+				if(this.keyWords) {
+					this.fire('mg-spinner-active');
+					var searchPollAjax = this.$['search-poll-ajax'];
+					searchPollAjax.params = {	name: this.keyWords, page: this.searchPollPage };
+					searchPollAjax.generateRequest();
+				}
 			},			
 
 			_initReponsedData: function(event) {
@@ -314,6 +309,7 @@
 			topScrollAdjust: function() {
 				var pullBoxHeight = this.querySelector('#pull-box').scrollHeight;
 				var outerScroller = this.querySelector('#outer-scroller');
+				outerScroller.scrollTop = 50;
 				outerScroller.scrollTop = pullBoxHeight;
 			}
 		})
