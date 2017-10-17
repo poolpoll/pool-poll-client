@@ -50,13 +50,9 @@
 			},			
 
 			_dataChanged: function(data) {
-				if(!data || data.length == 0) {
-					var isMyPollInformed = localStorage.myPollInformed ? localStorage.myPollInformed : false;
-					if(this.page == 1 && !isMyPollInformed) this.alertNoData();
-					return;
-				};
+				if(!data || data.length == 0) return;
 
-				this._clearCards();
+				if(this.page == 1) this._clearCards();
 
 				for(var i = 0; i < data.length; i++) {
 					var cardElement = document.createElement('mg-image-card');
