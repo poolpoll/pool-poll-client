@@ -1,0 +1,169 @@
+<dom-module id="pp-profile">
+	<template>
+		<style>
+			#container {
+				background-color: #FFFFFF;
+			}
+			.row-flex {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+			.column-flex {
+				display: flex;
+				flex-direction: column;
+			}
+			.default-padding {
+				padding: 3%;
+			}
+			.small-padding {
+				padding: 1%;
+			}
+			.under-line {
+				border-bottom: 1px solid #C2C4C7;
+			}
+			.profile-img img {
+				display: block;
+				margin: auto;
+				width: 25vw;
+				border-radius: 100%;
+				border: 2px #FFFFFF solid;
+			}
+      mg-input {
+      	--mg-input-width: 100%;
+        --mg-input-border: none;
+        --mg-font-size: 10pt;
+        --mg-input-text-align: right;
+      }
+      .title {
+      	font-size: 12pt;
+      }
+      .label {
+      	width: 40%;	
+      	display: block;
+      	color: #C2C4C7;
+      }
+		</style>
+
+		<custom-ajax
+			id="user-info-ajax"
+			last-response="{{userInfo}}">
+		</custom-ajax>
+
+		<div id="container">
+			<div id="profile-img-section" class="default-padding under-line">
+				<span class="title">프로필 사진</span>
+
+				<div class="profile-img">
+					<img src="[[profileImgSrc]]" />
+				</div>
+			</div>
+
+			<div id="basic-info-section" class="default-padding under-line">
+				<span class="title">기본 정보</span>
+
+				<div id="name-section" class="row-flex small-padding">
+					<span class="label">이름</span>
+					<mg-input hide-label value="[[userInfo.name]]"></mg-input>
+				</div>
+
+				<div id="email-section" class="row-flex small-padding">
+					<span class="label">이메일</span>
+					<mg-input hide-label value="[[userInfo.email]]"></mg-input>
+				</div>
+
+				<div id="birthdate-section" class="row-flex small-padding">
+					<span class="label">생년월일</span>
+					<mg-input hide-label value="[[userInfo.birthDate]]"></mg-input>
+				</div>
+			</div>
+
+			<div id="level-info" class="default-padding under-line">
+				<span class="title">Level & Coin</span>
+
+				<div id="level-section" class="row-flex small-padding">
+					<span class="label">Level</span>
+					<mg-input hide-label value="[[userInfo.level]]" readonly></mg-input>
+				</div>
+
+				<div id="contrib-point-section" class="row-flex small-padding">
+					<span class="label">기여도</span>
+					<mg-input hide-label value="100 / 120" readonly></mg-input>
+				</div>
+
+				<div id="coin-section" class="row-flex small-padding">
+					<span class="label">Coin</span>
+					<mg-input hide-label value="[[userInfo.coin]]" readonly></mg-input>
+				</div>
+			</div>
+
+			<div id="tag-section" class="default-padding under-line">
+				<span class="title">Tags</span>
+
+				<div id="tag-section">
+					<div class="small-padding">
+						<template is="dom-repeat" items="[[tagArray]]">
+							<span class="label">[[item]]</span>
+						</template>
+					</div>
+				</div>
+			</div>
+
+			<div id="tag-editor" class="default-padding">
+				<div contenteditable on-keypress="_keyPressed">
+				</div>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'pp-profile',
+
+			properties: {
+				userInfo: {
+					type: Object,
+					observer: '_userInfoChanged'
+				},
+
+				profileImgSrc: {
+					type: String,
+					computed: '_computeImageSrc(userInfo)'
+				},
+
+				tagArray: {
+					type: Array,
+					computed: '_computeTagArray(userInfo.tags)'
+				}
+			},
+
+			getUserInfo: function() {
+				var userInfoAjax = this.$['user-info-ajax'];
+				userInfoAjax.resourceUrl = 'users/' + JSON.parse(sessionStorage.userInfo).id;
+				userInfoAjax.generateRequest();
+			},
+
+			_userInfoChanged: function(userInfo) {
+			},
+
+			_computeImageSrc: function(userInfo) {
+				if(userInfo && userInfo.attachmentId) {
+					var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
+					return baseUrl + '/attachments/preview/' + userInfo.attachmentId;
+				}
+			},
+
+			_computeTagArray: function(tags) {
+				return tags.split(',');
+			},
+
+			_keyPressed: function(event) {
+				if(event.keyCode == 32) {
+					console.log('spacebar pressed');
+					var innerText = event.target.innerText;
+					document.createElement('span');
+					span.inner
+				}
+			}
+		})
+	</script>
+</dom-module>

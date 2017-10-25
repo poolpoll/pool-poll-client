@@ -62,6 +62,9 @@
         margin: auto;
         padding: 5%;
       }
+      .row-reverse {
+        --mg-flex-direction: row-reverse;
+      }
       textarea {
         color: #939499;
         min-height: 15vh;
@@ -170,8 +173,8 @@
           <div class="full-width">
             <span class="grey-color">마감 일시</span>
           </div>
-          <mg-input-date id="date-input" class="small-input input-right full-width" readonly value="{{expireDate}}"></mg-input-date>
-          <mg-input-time id="time-input" class="samll-input input-right full-width" readonly value="{{expireTime}}"></mg-input-time>
+          <mg-input-date id="date-input" class="row-reverse small-input input-right full-width" value="{{expireDate}}"></mg-input-date>
+          <mg-input-time id="time-input" class="row-reverse samll-input input-right full-width" value="{{expireTime}}" step="300"></mg-input-time>
         </div>
       </div>
 

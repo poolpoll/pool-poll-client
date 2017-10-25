@@ -39,15 +39,15 @@
 					<!-- view list -->
 					<sign-in class="pages" route="sign_in"></sign-in>
 					<sign-up class="pages" route="sign_up"></sign-up>
-					<main-page class="pages" route="main" on-content-scroll="_scrollHandler"></main-page>
+					<main-page class="pages" route="main"></main-page>
 					<my-poll class="pages" route="my_polls"></my-poll>
 					<new-poll class="pages" route="new_poll"></new-poll>
 					<poll-list class="pages" route="polls"></poll-list>
 					<poll-join class="pages" route="poll_join"></poll-join>
 					<poll-charts class="pages" route="poll_charts"></poll-charts>
-					<!--profile-view class="pages" route="profile"></profile-view-->
+					<pp-profile class="pages" route="profile"></pp-profile>
 				</iron-pages>
-
+				
 			</app-header-layout>
 		</app-drawer-layout>
 
@@ -111,6 +111,12 @@
 						var newPolElement = pages.querySelector('new-poll');
 						newPolElement.clearValues();
 					};
+
+					if(currentRouting == 'profile') {
+						var pages = this.$['pages'];
+						var profileElement = pages.querySelector('pp-profile');
+						profileElement.getUserInfo();
+					}
 				}.bind(this));
 
 				document.addEventListener('toast-toggle', function(event) {

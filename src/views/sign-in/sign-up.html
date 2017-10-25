@@ -53,12 +53,9 @@
       	border-top: 1px solid #CBCCCB;
       }
       .input-common {
-      	--mg-input-border: none;
+      	--mg-input-border: 0 0 1px 0 solid;
       	--mg-font-size: 15pt;
-      	width: 78%;
-      }
-      .input-center {
-      	--mg-input-text-align: center;
+      	--mg-input-width: 100%;
       }
       .input-right {
       	--mg-input-text-align: right;
@@ -71,8 +68,9 @@
       	padding: 0 5% 0 5%;      	
       }
       span {
+      	display: block;
+      	width: 60%;
       	font-size: 2.8vh;
-      	width: 30vw;
       }
       .short-span {
       	width: 10vw;
@@ -100,10 +98,6 @@
       	--mg-button-height: 4vh;
       	--mg-button-font-size: 2.8vh;
       	--mg-button-color: #32B6B0;
-      }
-      .date-field {
-      	--mg-input-text-align: right;
-      	width: 100%;
       }
 		</style>
 		<custom-ajax
@@ -145,7 +139,7 @@
 			</div>
 
 			<div class="div-border-bottom div-margin-bottom">
-				<span>생일</span>
+				<span style="width: 100%;">생일</span>
 				<mg-input-date class="date-field" value="{{birthDate}}"></mg-input-date>
 				<!-- <mg-input class="input-common input-right" hide-label type="date" value="{{birthDate}}"></mg-input> -->
 			</div>
