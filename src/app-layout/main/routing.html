@@ -1,155 +1,190 @@
 <script src="../../../bower_components/page/page.js"></script>
 
 <script>
-	page('/', function() {
-		var targetRoute = (sessionStorage.userInfo) ? 'main' : 'sign_in';
-		page(targetRoute)
-	});
+  page("/", function() {
+    var targetRoute = sessionStorage.userInfo ? "/main" : "/sign_in";
+    page(targetRoute);
+  });
 
-	page('/main', function() {
-		var targetRoute = 'main';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
-	});
+  page("/main", function() {
+    var targetRoute = "main";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
+  });
 
-	page('/sign_in', function() {
-		var targetRoute = 'sign_in';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
-	});
+  page("/sign_in", function() {
+    var targetRoute = "sign_in";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
+  });
 
-	page('/sign_up', function() {
-		var targetRoute = 'sign_up';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
-	})
+  page("/sign_up", function() {
+    var targetRoute = "sign_up";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
+  });
 
-	page('/new_poll', function() {
-		var targetRoute = 'new_poll';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
-	});
+  page("/new_poll", function() {
+    var targetRoute = "new_poll";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
+  });
 
-	page('/my_polls', function() {
-		var targetRoute = 'my_polls';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
-	});
+  page("/my_polls", function() {
+    var targetRoute = "my_polls";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
+  });
 
-	page('/polls/chart/:pollId', function(ctx) {
-		app.pollId = ctx.params.pollId;
-		var targetRoute = 'poll_charts';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
+  page("/polls/chart/:pollId", function(ctx) {
+    app.pollId = ctx.params.pollId;
+    var targetRoute = "poll_charts";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
 
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
 
-		document.dispatchEvent(new CustomEvent('poll-chart-routed', {
-			detail: {
-				pollId: ctx.params.pollId
-			}
-		}));
-	});
+    document.dispatchEvent(
+      new CustomEvent("poll-chart-routed", {
+        detail: {
+          pollId: ctx.params.pollId
+        }
+      })
+    );
+  });
 
-	page('/polls/join/:pollId', function(ctx) {
-		var targetRoute = 'poll_join';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
+  page("/polls/join/:pollId", function(ctx) {
+    var targetRoute = "poll_join";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
 
-		document.dispatchEvent(new CustomEvent('poll-join-routed', {
-			detail: {
-				pollId: ctx.params.pollId
-			}
-		}));
-	});
+    document.dispatchEvent(
+      new CustomEvent("poll-join-routed", {
+        detail: {
+          pollId: ctx.params.pollId
+        }
+      })
+    );
+  });
 
-	page('/profile', function() {
-		var targetRoute = 'profile';
-		document.dispatchEvent(new CustomEvent('before-routing-changed', {
-			detail: {
-				currentRoute: app.route,
-				targetRoute: targetRoute
-			}
-		}));
-		app.route = targetRoute;
-		document.dispatchEvent(new CustomEvent('after-routing-changed', {
-			detail: {
-				currentRoute: targetRoute
-			}
-		}));
-	});
+  page("/profile", function() {
+    var targetRoute = "profile";
+    document.dispatchEvent(
+      new CustomEvent("before-routing-changed", {
+        detail: {
+          currentRoute: app.route,
+          targetRoute: targetRoute
+        }
+      })
+    );
+    app.route = targetRoute;
+    document.dispatchEvent(
+      new CustomEvent("after-routing-changed", {
+        detail: {
+          currentRoute: targetRoute
+        }
+      })
+    );
+  });
 
-	page({
-		hashbang: true
-	})
-
+  page({
+    hashbang: true
+  });
 </script>
