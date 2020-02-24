@@ -8,8 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-request.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
+<link rel="import" href="../../bower_components/iron-ajax/iron-request.html" />
 
 <!--
 The `iron-ajax` element exposes network request functionality.
@@ -37,11 +37,10 @@ element.
 -->
 
 <script>
-  'use strict';
+  "use strict";
 
   Polymer({
-
-    is: 'custom-ajax',
+    is: "custom-ajax",
 
     /**
      * Fired when a request is sent.
@@ -74,7 +73,7 @@ element.
        */
       url: {
         type: String,
-        computed: 'computedUrl(resourceUrl)'
+        computed: "computedUrl(resourceUrl)"
       },
 
       resourceUrl: {
@@ -100,7 +99,7 @@ element.
        */
       method: {
         type: String,
-        value: 'GET'
+        value: "GET"
       },
 
       /**
@@ -189,7 +188,7 @@ element.
        */
       handleAs: {
         type: String,
-        value: 'json'
+        value: "json"
       },
 
       /**
@@ -197,7 +196,6 @@ element.
        */
       withCredentials: {
         type: Boolean,
-        // value: false
         value: true
       },
 
@@ -306,7 +304,7 @@ element.
        */
       jsonPrefix: {
         type: String,
-        value: ''
+        value: ""
       },
 
       /**
@@ -333,7 +331,7 @@ element.
     },
 
     observers: [
-      '_requestOptionsChanged(url, method, params.*, headers, contentType, body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)'
+      "_requestOptionsChanged(url, method, params.*, headers, contentType, body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)"
     ],
 
     /**
@@ -342,7 +340,7 @@ element.
      *
      * @return {string}
      */
-    get queryString () {
+    get queryString() {
       var queryParts = [];
       var param;
       var value;
@@ -353,16 +351,16 @@ element.
 
         if (Array.isArray(value)) {
           for (var i = 0; i < value.length; i++) {
-            queryParts.push(param + '=' + window.encodeURIComponent(value[i]));
+            queryParts.push(param + "=" + window.encodeURIComponent(value[i]));
           }
         } else if (value !== null) {
-          queryParts.push(param + '=' + window.encodeURIComponent(value));
+          queryParts.push(param + "=" + window.encodeURIComponent(value));
         } else {
           queryParts.push(param);
         }
       }
 
-      return queryParts.join('&');
+      return queryParts.join("&");
     },
 
     /**
@@ -373,10 +371,10 @@ element.
      */
     get requestUrl() {
       var queryString = this.queryString;
-      var url = this.url || '';
+      var url = this.url || "";
 
       if (queryString) {
-        var bindingChar = url.indexOf('?') >= 0 ? '&' : '?';
+        var bindingChar = url.indexOf("?") >= 0 ? "&" : "?";
         return url + bindingChar + queryString;
       }
 
@@ -393,11 +391,11 @@ element.
     get requestHeaders() {
       var headers = {};
       var contentType = this.contentType;
-      if (contentType == null && (typeof this.body === 'string')) {
-        contentType = 'application/x-www-form-urlencoded';
+      if (contentType == null && typeof this.body === "string") {
+        contentType = "application/x-www-form-urlencoded";
       }
       if (contentType) {
-        headers['content-type'] = contentType;
+        headers["content-type"] = contentType;
       }
       var header;
 
@@ -426,7 +424,7 @@ element.
      */
     toRequestOptions: function() {
       return {
-        url: this.requestUrl || '',
+        url: this.requestUrl || "",
         method: this.method,
         headers: this.requestHeaders,
         body: this.body,
@@ -439,11 +437,11 @@ element.
     },
 
     computedUrl: function(resourceUrl) {
-      var baseUrl = window.localStorage.getItem('baseUrl');
-      if(baseUrl) {
-        return baseUrl + '/' + resourceUrl;
+      var baseUrl = window.localStorage.getItem("baseUrl");
+      if (baseUrl) {
+        return baseUrl + "/" + resourceUrl;
       } else {
-        return 'http://localhost:3000/' + resourceUrl;
+        return "http://localhost:3000/" + resourceUrl;
       }
     },
 
@@ -453,33 +451,40 @@ element.
      * @return {!IronRequestElement}
      */
     generateRequest: function() {
-      var request = /** @type {!IronRequestElement} */ (document.createElement('iron-request'));
+      var request = /** @type {!IronRequestElement} */ (document.createElement(
+        "iron-request"
+      ));
       var requestOptions = this.toRequestOptions();
 
-      this.push('activeRequests', request);
+      this.push("activeRequests", request);
 
-      request.completes.then(
-        this._boundHandleResponse
-      ).catch(
-        this._handleError.bind(this, request)
-      ).then(
-        this._discardRequest.bind(this, request)
-      );
+      request.completes
+        .then(this._boundHandleResponse)
+        .catch(this._handleError.bind(this, request))
+        .then(this._discardRequest.bind(this, request));
 
       request.send(requestOptions);
 
       this._setLastRequest(request);
       this._setLoading(true);
 
-      this.fire('request', {
-        request: request,
-        options: requestOptions
-      }, {bubbles: this.bubbles});
+      this.fire(
+        "request",
+        {
+          request: request,
+          options: requestOptions
+        },
+        { bubbles: this.bubbles }
+      );
 
-      this.fire('custom-ajax-request', {
-        request: request,
-        options: requestOptions
-      }, {bubbles: this.bubbles});
+      this.fire(
+        "custom-ajax-request",
+        {
+          request: request,
+          options: requestOptions
+        },
+        { bubbles: this.bubbles }
+      );
 
       return request;
     },
@@ -490,8 +495,8 @@ element.
         this._setLastError(null);
         this._setLoading(false);
       }
-      this.fire('response', request, {bubbles: this.bubbles});
-      this.fire('custom-ajax-response', request, {bubbles: this.bubbles});
+      this.fire("response", request, { bubbles: this.bubbles });
+      this.fire("custom-ajax-response", request, { bubbles: this.bubbles });
     },
 
     _handleError: function(request, error) {
@@ -512,35 +517,46 @@ element.
       }
 
       // Tests fail if this goes after the normal this.fire('error', ...)
-      this.fire('custom-ajax-error', {
-        request: request,
-        error: error
-      }, {bubbles: this.bubbles});
+      this.fire(
+        "custom-ajax-error",
+        {
+          request: request,
+          error: error
+        },
+        { bubbles: this.bubbles }
+      );
 
-      this.fire('error', {
-        request: request,
-        error: error
-      }, {bubbles: this.bubbles});
+      this.fire(
+        "error",
+        {
+          request: request,
+          error: error
+        },
+        { bubbles: this.bubbles }
+      );
     },
 
     _discardRequest: function(request) {
       var requestIndex = this.activeRequests.indexOf(request);
 
       if (requestIndex > -1) {
-        this.splice('activeRequests', requestIndex, 1);
+        this.splice("activeRequests", requestIndex, 1);
       }
     },
 
     _requestOptionsChanged: function() {
-      this.debounce('generate-request', function() {
-        if (this.url == null) {
-          return;
-        }
-        if (this.auto) {
-          this.generateRequest();
-        }
-      }, this.debounceDuration);
-    },
-
+      this.debounce(
+        "generate-request",
+        function() {
+          if (this.url == null) {
+            return;
+          }
+          if (this.auto) {
+            this.generateRequest();
+          }
+        },
+        this.debounceDuration
+      );
+    }
   });
 </script>

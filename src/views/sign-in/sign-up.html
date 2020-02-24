@@ -1,165 +1,216 @@
 <dom-module id="sign-up">
-	<template>
-		<style>
-			.container {
-				background: linear-gradient( to bottom, #3CB5A3, #23ACDB );
-				display: flex;
-				height: 100%;
-				flex-direction: column;
-			}
-			.container div {
-				display: flex;
-				padding: 2vw;
-				flex-direction: row;
-				background-color: #FFFFFF;
-				align-items: center;
-			}
-			.div-border-bottom {
-				border-bottom: 1px solid #CBCCCB;
-			}
-			.div-margin-bottom {
-				margin-bottom: 5vh;
-			}
-			.container .close-btn-container {
-				display: block;
-				border: none;
-				background-color: transparent;
-			}
-			.close-btn {
-				padding: 3vw;
-				float: right;
-				width: 5vw;
-				height: 5vw;
-			}
+  <template>
+    <style>
+      .container {
+        background: linear-gradient(to bottom, #3cb5a3, #23acdb);
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .container div {
+        display: flex;
+        padding: 2vw;
+        flex-direction: row;
+        background-color: #ffffff;
+        align-items: center;
+      }
+      .div-border-bottom {
+        border-bottom: 1px solid #cbcccb;
+      }
+      .div-margin-bottom {
+        margin-bottom: 5vh;
+      }
+      .container .close-btn-container {
+        display: block;
+        border: none;
+        background-color: transparent;
+      }
+      .close-btn {
+        padding: 3vw;
+        float: right;
+        width: 5vw;
+        height: 5vw;
+      }
       .logo-img {
         display: block;
         margin: auto;
         height: 14vh;
       }
       .profile-frame {
-      	background-color: transparent;
-      	border: 2px #FFFFFF solid;
-      	border-radius: 100%;
-      	margin: auto;
+        background-color: transparent;
+        border: 2px #ffffff solid;
+        border-radius: 100%;
+        margin: auto;
       }
       .profile-img {
-      	background-image: url('../../assets/images/profile_empty.png');
-      	background-size: contain;
-      	border-radius: 100%;
-      	width: 30vw;
-      	height: 30vw;
+        background-image: url("../../assets/images/profile_empty.png");
+        background-size: contain;
+        border-radius: 100%;
+        width: 30vw;
+        height: 30vw;
       }
       .name-field {
-      	border-top: 1px solid #CBCCCB;
+        border-top: 1px solid #cbcccb;
       }
       .input-common {
-      	--mg-input-border: 0 0 1px 0 solid;
-      	--mg-font-size: 15pt;
-      	--mg-input-width: 100%;
+        --mg-input-border: 0 0 1px 0 solid;
+        --mg-font-size: 15pt;
+        --mg-input-width: 100%;
       }
       .input-right {
-      	--mg-input-text-align: right;
+        --mg-input-text-align: right;
       }
       .common-checkbox {
-      	height: 100%;
-      	--mg-checkbox-size: 5vw;
-      	--mg-checkbox-bg: url('../../assets/images/check_box_off.png') no-repeat;
-      	--mg-checkbox-bg-checked: url('../../assets/images/check_box_on.png') no-repeat;
-      	padding: 0 5% 0 5%;      	
+        height: 100%;
+        --mg-checkbox-size: 5vw;
+        --mg-checkbox-bg: url("../../assets/images/check_box_off.png") no-repeat;
+        --mg-checkbox-bg-checked: url("../../assets/images/check_box_on.png")
+          no-repeat;
+        padding: 0 5% 0 5%;
       }
       span {
-      	display: block;
-      	width: 60%;
-      	font-size: 2.8vh;
+        display: block;
+        width: 60%;
+        font-size: 2.8vh;
       }
       .short-span {
-      	width: 10vw;
+        width: 10vw;
       }
       .long-span {
-      	width: 60vw;
+        width: 60vw;
       }
       .span-center {
-      	text-align: center;
-      	color: #979799;
+        text-align: center;
+        color: #979799;
       }
-     	bottom-margin {
-     		margin-bottom: 5vh;
-     	}
+      bottom-margin {
+        margin-bottom: 5vh;
+      }
       .phone-field {
-      	text-align: center;
+        text-align: center;
       }
       .national-code {
-      	border-right: 1px solid #CBCCCB;
-      	width: 25vw;
+        border-right: 1px solid #cbcccb;
+        width: 25vw;
       }
       mg-button {
-      	--mg-button-border-radius: 0px;
-      	--mg-button-width: 27vw;
-      	--mg-button-height: 4vh;
-      	--mg-button-font-size: 2.8vh;
-      	--mg-button-color: #32B6B0;
+        --mg-button-border-radius: 0px;
+        --mg-button-width: 27vw;
+        --mg-button-height: 4vh;
+        --mg-button-font-size: 2.8vh;
+        --mg-button-color: #32b6b0;
       }
-		</style>
-		<custom-ajax
-			id="name-duplication-check-ajax"
-			method="GET">
-		</custom-ajax>
+    </style>
+    <custom-ajax id="name-duplication-check-ajax" method="GET"> </custom-ajax>
 
-		<custom-ajax
-			id="sign-up-ajax"
-			resource-url="auth/sign_up"
-			method="POST"
-			content-type="application/json">
- 		</custom-ajax>
+    <custom-ajax
+      id="sign-up-ajax"
+      resource-url="auth/sign_up"
+      method="POST"
+      content-type="application/json"
+    >
+    </custom-ajax>
 
-		<div class="container">
-			<div class="close-btn-container">
-				<img class="close-btn" src="../../assets/images/close_icon.png"  on-tap="_closeBtnTapped" />
-			</div>
-			<img class="logo-img" src="../../assets/images/sign_in_logo.png" />
-			<div style="background-color: transparent; margin-top: 3vh; margin-bottom: 3vh;">
-				<div class="profile-frame" style="padding: 0px">
-					<img id="profile-preview" class="profile-img" on-tap="changeProfilePicture" />
-				</div>				
-			</div>
-			<input id="upload-input" type="file" on-change="_fileSelected" accept="image/*" hidden>
+    <div class="container">
+      <div class="close-btn-container">
+        <img
+          class="close-btn"
+          src="../../assets/images/close_icon.png"
+          on-tap="_closeBtnTapped"
+        />
+      </div>
+      <img class="logo-img" src="../../assets/images/sign_in_logo.png" />
+      <div
+        style="background-color: transparent; margin-top: 3vh; margin-bottom: 3vh;"
+      >
+        <div class="profile-frame" style="padding: 0px">
+          <img
+            id="profile-preview"
+            class="profile-img"
+            on-tap="changeProfilePicture"
+          />
+        </div>
+      </div>
+      <input
+        id="upload-input"
+        type="file"
+        on-change="_fileSelected"
+        accept="image/*"
+        hidden
+      />
 
-			<div class="div-border-bottom name-field">
-				<span id="name-span">별명</span>
-				<mg-input class="input-common input-right" max-length="12" hide-label value="{{name}}"></mg-input>
-				<mg-checkbox id="name-checkbox" class="common-checkbox" id="name-valid" disabled></mg-checkbox>
-			</div>
+      <div class="div-border-bottom name-field">
+        <span id="name-span">별명</span>
+        <mg-input
+          class="input-common input-right"
+          max-length="12"
+          hide-label
+          value="{{name}}"
+        ></mg-input>
+        <mg-checkbox
+          id="name-checkbox"
+          class="common-checkbox"
+          id="name-valid"
+          disabled
+        ></mg-checkbox>
+      </div>
 
-			<div class="div-border-bottom">
-				<span>성별</span>
-				<span class="span-center">남자</span>
-				<mg-checkbox class="common-checkbox" id="gender-male-check" checked="{{isMale}}"></mg-checkbox>
-				<span class="span-center">여자</span>
-				<mg-checkbox class="common-checkbox" id="gender-female-check" checked="{{!isMale}}"></mg-checkbox>
-			</div>
+      <div class="div-border-bottom">
+        <span>성별</span>
+        <span class="span-center">남자</span>
+        <mg-checkbox
+          class="common-checkbox"
+          id="gender-male-check"
+          checked="{{isMale}}"
+        ></mg-checkbox>
+        <span class="span-center">여자</span>
+        <mg-checkbox
+          class="common-checkbox"
+          id="gender-female-check"
+          checked="{{!isMale}}"
+        ></mg-checkbox>
+      </div>
 
-			<div class="div-border-bottom div-margin-bottom">
-				<span style="width: 100%;">생일</span>
-				<mg-input-date class="date-field" value="{{birthDate}}"></mg-input-date>
-				<!-- <mg-input class="input-common input-right" hide-label type="date" value="{{birthDate}}"></mg-input> -->
-			</div>
+      <div class="div-border-bottom div-margin-bottom">
+        <span>생일</span>
+        <mg-input-date class="date-field" value="{{birthDate}}"></mg-input-date>
+        <!-- <mg-input class="input-common input-right" hide-label type="date" value="{{birthDate}}"></mg-input> -->
+      </div>
 
-			<div class="div-border-bottom">
-				<span id="email-span">이메일</span>
-				<mg-input class="input-common input-right" hide-label type="email" value="{{email}}" auto-validation is-valid="{{isEmailValid}}"></mg-input>
-			</div>
+      <div class="div-border-bottom">
+        <span id="email-span">이메일</span>
+        <mg-input
+          class="input-common input-right"
+          hide-label
+          type="email"
+          value="{{email}}"
+          auto-validation
+          is-valid="{{isEmailValid}}"
+        ></mg-input>
+      </div>
 
-			<div class="div-border-bottom">
-				<span class="password-span">비밀번호</span>
-				<mg-input class="input-common input-right" hide-label type="password" value="{{password}}"></mg-input>
-			</div>
+      <div class="div-border-bottom">
+        <span class="password-span">비밀번호</span>
+        <mg-input
+          class="input-common input-right"
+          hide-label
+          type="password"
+          value="{{password}}"
+        ></mg-input>
+      </div>
 
-			<div class="div-border-bottom div-margin-bottom">
-				<span class="password-span">비밀번호 확인</span>
-				<mg-input class="input-common input-right" hide-label type="password" value="{{confirmPassword}}"></mg-input>
-			</div>
+      <div class="div-border-bottom div-margin-bottom">
+        <span class="password-span">비밀번호 확인</span>
+        <mg-input
+          class="input-common input-right"
+          hide-label
+          type="password"
+          value="{{confirmPassword}}"
+        ></mg-input>
+      </div>
 
-			<!--div class="div-border-bottom phone-field">
+      <!--div class="div-border-bottom phone-field">
 				<span class="national-code">+82</span>
 				<mg-input class="input-common input-center" hide-label type="tel" value="{{phoneNum}}" placeholder="휴대전화"></mg-input>
 				<mg-button button-text="인증번호"></mg-button>
@@ -171,262 +222,280 @@
 				<mg-button button-text="확 인"></mg-button>
 			</div-->
 
-			<div class="div-border-bottom">
-				<mg-button button-text="참여하기" on-tap="_validationCheck"></mg-button>
-			</div>
-		</div>
-	</template>
-	<script>
-		Polymer({
-			is: 'sign-up',
+      <div class="div-border-bottom">
+        <mg-button button-text="참여하기" on-tap="_validationCheck"></mg-button>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: "sign-up",
 
-			properties: {
-				account: {
-					type: String
-				},
+      properties: {
+        account: {
+          type: String
+        },
 
-				name: {
-					type: String,
-					observer: '_nameDuplicationCheck'
-				},
+        name: {
+          type: String,
+          observer: "_nameDuplicationCheck"
+        },
 
-				isNameDuplValid: {
-					type: Boolean,
-					value: false
-				},
+        isNameDuplValid: {
+          type: Boolean,
+          value: false
+        },
 
-				isMale: {
-					type: Boolean,
-					value: true
-				},				
+        isMale: {
+          type: Boolean,
+          value: true
+        },
 
-				birthDate: {
-					type: String
-				},
+        birthDate: {
+          type: String
+        },
 
-				password: {
-					type: String
-				},
+        password: {
+          type: String
+        },
 
-				confirmPassword: {
-					type: String
-				},
+        confirmPassword: {
+          type: String
+        },
 
-				isPwdValid: {
-					type: Boolean,
-					value: false
-				},
+        isPwdValid: {
+          type: Boolean,
+          value: false
+        },
 
-				email: {
-					type: String
-				},
+        email: {
+          type: String
+        },
 
-				isEmailValid: {
-					type: Boolean,
-					observer: '_isEmailValidChanged'
-				}
-			},
+        isEmailValid: {
+          type: Boolean,
+          observer: "_isEmailValidChanged"
+        }
+      },
 
-			observers: [
-				'isPasswordValid(password, confirmPassword)'
-			],
+      observers: ["isPasswordValid(password, confirmPassword)"],
 
-			listeners: {
-				'name-duplication-check-ajax.response': '_duplicationCheckResponsed',
-				'sign-up-ajax.response': '_signUpResponsed'
-			},
+      listeners: {
+        "name-duplication-check-ajax.response": "_duplicationCheckResponsed",
+        "sign-up-ajax.response": "_signUpResponsed"
+      },
 
-			_nameDuplicationCheck: function() {
-				if(this.name) {
-					var nameDupliCheckAjax = this.$['name-duplication-check-ajax'];
-					nameDupliCheckAjax.resourceUrl = 'auth/name_check/' + this.name;
-					nameDupliCheckAjax.generateRequest();
-				}
-			},
+      _nameDuplicationCheck: function() {
+        if (this.name) {
+          var nameDupliCheckAjax = this.$["name-duplication-check-ajax"];
+          nameDupliCheckAjax.resourceUrl = "auth/name_check/" + this.name;
+          nameDupliCheckAjax.generateRequest();
+        }
+      },
 
-			_duplicationCheckResponsed: function(event) {
-				this.isNameDuplValid = event.detail.response;
-				this.$['name-checkbox'].checked = this.isNameDuplValid;
-				if(!this.isNameDuplValid) {
-					this.$['name-span'].style.color = 'red';
-				} else {
-					this.$['name-span'].style.color = 'black';
-				}
-			},
+      _duplicationCheckResponsed: function(event) {
+        this.isNameDuplValid = event.detail.response;
+        this.$["name-checkbox"].checked = this.isNameDuplValid;
+        if (!this.isNameDuplValid) {
+          this.$["name-span"].style.color = "red";
+        } else {
+          this.$["name-span"].style.color = "black";
+        }
+      },
 
-			_isEmailValidChanged: function(valid) {
-				var emailSpan = this.$['email-span'];
-				if(valid) {
-					emailSpan.style.color = 'black';
-				} else {
-					emailSpan.style.color = 'red';
-				}
-			},
+      _isEmailValidChanged: function(valid) {
+        var emailSpan = this.$["email-span"];
+        if (valid) {
+          emailSpan.style.color = "black";
+        } else {
+          emailSpan.style.color = "red";
+        }
+      },
 
-			_closeBtnTapped: function() {
-				page('/sign_in');
-			},
+      _closeBtnTapped: function() {
+        page("/sign_in");
+      },
 
-			changeProfilePicture: function() {
-				// Cordova 환경에서 실행
-				if(navigator.camera) {
-					var options = {
-		        quality: 100,
-	        	destinationType: Camera.DestinationType.FILE_URI,
-		        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-		        allowEdit: true,
-		        encodingType: Camera.EncodingType.PNG,
-		        saveToPhotoAlbum: false
-					};
+      changeProfilePicture: function() {
+        // Cordova 환경에서 실행
+        if (navigator.camera) {
+          var options = {
+            quality: 100,
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            allowEdit: true,
+            encodingType: Camera.EncodingType.PNG,
+            saveToPhotoAlbum: false
+          };
 
-					navigator.camera.getPicture(function(fileURL) {
-						var previewElement = document.querySelector('#profile-preview');
-						previewElement.src = fileURL;
-					}, function(error) {
-						throw error;
-					}, options);					
-				} else { // Bowser 환경에서 실행
-					this.$['upload-input'].click();
-				}
-			},
+          navigator.camera.getPicture(
+            function(fileURL) {
+              var previewElement = document.querySelector("#profile-preview");
+              previewElement.src = fileURL;
+            },
+            function(error) {
+              throw error;
+            },
+            options
+          );
+        } else {
+          // Bowser 환경에서 실행
+          this.$["upload-input"].click();
+        }
+      },
 
-			_fileSelected: function(event) {
-				this.$['profile-preview'].src = URL.createObjectURL(event.target.files[0]);
-			},
+      _fileSelected: function(event) {
+        this.$["profile-preview"].src = URL.createObjectURL(
+          event.target.files[0]
+        );
+      },
 
-			_validationCheck: function() {
-				var warnAlert = document.createElement('warn-alert');
+      _validationCheck: function() {
+        var warnAlert = document.createElement("warn-alert");
 
-				if(!this.name) {
-					warnAlert.msg = '입력한 별명이 올바르지 않습니다.';
-					mgAlert({
-						content: warnAlert,
-						useCancelButton: true
-					});
-				} else if (!this.isNameDuplValid) {
-					warnAlert.msg = '입력한 별명은 이미 등록되어 있습니다.';
-					mgAlert({
-						content: warnAlert,
-						useCancelButton: true
-					});
-				} else if (!this.birthDate) {
-					warnAlert.msg = '입력한 생일이 올바르지 않습니다.';
-					mgAlert({
-						content: warnAlert,
-						useCancelButton: true
-					});
-				} else if (!this.isEmailValid) {
-					warnAlert.msg = '입력한 이메일이 올바르지 않습니다.';
-					mgAlert({
-						content: warnAlert,
-						useCancelButton: true
-					});
-				} else if (!this.isPasswordValid) {
-					warnAlert.msg = '입력한 비밀번호가 올바르지 않습니다.';
-					mgAlert({
-						content: warnAlert,
-						useCancelButton: true
-					});
-				} else {
-					var me = this;
-					var infoAlert = document.createElement('info-alert');
-					infoAlert.title = '사용자 생성',
-					infoAlert.msg = '입력한 정보를 바탕으로 사용자를 생성 합니다.'
-					mgAlert({
-						content: infoAlert,
-						useCancelButton: true,
-						useConfirmButton: true,
-						cancelCallback: function() {
-							return;
-						},
-						confirmCallback: function() {
-							me._signUp();
-						}
-					});
-				}
-				
-				return false;
-			},			
+        if (!this.name) {
+          warnAlert.msg = "입력한 별명이 올바르지 않습니다.";
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true
+          });
+        } else if (!this.isNameDuplValid) {
+          warnAlert.msg = "입력한 별명은 이미 등록되어 있습니다.";
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true
+          });
+        } else if (!this.birthDate) {
+          warnAlert.msg = "입력한 생일이 올바르지 않습니다.";
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true
+          });
+        } else if (!this.isEmailValid) {
+          warnAlert.msg = "입력한 이메일이 올바르지 않습니다.";
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true
+          });
+        } else if (!this.isPasswordValid) {
+          warnAlert.msg = "입력한 비밀번호가 올바르지 않습니다.";
+          mgAlert({
+            content: warnAlert,
+            useCancelButton: true
+          });
+        } else {
+          var me = this;
+          var infoAlert = document.createElement("info-alert");
+          (infoAlert.title = "사용자 생성"),
+            (infoAlert.msg = "입력한 정보를 바탕으로 사용자를 생성 합니다.");
+          mgAlert({
+            content: infoAlert,
+            useCancelButton: true,
+            useConfirmButton: true,
+            cancelCallback: function() {
+              return;
+            },
+            confirmCallback: function() {
+              me._signUp();
+            }
+          });
+        }
 
-			_signUp: function() {
-				var fileURL = this.$['profile-preview'].src;
+        return false;
+      },
+
+      _signUp: function() {
+        var fileURL = this.$["profile-preview"].src;
 
         // Cordova plugin 처리
-        if(navigator.camera && fileURL) {
+        if (navigator.camera && fileURL) {
           var options = new FileUploadOptions();
-          options.fileKey = 'profile';
-          options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-          options.mimeType = 'image/png';
+          options.fileKey = "profile";
+          options.fileName = fileURL.substr(fileURL.lastIndexOf("/") + 1);
+          options.mimeType = "image/png";
 
           var params = new Object();
           params = {
-						name: this.name,
-						birthDate: this.birthDate,
-						email: this.email,
-						password: this.password
-						// confirmPassword: this.confirmPassword,
-						// phoneNum: this.phoneNum,
-						// authNumber: this.authNumber
+            name: this.name,
+            birthDate: this.birthDate,
+            email: this.email,
+            password: this.password
+            // confirmPassword: this.confirmPassword,
+            // phoneNum: this.phoneNum,
+            // authNumber: this.authNumber
           };
           options.params = params;
 
           var ft = new FileTransfer();
-          var baseUrl = localStorage.baseUrl ? localStorage.baseUrl : 'http://localhost:3000';
-          ft.upload(fileURL, encodeURI(localStorage.baseUrl + '/auth/sign_up'), function(event) {
-            page('/sign_in');
-            document.dispatchEvent(new Event('mg-spinner-deactive'));
-          }, function(error) {
-          	alert(error);
-            throw error;
-          }, options);
+          var baseUrl = localStorage.baseUrl
+            ? localStorage.baseUrl
+            : "http://localhost:3000";
+          ft.upload(
+            fileURL,
+            encodeURI(localStorage.baseUrl + "/auth/sign_up"),
+            function(event) {
+              page("/sign_in");
+              document.dispatchEvent(new Event("mg-spinner-deactive"));
+            },
+            function(error) {
+              alert(error);
+              throw error;
+            },
+            options
+          );
         } else if (navigator.camera && !fileURL) {
-        	var signUpAjax = this.$['sign-up-ajax'];
-        	signUpAjax.body = {
-						name: this.name,
-						birthDate: this.birthDate,
-						email: this.email,
-						password: this.password          		
-        	};
-        	signUpAjax.generateRequest();
+          var signUpAjax = this.$["sign-up-ajax"];
+          signUpAjax.body = {
+            name: this.name,
+            birthDate: this.birthDate,
+            email: this.email,
+            password: this.password
+          };
+          signUpAjax.generateRequest();
 
-        	this.fire('mg-spinner-active');
-        } else { // 브라우저 처리
-        	var uploadInput = this.$['upload-input'];
+          this.fire("mg-spinner-active");
+        } else {
+          // 브라우저 처리
+          var uploadInput = this.$["upload-input"];
           var file = uploadInput.files[0];
 
           var formData = new FormData();
-          if(file) formData.append('profile', file);
-          formData.append('name', this.name);
-          formData.append('birthDate', this.birthDate);
-          formData.append('email', this.email);
-          formData.append('gender', (this.isMale) ? 'male' : 'female');
-          formData.append('password', this.password);
+          if (file) formData.append("profile", file);
+          formData.append("name", this.name);
+          formData.append("birthDate", this.birthDate);
+          formData.append("email", this.email);
+          formData.append("gender", this.isMale ? "male" : "female");
+          formData.append("password", this.password);
 
-          var signUpAjax = this.$['sign-up-ajax'];
+          var signUpAjax = this.$["sign-up-ajax"];
           signUpAjax.body = formData;
           signUpAjax.contentType = undefined;
           signUpAjax.generateRequest();
-        };
-			},
+        }
+      },
 
-			isPasswordValid: function(password, confirmPassword) {
-				var pwdSpans = document.querySelectorAll('.password-span');
+      isPasswordValid: function(password, confirmPassword) {
+        var pwdSpans = document.querySelectorAll(".password-span");
 
-				if(password === confirmPassword) {
-					pwdSpans.forEach(function(pwdSpan) { pwdSpan.style.color = 'black';	});
+        if (password === confirmPassword) {
+          pwdSpans.forEach(function(pwdSpan) {
+            pwdSpan.style.color = "black";
+          });
 
-					this.isPwdValid = true;
-				} else {
-					pwdSpans.forEach(function(pwdSpan) { pwdSpan.style.color = 'red';	});
+          this.isPwdValid = true;
+        } else {
+          pwdSpans.forEach(function(pwdSpan) {
+            pwdSpan.style.color = "red";
+          });
 
-					this.isPwdValid = false;
-				}
-			},
+          this.isPwdValid = false;
+        }
+      },
 
-			_signUpResponsed: function(response) {
-				page('/sign_in');
-				this.fire('mg-spinner-deactive');
-			}
-		})
-	</script>
+      _signUpResponsed: function(response) {
+        page("/sign_in");
+        this.fire("mg-spinner-deactive");
+      }
+    });
+  </script>
 </dom-module>
